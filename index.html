@@ -90,6 +90,7 @@ function studentLogin() {
   firebase.auth().signInWithEmailAndPassword(email, password)
     .then(() => {
       document.getElementById("emailMessage").innerText = "Login यशस्वी!";
+      document.getElementById("studentDashboard").style.display = "block";
     })
     .catch(error => {
       document.getElementById("emailMessage").innerText = error.message;
