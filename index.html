@@ -55,7 +55,47 @@ button {
 <h3>MPSC</h3>
 <p>लवकरच उपलब्ध</p>
 </div>
+</div><div style="max-width:350px;margin:30px auto;padding:20px;border:1px solid #ddd;text-align:center;">
+  <h2>Student Signup / Login</h2>
+
+  <input id="emailBox" type="email" placeholder="Email Address">
+
+  <input id="passBox" type="password" placeholder="Password">
+
+  <button onclick="studentSignup()">Create Account</button>
+
+  <button onclick="studentLogin()">Login</button>
+
+  <p id="emailMessage"></p>
 </div>
+
+<script>
+function studentSignup() {
+  const email = document.getElementById("emailBox").value.trim();
+  const password = document.getElementById("passBox").value;
+
+  firebase.auth().createUserWithEmailAndPassword(email, password)
+    .then(() => {
+      document.getElementById("emailMessage").innerText = "Account तयार झाले!";
+    })
+    .catch(error => {
+      document.getElementById("emailMessage").innerText = error.message;
+    });
+}
+
+function studentLogin() {
+  const email = document.getElementById("emailBox").value.trim();
+  const password = document.getElementById("passBox").value;
+
+  firebase.auth().signInWithEmailAndPassword(email, password)
+    .then(() => {
+      document.getElementById("emailMessage").innerText = "Login यशस्वी!";
+    })
+    .catch(error => {
+      document.getElementById("emailMessage").innerText = error.message;
+    });
+}
+</script>
 </body>
 </html>
  <div style="max-width:350px;margin:30px auto;padding:20px;border:1px solid #ddd;border-radius:12px;text-align:center;">
