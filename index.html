@@ -58,3 +58,69 @@ button {
 </div>
 </body>
 </html>
+ <div style="max-width:350px;margin:30px auto;padding:20px;border:1px solid #ddd;border-radius:12px;text-align:center;">
+  <h2>Student Login</h2>
+  <input id="phone" type="tel" placeholder="+91 मोबाइल नंबर"
+    style="width:90%;padding:12px;margin:8px;">
+  <div id="recaptcha-container"></div>
+  <button onclick="sendOTP()" style="padding:12px;margin:8px;">
+    Send OTP
+  </button>
+
+  <input id="otp" type="text" placeholder="OTP टाका"
+    style="width:90%;padding:12px;margin:8px;">
+  <button onclick="verifyOTP()" style="padding:12px;margin:8px;">
+    Verify OTP
+  </button>
+  <p id="message"></p>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+
+<script>
+const firebaseConfig = {
+  apiKey: "AIzaSyAQlAw96dP_2TbMNsP94olt1Q4f-TB1kNQ",
+  authDomain: "danny-competative-academy.firebaseapp.com",
+  projectId: "danny-competative-academy"
+};
+
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+let confirmationResult;
+
+function sendOTP() {
+  const phone = document.getElementById("phone").value.trim();
+  window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier(
+    "recaptcha-container", { size: "normal" }
+  );
+
+  auth.signInWithPhoneNumber(phone, window.recaptchaVerifier)
+    .then(result => {
+      confirmationResult = result;
+      document.getElementById("message").innerText = "OTP पाठवला आहे!";
+    })
+    .catch(error => {
+      document.getElementById("message").innerText = error.message;
+      if (window.recaptchaVerifier) {
+        window.recaptchaVerifier.clear();
+      }
+    });
+}
+
+function verifyOTP() {
+  const otp = document.getElementById("otp").value.trim();
+  if (!confirmationResult) {
+    document.getElementById("message").innerText = "आधी OTP पाठवा.";
+    return;
+  }
+
+  confirmationResult.confirm(otp)
+    .then(() => {
+      document.getElementById("message").innerText = "Login यशस्वी!";
+    })
+    .catch(() => {
+      document.getElementById("message").innerText = "OTP चुकीचा आहे.";
+    });
+}
+</script>
