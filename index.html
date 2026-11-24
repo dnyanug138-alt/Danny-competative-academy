@@ -483,9 +483,10 @@ function studentLogin() {
     });
 }
 
-auth.onAuthStateChanged(function(user) {
+auth.onAuthStateChanged(async function(user) {
 
   const dashboard = document.getElementById("studentDashboard");
+  const adminPanel = document.getElementById("adminPanel");
 
   if (user) {
 
@@ -495,11 +496,27 @@ auth.onAuthStateChanged(function(user) {
       "Student Name: " + (user.displayName || "Student");
 
     document.getElementById("studentEmail").innerText =
-      "Student Email: " + (user.email || user.phoneNumber || "");
+      "Student Email: " + (user.email || "");
+
+    try {
+      const adminDoc = await db.collection("Admins")
+        .doc(user.uid).get();
+
+      if (adminDoc.exists && adminDoc.data().role === "admin") {
+        adminPanel.style.display = "block";
+      } else {
+        adminPanel.style.display = "none";
+      }
+
+    } catch (error) {
+      adminPanel.style.display = "none";
+      console.error("Admin check error:", error);
+    }
 
   } else {
 
     dashboard.style.display = "none";
+    adminPanel.style.display = "none";
 
   }
 
