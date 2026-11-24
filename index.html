@@ -316,21 +316,101 @@ function studentLogout() {
     location.reload();
   });
 }
-  function startPoliceTest() {
-  document.getElementById("policeQuiz").innerHTML = `
-    <h3>🚔 Police Bharti Test</h3>
-    <p>प्रश्न 1: महाराष्ट्राची राजधानी कोणती?</p>
-    <button onclick="checkPoliceAnswer('Mumbai')">मुंबई</button>
-    <button onclick="checkPoliceAnswer('Pune')">पुणे</button>
-    <button onclick="checkPoliceAnswer('Nagpur')">नागपूर</button>
-    <button onclick="checkPoliceAnswer('Nashik')">नाशिक</button>
-    <p id="policeResult"></p>
+  const policeQuestions = [
+  {
+    q: "महाराष्ट्राची राजधानी कोणती?",
+    options: ["पुणे", "मुंबई", "नागपूर", "नाशिक"],
+    answer: 1
+  },
+  {
+    q: "25 × 4 = किती?",
+    options: ["50", "75", "100", "125"],
+    answer: 2
+  },
+  {
+    q: "भारताचे संविधान कधी लागू झाले?",
+    options: ["15 ऑगस्ट 1947", "26 जानेवारी 1950", "2 ऑक्टोबर 1950", "1 मे 1960"],
+    answer: 1
+  },
+  {
+    q: "महाराष्ट्र दिन कधी साजरा केला जातो?",
+    options: ["1 मे", "15 ऑगस्ट", "26 जानेवारी", "1 जानेवारी"],
+    answer: 0
+  },
+  {
+    q: "2, 4, 6, 8, पुढील संख्या कोणती?",
+    options: ["9", "10", "11", "12"],
+    answer: 1
+  },
+  {
+    q: "भारताचे राष्ट्रीय प्राणी कोणते?",
+    options: ["सिंह", "हत्ती", "वाघ", "मोर"],
+    answer: 2
+  },
+  {
+    q: "एका आठवड्यात किती दिवस असतात?",
+    options: ["5", "6", "7", "8"],
+    answer: 2
+  },
+  {
+    q: "खालीलपैकी समानार्थी शब्द कोणता? आनंद",
+    options: ["दुःख", "हर्ष", "राग", "भीती"],
+    answer: 1
+  },
+  {
+    q: "12 + 18 = किती?",
+    options: ["20", "25", "30", "35"],
+    answer: 2
+  },
+  {
+    q: "भारताचा राष्ट्रीय पक्षी कोणता?",
+    options: ["पोपट", "मोर", "कावळा", "गरुड"],
+    answer: 1
+  }
+];
+
+let policeIndex = 0;
+let policeScore = 0;
+
+function startPoliceTest() {
+  policeIndex = 0;
+  policeScore = 0;
+  showPoliceQuestion();
+}
+
+function showPoliceQuestion() {
+  const quiz = document.getElementById("policeQuiz");
+
+  if (policeIndex >= policeQuestions.length) {
+    quiz.innerHTML = `
+      <h3>टेस्ट पूर्ण झाली! 🎉</h3>
+      <h2>तुमचे गुण: ${policeScore}/10</h2>
+      <button onclick="startPoliceTest()">पुन्हा टेस्ट द्या</button>
+    `;
+    return;
+  }
+
+  const q = policeQuestions[policeIndex];
+
+  quiz.innerHTML = `
+    <h3>🚔 Police Bharti Mock Test</h3>
+    <p>प्रश्न ${policeIndex + 1} / 10</p>
+    <h4>${q.q}</h4>
+    ${q.options.map((option, i) => `
+      <button onclick="selectPoliceAnswer(${i})">
+        ${option}
+      </button><br><br>
+    `).join("")}
   `;
 }
 
-function checkPoliceAnswer(answer) {
-  document.getElementById("policeResult").innerText =
-    answer === "Mumbai" ? "बरोबर उत्तर! 🎉" : "चुकीचे उत्तर. योग्य उत्तर मुंबई आहे.";
+function selectPoliceAnswer(selected) {
+  if (selected === policeQuestions[policeIndex].answer) {
+    policeScore++;
+  }
+
+  policeIndex++;
+  showPoliceQuestion();
 }
 </script>
 
