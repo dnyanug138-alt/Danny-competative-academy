@@ -154,6 +154,13 @@ button:hover {
 </head>
 
 <body>
+  <!-- LIVE NEWS SLIDER -->
+<div id="liveNewsSlider">
+  <h3>🔴 LIVE NEWS</h3>
+  <div id="sliderNewsContent">बातम्या Loading...</div>
+  <button onclick="previousNews()">❮ मागील</button>
+  <button onclick="nextNews()">पुढील ❯</button>
+</div>
   <div class="welcome-section">
   <h2>पोलीस भरती परीक्षा पोर्टल</h2>
   <p>तुमच्या पोलीस भरतीच्या तयारीला आजच सुरुवात करा!</p>
@@ -1001,6 +1008,66 @@ function loadNews() {
       list.textContent = "बातम्या लोड झाल्या नाहीत: " + error.message;
     });
 }
+  let newsItems = [];
+let currentNewsIndex = 0;
+let newsSliderTimer;
+
+function loadLiveNews() {
+  db.collection("news")
+    .orderBy("createdAt", "desc")
+    .onSnapshot(snapshot => {
+      newsItems = [];
+
+      snapshot.forEach(doc => {
+        newsItems.push(doc.data());
+      });
+
+      currentNewsIndex = 0;
+      showLiveNews();
+    }, error => {
+      document.getElementById("sliderNewsContent").innerText =
+        "बातम्या लोड झाल्या नाहीत.";
+    });
+}
+
+function showLiveNews() {
+  const box = document.getElementById("sliderNewsContent");
+
+  if (!newsItems.length) {
+    box.innerText = "सध्या कोणतीही बातमी उपलब्ध नाही.";
+    return;
+  }
+
+  const news = newsItems[currentNewsIndex];
+
+  box.innerHTML = "";
+
+  const title = document.createElement("h3");
+  title.textContent = news.title || "";
+
+  const description = document.createElement("p");
+  description.textContent = news.description || "";
+
+  box.appendChild(title);
+  box.appendChild(description);
+}
+
+function nextNews() {
+  if (!newsItems.length) return;
+  currentNewsIndex = (currentNewsIndex + 1) % newsItems.length;
+  showLiveNews();
+}
+
+function previousNews() {
+  if (!newsItems.length) return;
+  currentNewsIndex =
+    (currentNewsIndex - 1 + newsItems.length) % newsItems.length;
+  showLiveNews();
+}
+
+loadLiveNews();
+
+newsSliderTimer = setInterval(nextNews, 5000);
 </script>
  <hr>
 
