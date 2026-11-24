@@ -5,40 +5,103 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Danny Competitive Academy</title>
 
+
 <style>
+* {
+  box-sizing: border-box;
+}
+
 body {
   margin: 0;
   font-family: Arial, sans-serif;
-  background: #f2f5fa;
+  background: #f3f6fc;
+  color: #183153;
   text-align: center;
 }
+
 header {
-  background: #12345a;
+  background: linear-gradient(135deg, #09264b, #1769aa);
   color: white;
-  padding: 25px 10px;
+  padding: 38px 15px;
 }
-.container { padding: 20px; }
+
+header h1 {
+  font-size: 28px;
+  margin: 0 0 12px;
+  letter-spacing: 1px;
+}
+
+header p {
+  font-size: 16px;
+  margin: 0;
+}
+
+.container {
+  padding: 25px 15px;
+  max-width: 1100px;
+  margin: auto;
+}
+
+.container h2 {
+  color: #12345a;
+  margin-bottom: 25px;
+}
+
 .card {
   background: white;
-  padding: 20px;
+  padding: 25px 20px;
   margin: 15px auto;
   max-width: 400px;
-  border-radius: 12px;
+  border-radius: 16px;
+  box-shadow: 0 5px 18px rgba(0,0,0,0.07);
+  border: 1px solid #e5ebf5;
 }
+
+.card h3 {
+  color: #1769aa;
+}
+
 input {
-  padding: 12px;
-  margin: 8px;
-  width: 85%;
+  display: block;
+  padding: 13px;
+  margin: 12px auto;
+  width: 90%;
+  max-width: 350px;
+  border: 1px solid #ccd6e5;
+  border-radius: 8px;
+  font-size: 15px;
 }
+
 button {
-  background: #12345a;
+  background: #1769aa;
   color: white;
-  padding: 12px 25px;
+  padding: 13px 24px;
   margin: 8px;
   border: 0;
   border-radius: 8px;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #09264b;
+}
+
+#studentDashboard {
+  box-shadow: 0 5px 18px rgba(0,0,0,0.07);
+}
+
+@media (max-width: 600px) {
+  header h1 {
+    font-size: 23px;
+  }
+
+  .container {
+    padding: 18px 10px;
+  }
 }
 </style>
+
 </head>
 
 <body>
