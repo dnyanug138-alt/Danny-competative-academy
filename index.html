@@ -814,6 +814,7 @@ function adminLogin() {
     if (result.user.email === "dnyanug138@gmail.com") {
       msg.innerText = "Admin Login Successful!";
       document.getElementById("adminDashboard").style.display = "block";
+      loadNews();
     } else {
       firebase.auth().signOut();
       msg.innerText = "तुम्ही Admin नाही!";
