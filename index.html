@@ -397,7 +397,7 @@ function showPoliceQuestion() {
     <p>प्रश्न ${policeIndex + 1} / 10</p>
     <h4>${q.q}</h4>
     ${q.options.map((option, i) => `
-      <button onclick="selectPoliceAnswer(${i})">
+      <button type="button" onclick="selectPoliceAnswer(${i})">
         ${option}
       </button><br><br>
     `).join("")}
