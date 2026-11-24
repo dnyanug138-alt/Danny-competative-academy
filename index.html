@@ -297,7 +297,12 @@ function verifyOTP() {
         "OTP चुकीचा आहे. पुन्हा तपासा.";
     });
 }
-
+function studentLogout() {
+  auth.signOut().then(() => {
+    alert("Logout यशस्वी!");
+    location.reload();
+  });
+}
 </script>
 
 </body>
