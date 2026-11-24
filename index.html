@@ -315,13 +315,8 @@ function studentLogout() {
     alert("Logout यशस्वी!");
     location.reload();
   });
-}  policeScore = 0;
-  clearInterval(policeTimer);
-policeTimeLeft = 90 * 60;
-  showPoliceQuestion();
-  policeTimer = setInterval(function() {
-  policeTimeLeft--;
-
+}
+  
 const policeQuestions = [
   {q:"नाम म्हणजे काय?",options:["नाव","क्रिया","गुण","अव्यय"],answer:0},
   {q:"'सुंदर' हा कोणता शब्दप्रकार आहे?",options:["नाम","सर्वनाम","विशेषण","क्रियापद"],answer:2},
@@ -457,26 +452,7 @@ function startPoliceTest() {
       showPoliceQuestion();
     }
   }, 1000);
-} {
-  policeIndex = 0;
-
-  let timerDisplay = document.getElementById("policeTimerDisplay");
-
-  if (timerDisplay) {
-    timerDisplay.innerText =
-      "वेळ: " +
-      String(Math.floor(policeTimeLeft / 60)).padStart(2, "0") +
-      ":" +
-      String(policeTimeLeft % 60).padStart(2, "0");
-  }
-
-  if (policeTimeLeft <= 0) {
-    clearInterval(policeTimer);
-    policeIndex = policeQuestions.length;
-    showPoliceQuestion();
-  }
-}, 1000);
-}
+} 
 
 function showPoliceQuestion() {
   const quiz = document.getElementById("policeQuiz");
