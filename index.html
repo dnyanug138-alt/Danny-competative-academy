@@ -350,37 +350,51 @@ function studentSignup() {
 
 // STUDENT LOGIN
 
-function studentLogin() {
 
+function studentSignup() {
+
+  const name = document.getElementById("studentName").value.trim();
   const email = document.getElementById("emailBox").value.trim();
   const password = document.getElementById("passBox").value;
-  const msg = document.getElementById("emailMessage");
 
-  if (!email || !password) {
-    msg.innerText = "Email आणि Password टाका.";
+  if (!name) {
+    document.getElementById("emailMessage").innerText =
+      "कृपया पूर्ण नाव टाका.";
     return;
   }
 
-  msg.innerText = "Login सुरू आहे...";
-
-  auth.signInWithEmailAndPassword(email, password)
+  auth.createUserWithEmailAndPassword(email, password)
 
     .then((result) => {
-      msg.innerText = "Login यशस्वी!";
 
-      document.getElementById("studentDashboard").style.display = "block";
+      const user = result.user;
 
-      document.getElementById("studentNameDisplay").innerText =
-        "Student Name: " + (result.user.displayName || "Student");
+      return user.updateProfile({
+        displayName: name
+      }).then(() => {
 
-      document.getElementById("studentEmail").innerText =
-        "Student Email: " + result.user.email;
+        return db.collection("students").doc(user.uid).set({
+          uid: user.uid,
+          name: name,
+          email: email,
+          registeredAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+
+      });
+
     })
 
-    .catch((error) => {
-      msg.innerText = "Login Error: " + error.message;
+    .then(() => {
+      document.getElementById("emailMessage").innerText =
+        "Account तयार झाले! स्वागत आहे " + name;
+    })
+
+    .catch(error => {
+      document.getElementById("emailMessage").innerText =
+        error.message;
     });
 }
+
 
 // DASHBOARD
 
