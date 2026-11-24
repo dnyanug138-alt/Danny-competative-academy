@@ -315,88 +315,69 @@ firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db = firebase.firestore();
   
+
 // STUDENT SIGNUP
 
 function studentSignup() {
-
   const name = document.getElementById("studentName").value.trim();
   const email = document.getElementById("emailBox").value.trim();
   const password = document.getElementById("passBox").value;
 
-  if (!name) {
+  if (!name || !email || !password) {
     document.getElementById("emailMessage").innerText =
-      "कृपया पूर्ण नाव टाका.";
+      "सर्व माहिती भरा.";
     return;
   }
 
   auth.createUserWithEmailAndPassword(email, password)
+    .then(async (result) => {
+      const user = result.user;
 
-    .then((result) => {
-      return result.user.updateProfile({
-        displayName: name
+      await user.updateProfile({ displayName: name });
+
+      await db.collection("students").doc(user.uid).set({
+        uid: user.uid,
+        name: name,
+        email: email,
+        registeredAt: firebase.firestore.FieldValue.serverTimestamp(),
+        lastLoginAt: firebase.firestore.FieldValue.serverTimestamp()
       });
-    })
 
-    .then(() => {
       document.getElementById("emailMessage").innerText =
         "Account तयार झाले! स्वागत आहे " + name;
     })
-
     .catch(error => {
       document.getElementById("emailMessage").innerText =
         error.message;
     });
 }
+
 
 // STUDENT LOGIN
 
-
-function studentSignup() {
-
-  const name = document.getElementById("studentName").value.trim();
+function studentLogin() {
   const email = document.getElementById("emailBox").value.trim();
   const password = document.getElementById("passBox").value;
 
-  if (!name) {
-    document.getElementById("emailMessage").innerText =
-      "कृपया पूर्ण नाव टाका.";
-    return;
-  }
-
-  auth.createUserWithEmailAndPassword(email, password)
-
-    .then((result) => {
-
+  auth.signInWithEmailAndPassword(email, password)
+    .then(async (result) => {
       const user = result.user;
 
-      return user.updateProfile({
-        displayName: name
-      }).then(() => {
+      await db.collection("students").doc(user.uid).set({
+        uid: user.uid,
+        name: user.displayName || "Student",
+        email: user.email,
+        lastLoginAt: firebase.firestore.FieldValue.serverTimestamp()
+      }, { merge: true });
 
-        return db.collection("students").doc(user.uid).set({
-          uid: user.uid,
-          name: name,
-          email: email,
-          registeredAt: firebase.firestore.FieldValue.serverTimestamp()
-        });
-
-      });
-
-    })
-
-    .then(() => {
       document.getElementById("emailMessage").innerText =
-        "Account तयार झाले! स्वागत आहे " + name;
+        "Login यशस्वी! स्वागत आहे.";
     })
-
     .catch(error => {
       document.getElementById("emailMessage").innerText =
         error.message;
     });
 }
-
-
-// DASHBOARD
 
 auth.onAuthStateChanged(function(user) {
 
