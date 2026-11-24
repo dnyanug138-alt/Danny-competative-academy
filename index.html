@@ -158,6 +158,8 @@ firebase.auth().onAuthStateChanged(function(user) {
   if (user) {
     dashboard.style.display = "block";
     document.getElementById("studentEmail").innerText = user.email;
+    document.getElementById("studentNameDisplay").innerText =
+  "Student Name: " + (user.displayName || "Student");
   } else {
     dashboard.style.display = "none";
   }
