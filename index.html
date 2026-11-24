@@ -212,17 +212,31 @@ function studentLogin() {
 
   const email = document.getElementById("emailBox").value.trim();
   const password = document.getElementById("passBox").value;
+  const msg = document.getElementById("emailMessage");
+
+  if (!email || !password) {
+    msg.innerText = "Email आणि Password टाका.";
+    return;
+  }
+
+  msg.innerText = "Login सुरू आहे...";
 
   auth.signInWithEmailAndPassword(email, password)
 
-    .then(() => {
-      document.getElementById("emailMessage").innerText =
-        "Login यशस्वी!";
+    .then((result) => {
+      msg.innerText = "Login यशस्वी!";
+
+      document.getElementById("studentDashboard").style.display = "block";
+
+      document.getElementById("studentNameDisplay").innerText =
+        "Student Name: " + (result.user.displayName || "Student");
+
+      document.getElementById("studentEmail").innerText =
+        "Student Email: " + result.user.email;
     })
 
-    .catch(error => {
-      document.getElementById("emailMessage").innerText =
-        error.message;
+    .catch((error) => {
+      msg.innerText = "Login Error: " + error.message;
     });
 }
 
