@@ -1313,6 +1313,101 @@ const freeTest1GK = [
   { q: "भारतीय संविधान कधी लागू झाले?", options: ["15 ऑगस्ट 1947", "26 नोव्हेंबर 1949", "26 जानेवारी 1950", "1 मे 1960"], answer: 2 },
 ];
   
+let freeTestQuestions = [];
+let freeTestIndex = 0;
+let freeTestScore = 0;
+let freeTestTimer = null;
+let freeTestTimeLeft = 90 * 60;
+
+function startFreeTest1() {
+  freeTestQuestions = [
+    ...freeTest1Marathi,
+    ...freeTest1Math,
+    ...freeTest1Reasoning,
+    ...freeTest1GK
+  ];
+
+  freeTestIndex = 0;
+  freeTestScore = 0;
+  freeTestTimeLeft = 90 * 60;
+
+  clearInterval(freeTestTimer);
+
+  showFreeTestQuestion();
+
+  freeTestTimer = setInterval(function() {
+    freeTestTimeLeft--;
+    let timerDisplay = document.getElementById("freeTestTimerDisplay");
+
+if (timerDisplay) {
+  timerDisplay.innerText =
+    "वेळ: " +
+    Math.floor(freeTestTimeLeft / 60) +
+    ":" +
+    String(freeTestTimeLeft % 60).padStart(2, "0");
+}
+
+    if (freeTestTimeLeft <= 0) {
+      finishFreeTest();
+    }
+  }, 1000);
+}
+  
+function showFreeTestQuestion() {
+  const area = document.getElementById("freeTestArea");
+
+  if (freeTestIndex >= freeTestQuestions.length) {
+    finishFreeTest();
+    return;
+  }
+
+  const q = freeTestQuestions[freeTestIndex];
+
+  let html = `
+    <h3>Free Mock Test 1</h3>
+    <p>प्रश्न: ${freeTestIndex + 1} / 100</p>
+    <p id="freeTestTimerDisplay">वेळ: ${Math.floor(freeTestTimeLeft / 60)}:${String(freeTestTimeLeft % 60).padStart(2, "0")}</p>
+    <h4>${q.q}</h4>
+  `;
+
+  q.options.forEach((option, index) => {
+    html += `
+      <button onclick="selectFreeAnswer(${index})">
+        ${String.fromCharCode(65 + index)}. ${option}
+      </button><br><br>
+    `;
+  });
+
+  area.innerHTML = html;
+}
+
+function selectFreeAnswer(selected) {
+  const q = freeTestQuestions[freeTestIndex];
+
+  if (selected === q.answer) {
+    freeTestScore++;
+  }
+
+  freeTestIndex++;
+  showFreeTestQuestion();
+  }
+  
+function finishFreeTest() {
+  clearInterval(freeTestTimer);
+
+  const area = document.getElementById("freeTestArea");
+
+  area.innerHTML = `
+    <h2>🎉 टेस्ट पूर्ण झाली!</h2>
+    <h3>तुमचा निकाल</h3>
+    <p>एकूण प्रश्न: 100</p>
+    <p>बरोबर उत्तरे: ${freeTestScore}</p>
+    <p>चुकीची / न सोडवलेली उत्तरे: ${100 - freeTestScore}</p>
+    <h2>मिळालेले गुण: ${freeTestScore} / 100</h2>
+    <button onclick="openFreeTest(1)">पुन्हा टेस्ट द्या</button>
+  `;
+}
+  
 </script>
  <hr>
 
