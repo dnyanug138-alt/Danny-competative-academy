@@ -804,6 +804,55 @@ function loadStudents() {
   function showPayment() {
   document.getElementById("paymentSection").style.display = "block";
   }
+  // AUTO LOGOUT - 15 MINUTES
+
+let inactivityTimer;
+
+const INACTIVITY_LIMIT = 15 * 60 * 1000;
+
+function resetInactivityTimer() {
+
+  clearTimeout(inactivityTimer);
+
+  if (!firebase.auth().currentUser) {
+    return;
+  }
+
+  inactivityTimer = setTimeout(function() {
+
+    firebase.auth().signOut().then(function() {
+
+      alert("15 मिनिटे Activity नसल्यामुळे तुम्हाला Logout केले आहे.");
+
+      location.reload();
+
+    });
+
+  }, INACTIVITY_LIMIT);
+}
+
+// Student Login Status
+
+firebase.auth().onAuthStateChanged(function(user) {
+
+  clearTimeout(inactivityTimer);
+
+  if (user) {
+    resetInactivityTimer();
+  }
+
+});
+
+// Student Activity Check
+
+["click", "touchstart", "pointerdown", "keydown", "scroll"]
+.forEach(function(eventName) {
+
+  document.addEventListener(eventName, function() {
+    resetInactivityTimer();
+  }, { passive: true });
+
+});
 </script>
  <hr>
 
