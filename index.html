@@ -733,11 +733,21 @@ function selectPoliceAnswer(selected) {
 
   <p id="adminMessage"></p>
 
-  <div id="adminDashboard" style="display:none;">
-    <h3>Welcome Admin!</h3>
-    <p>Danny Competitive Academy</p>
+  
+<div id="adminDashboard" style="display:none;">
+  <h3>Welcome Admin!</h3>
+  <h2>Danny Competitive Academy</h2>
+
+  <button onclick="loadStudents()">
+    विद्यार्थ्यांची यादी पहा
+  </button>
+
+  <div id="studentList">
+    विद्यार्थी यादी येथे दिसेल.
   </div>
 </div>
+</div>
+
 
 <script>
 function adminLogin() {
@@ -759,6 +769,41 @@ function adminLogin() {
     msg.innerText = "Login Failed: " + error.message;
   });
 }
+  
+function loadStudents() {
+
+  const list = document.getElementById("studentList");
+  list.innerHTML = "Loading Students...";
+
+  db.collection("students").get()
+    .then((snapshot) => {
+
+      if (snapshot.empty) {
+        list.innerHTML = "अजून विद्यार्थी उपलब्ध नाहीत.";
+        return;
+      }
+
+      let html = "";
+
+      snapshot.forEach((doc) => {
+        const student = doc.data();
+
+        html += `
+          <div style="padding:12px;border:1px solid #ccc;margin:10px 0;">
+            <b>नाव:</b> ${student.name || "N/A"}<br>
+            <b>Email:</b> ${student.email || "N/A"}<br>
+            <b>UID:</b> ${student.uid || doc.id}
+          </div>
+        `;
+      });
+
+      list.innerHTML = html;
+    })
+    .catch((error) => {
+      list.innerText = "Error: " + error.message;
+    });
+}
+  
 </script>
   
 </body>
