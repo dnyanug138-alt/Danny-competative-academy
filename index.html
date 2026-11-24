@@ -88,16 +88,21 @@ function studentLogin() {
   const password = document.getElementById("passBox").value;
 
   firebase.auth().signInWithEmailAndPassword(email, password)
-    .then(() => {
-      document.getElementById("emailMessage").innerText = "Login यशस्वी!";
-      document.getElementById("studentDashboard").style.display = "block";
-      document.getElementById("studentEmail").innerText =
-  firebase.auth().currentUser.email;
-    })
-    .catch(error => {
-      document.getElementById("emailMessage").innerText = error.message;
+  .then(() => {
+    document.getElementById("emailMessage").innerText = "Login यशस्वी!";
+    document.getElementById("studentDashboard").style.display = "block";
+
+    firebase.auth().onAuthStateChanged(function(user) {
+      if (user) {
+        document.getElementById("studentEmail").innerText =
+          "Student Email: " + user.email;
+      }
     });
-}
+
+  })
+  .catch(error => {
+    document.getElementById("emailMessage").innerText = error.message;
+  });
 </script>
 <div id="studentDashboard" style="display:none;max-width:500px;margin:25px auto;padding:20px;text-align:center;background:#f2f5ff;border-radius:12px;">
   <p id="studentEmail"></p>
