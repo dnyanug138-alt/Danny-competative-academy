@@ -315,8 +315,13 @@ function studentLogout() {
     alert("Logout यशस्वी!");
     location.reload();
   });
-}
-  const policeQuestions = [
+}  policeScore = 0;
+  clearInterval(policeTimer);
+policeTimeLeft = 90 * 60;
+  showPoliceQuestion();
+  policeTimer = setInterval(function() {
+  policeTimeLeft--;
+
 const policeQuestions = [
   {q:"नाम म्हणजे काय?",options:["नाव","क्रिया","गुण","अव्यय"],answer:0},
   {q:"'सुंदर' हा कोणता शब्दप्रकार आहे?",options:["नाम","सर्वनाम","विशेषण","क्रियापद"],answer:2},
@@ -342,7 +347,7 @@ const policeQuestions = [
   {q:"प्रश्नार्थी वाक्याच्या शेवटी कोणते चिन्ह येते?",options:["पूर्णविराम","स्वल्पविराम","प्रश्नचिन्ह","उद्गारचिन्ह"],answer:2},
   {q:"'वा! किती सुंदर फूल आहे!' हे कोणते वाक्य आहे?",options:["विधानार्थी","प्रश्नार्थी","उद्गारार्थी","आज्ञार्थी"],answer:2},
   {q:"'आईने मुलाला बोलावले' या वाक्यातील क्रियापद कोणते?",options:["आईने","मुलाला","बोलावले","यापैकी नाही"],answer:2},
-  {q:"'प्रामाणिक' या शब्दाचा विरुद्धार्थी शब्द कोणता?",options:["सत्यवादी","अप्रामाणिक","प्रेमळ","दयाळू"],answer:1}
+  {q:"'प्रामाणिक' या शब्दाचा विरुद्धार्थी शब्द कोणता?",options:["सत्यवादी","अप्रामाणिक","प्रेमळ","दयाळू"],answer:1},
     {q:"25 + 35 = ?",options:["50","60","70","65"],answer:1},
   {q:"100 - 45 = ?",options:["45","55","65","75"],answer:1},
   {q:"12 × 8 = ?",options:["86","96","108","88"],answer:1},
@@ -392,7 +397,7 @@ const policeQuestions = [
   {q:"जर 1 = A, 2 = B, 3 = C, तर 4 = ?",options:["A","B","C","D"],answer:3},
   {q:"दिवस : रात्र :: प्रकाश : ?",options:["सूर्य","अंधार","चंद्र","तारा"],answer:1},
   {q:"एका डझनमध्ये किती वस्तू असतात?",options:["10","11","12","15"],answer:2},
-  {q:"सर्वात लहान संख्या कोणती?",options:["0.5","0.05","0.55","5"],answer:1}
+  {q:"सर्वात लहान संख्या कोणती?",options:["0.5","0.05","0.55","5"],answer:1},
     {q:"भारताची राजधानी कोणती?",options:["मुंबई","नवी दिल्ली","पुणे","चेन्नई"],answer:1},
   {q:"महाराष्ट्राची राजधानी कोणती?",options:["पुणे","नागपूर","मुंबई","नाशिक"],answer:2},
   {q:"भारताचा राष्ट्रीय प्राणी कोणता?",options:["सिंह","वाघ","हत्ती","चित्ता"],answer:1},
@@ -417,7 +422,7 @@ const policeQuestions = [
   {q:"शिक्षक दिन भारतात कधी साजरा होतो?",options:["5 सप्टेंबर","14 नोव्हेंबर","26 जानेवारी","1 मे"],answer:0},
   {q:"बालदिन भारतात कधी साजरा होतो?",options:["5 जून","14 नोव्हेंबर","2 ऑक्टोबर","15 ऑगस्ट"],answer:1},
   {q:"भारताचे राष्ट्रीय गीत कोणते?",options:["जन गण मन","वंदे मातरम्","सारे जहाँ से अच्छा","ऐ मेरे वतन"],answer:1},
-  {q:"भारताचे राष्ट्रगीत कोणते?",options:["वंदे मातरम्","जन गण मन","सारे जहाँ से अच्छा","जय हिंद"],answer:1}
+  {q:"भारताचे राष्ट्रगीत कोणते?",options:["वंदे मातरम्","जन गण मन","सारे जहाँ से अच्छा","जय हिंद"],answer:1},
 ];
 let policeIndex = 0;
 let policeScore = 0;
@@ -427,11 +432,33 @@ let policeScore = 0;
 function startPoliceTest() {
   policeIndex = 0;
   policeScore = 0;
+  policeTimeLeft = 90 * 60;
+
   clearInterval(policeTimer);
-policeTimeLeft = 90 * 60;
+
   showPoliceQuestion();
+
   policeTimer = setInterval(function() {
-  policeTimeLeft--;
+    policeTimeLeft--;
+
+    let timerDisplay = document.getElementById("policeTimerDisplay");
+
+    if (timerDisplay) {
+      timerDisplay.innerText =
+        "वेळ: " +
+        String(Math.floor(policeTimeLeft / 60)).padStart(2, "0") +
+        ":" +
+        String(policeTimeLeft % 60).padStart(2, "0");
+    }
+
+    if (policeTimeLeft <= 0) {
+      clearInterval(policeTimer);
+      policeIndex = policeQuestions.length;
+      showPoliceQuestion();
+    }
+  }, 1000);
+} {
+  policeIndex = 0;
 
   let timerDisplay = document.getElementById("policeTimerDisplay");
 
