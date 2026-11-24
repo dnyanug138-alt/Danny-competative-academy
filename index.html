@@ -732,6 +732,7 @@ function selectPoliceAnswer(selected) {
   <p id="adminMessage"></p>
 
   
+
 <div id="adminDashboard" style="display:none;">
   <h3>Welcome Admin!</h3>
   <h2>Danny Competitive Academy</h2>
@@ -743,6 +744,61 @@ function selectPoliceAnswer(selected) {
   <div id="studentList">
     विद्यार्थी यादी येथे दिसेल.
   </div>
+
+  <hr>
+
+  <h2>📰 News Management</h2>
+
+  <h3>नवीन बातमी पोस्ट करा</h3>
+
+  <select id="newsCategory">
+    <option value="भरती अपडेट">सरकारी भरती अपडेट</option>
+    <option value="चालू घडामोडी">चालू घडामोडी</option>
+    <option value="महाराष्ट्र बातम्या">महाराष्ट्र बातम्या</option>
+  </select>
+
+  <br><br>
+
+  <input
+    type="text"
+    id="newsTitle"
+    placeholder="बातमीचे शीर्षक"
+  >
+
+  <br><br>
+
+  <textarea
+    id="newsDescription"
+    placeholder="बातमीची संपूर्ण माहिती"
+  ></textarea>
+
+  <br><br>
+
+  <input
+    type="url"
+    id="newsLink"
+    placeholder="अधिकृत बातमीची लिंक"
+  >
+
+  <br><br>
+
+  <button onclick="addNews()">
+    📢 बातमी Publish करा
+  </button>
+
+  <div id="newsMessage"></div>
+
+  <hr>
+
+  <h3>📋 पोस्ट केलेल्या बातम्या</h3>
+
+  <div id="adminNewsList">
+    बातम्या येथे दिसतील.
+  </div>
+
+</div>
+</div>
+
 </div>
 </div>
 
@@ -853,6 +909,97 @@ firebase.auth().onAuthStateChanged(function(user) {
   }, { passive: true });
 
 });
+  // ADD NEWS TO FIRESTORE
+
+function addNews() {
+
+  const category = document.getElementById("newsCategory").value;
+  const title = document.getElementById("newsTitle").value.trim();
+  const description = document.getElementById("newsDescription").value.trim();
+  const link = document.getElementById("newsLink").value.trim();
+  const msg = document.getElementById("newsMessage");
+
+  if (!title || !description) {
+    msg.innerText = "कृपया शीर्षक आणि माहिती भरा.";
+    return;
+  }
+
+  db.collection("news").add({
+    category: category,
+    title: title,
+    description: description,
+    link: link,
+    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+  })
+  .then(() => {
+    msg.innerText = "बातमी यशस्वीपणे Publish झाली!";
+
+    document.getElementById("newsTitle").value = "";
+    document.getElementById("newsDescription").value = "";
+    document.getElementById("newsLink").value = "";
+
+    loadNews();
+  })
+  .catch(error => {
+    msg.innerText = "Error: " + error.message;
+  });
+}
+  // LOAD NEWS FROM FIRESTORE
+
+function loadNews() {
+
+  const list = document.getElementById("adminNewsList");
+
+  list.innerHTML = "बातम्या Loading...";
+
+  db.collection("news")
+    .orderBy("createdAt", "desc")
+    .get()
+    .then(snapshot => {
+
+      list.innerHTML = "";
+
+      if (snapshot.empty) {
+        list.innerHTML = "अजून कोणतीही बातमी नाही.";
+        return;
+      }
+
+      snapshot.forEach(doc => {
+
+        const news = doc.data();
+
+        const item = document.createElement("div");
+
+        const heading = document.createElement("h4");
+        heading.textContent = news.title || "";
+
+        const category = document.createElement("p");
+        category.textContent = news.category || "";
+
+        const description = document.createElement("p");
+        description.textContent = news.description || "";
+
+        item.appendChild(category);
+        item.appendChild(heading);
+        item.appendChild(description);
+
+        if (news.link) {
+          const link = document.createElement("a");
+          link.href = news.link;
+          link.textContent = "अधिकृत बातमी वाचा";
+          link.target = "_blank";
+          link.rel = "noopener noreferrer";
+          item.appendChild(link);
+        }
+
+        list.appendChild(item);
+      });
+
+    })
+    .catch(error => {
+      list.textContent = "बातम्या लोड झाल्या नाहीत: " + error.message;
+    });
+}
 </script>
  <hr>
 
