@@ -127,7 +127,6 @@ button {
 <h3>🏆 My Results</h3>
 <p>तुझे निकाल येथे दिसतील.</p>
 
-<button onclick="firebase.auth().signOut()">Logout</button>
 
 </div>
 
@@ -170,23 +169,6 @@ const auth = firebase.auth();
 const db = firebase.firestore();
 </script>
   
-// FIREBASE CONFIGURATION
-  <script>
-const firebaseConfig = {
-  apiKey: "AIzaSyAQlAw96dP_2TbMNsP94olt1Q4f-TB1kNQ",
-  authDomain: "danny-competative-academy.firebaseapp.com",
-  projectId: "danny-competative-academy"
-};
-
-firebase.initializeApp(firebaseConfig);
-
-const auth = firebase.auth();
-const db = firebase.firestore();
-
-let confirmationResult;
-  </script>
-let confirmationResult;
-
 // STUDENT SIGNUP
 
 function studentSignup() {
@@ -446,13 +428,14 @@ const policeQuestions = [
   {q:"बालदिन भारतात कधी साजरा होतो?",options:["5 जून","14 नोव्हेंबर","2 ऑक्टोबर","15 ऑगस्ट"],answer:1},
   {q:"भारताचे राष्ट्रीय गीत कोणते?",options:["जन गण मन","वंदे मातरम्","सारे जहाँ से अच्छा","ऐ मेरे वतन"],answer:1},
   {q:"भारताचे राष्ट्रगीत कोणते?",options:["वंदे मातरम्","जन गण मन","सारे जहाँ से अच्छा","जय हिंद"],answer:1},
-];
+ ];
 let policeIndex = 0;
 let policeScore = 0;
-  let policeTimer;
-  let policeTimeLeft = 0;
-  let policeResultSaved = false;
+let policeTimer;
+let policeTimeLeft = 0;
+let policeResultSaved = false;
 
+// START POLICE TEST
 function startPoliceTest() {
   policeIndex = 0;
   policeScore = 0;
@@ -482,63 +465,74 @@ function startPoliceTest() {
       showPoliceQuestion();
     }
   }, 1000);
-} 
+}
 
+// SHOW POLICE QUESTION
 function showPoliceQuestion() {
   const quiz = document.getElementById("policeQuiz");
 
   if (policeIndex >= policeQuestions.length) {
-   
-  if (policeIndex >= policeQuestions.length) {
-  clearInterval(policeTimer);
+    clearInterval(policeTimer);
 
-  const user = auth.currentUser;
+    if (policeResultSaved) return;
 
-  if (!user) {
-    quiz.innerHTML = "<h3>कृपया पुन्हा Login करा.</h3>";
+    const user = auth.currentUser;
+
+    if (!user) {
+      quiz.innerHTML = "<h3>कृपया पुन्हा Login करा.</h3>";
+      return;
+    }
+
+    policeResultSaved = true;
+    quiz.innerHTML = "<h3>निकाल सेव्ह होत आहे...</h3>";
+
+    db.collection("users")
+      .doc(user.uid)
+      .collection("testResults")
+      .add({
+        testName: "Police Bharti",
+        score: policeScore,
+        totalQuestions: policeQuestions.length,
+        studentName: user.displayName || user.email || "Student",
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      })
+
+      .then(() => {
+        quiz.innerHTML = `
+          <h3>टेस्ट पूर्ण झाली! 🎉</h3>
+          <h2>तुमचे गुण: ${policeScore}/${policeQuestions.length}</h2>
+          <p>निकाल यशस्वीपणे सेव्ह झाला!</p>
+          <button onclick="startPoliceTest()">पुन्हा टेस्ट द्या</button>
+        `;
+      })
+
+      .catch((error) => {
+        policeResultSaved = false;
+
+        quiz.innerHTML = `
+          <h3>टेस्ट पूर्ण झाली!</h3>
+          <h2>तुमचे गुण: ${policeScore}/${policeQuestions.length}</h2>
+          <p>निकाल सेव्ह झाला नाही: ${error.message}</p>
+          <button onclick="startPoliceTest()">पुन्हा टेस्ट द्या</button>
+        `;
+      });
+
     return;
-  }
-
-  quiz.innerHTML = "<h3>निकाल सेव्ह होत आहे...</h3>";
-
-  db.collection("users")
-    .doc(user.uid)
-    .collection("testResults")
-    .add({
-      testName: "Police Bharti",
-      score: policeScore,
-      totalQuestions: policeQuestions.length,
-      studentName: user.displayName || user.email,
-      createdAt: firebase.firestore.FieldValue.serverTimestamp()
-    })
-    .then(() => {
-      quiz.innerHTML = `
-        <h3>टेस्ट पूर्ण झाली! 🎉</h3>
-        <h2>तुमचे गुण: ${policeScore}/${policeQuestions.length}</h2>
-        <p>निकाल यशस्वीपणे सेव्ह झाला!</p>
-        <button onclick="startPoliceTest()">पुन्हा टेस्ट द्या</button>
-      `;
-    })
-    .catch((error) => {
-      quiz.innerHTML = `
-        <h3>टेस्ट पूर्ण झाली!</h3>
-        <h2>तुमचे गुण: ${policeScore}/${policeQuestions.length}</h2>
-        <p>निकाल सेव्ह झाला नाही: ${error.message}</p>
-        <button onclick="startPoliceTest()">पुन्हा टेस्ट द्या</button>
-      `;
-    });
-
-  return;
-}
   }
 
   const q = policeQuestions[policeIndex];
 
   quiz.innerHTML = `
     <h3>🚔 Police Bharti Mock Test</h3>
-    <h3 id="policeTimerDisplay">वेळ: ${String(Math.floor(policeTimeLeft / 60)).padStart(2,"0")}:${String(policeTimeLeft % 60).padStart(2,"0")}</h3>
+
+    <h3 id="policeTimerDisplay">
+      वेळ: ${String(Math.floor(policeTimeLeft / 60)).padStart(2,"0")}:${String(policeTimeLeft % 60).padStart(2,"0")}
+    </h3>
+
     <p>प्रश्न ${policeIndex + 1} / ${policeQuestions.length}</p>
+
     <h4>${q.q}</h4>
+
     ${q.options.map((option, i) => `
       <button type="button" onclick="selectPoliceAnswer(${i})">
         ${option}
@@ -547,7 +541,9 @@ function showPoliceQuestion() {
   `;
 }
 
+// SELECT ANSWER
 function selectPoliceAnswer(selected) {
+  if (policeIndex >= policeQuestions.length) return;
 
   if (selected === policeQuestions[policeIndex].answer) {
     policeScore++;
