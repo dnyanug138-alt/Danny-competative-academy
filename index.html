@@ -61,6 +61,11 @@ button {
   <input id="emailBox" type="email" placeholder="Email Address">
 
   <input id="passBox" type="password" placeholder="Password">
+  <input
+  type="text"
+  id="studentName"
+  placeholder="Enter Full Name"
+  required>
 
   <button onclick="studentSignup()">Create Account</button>
 
@@ -72,6 +77,7 @@ button {
 <script>
 function studentSignup() {
   const email = document.getElementById("emailBox").value.trim();
+  const name = document.getElementById("studentName").value.trim();
   const password = document.getElementById("passBox").value;
 
   firebase.auth().createUserWithEmailAndPassword(email, password)
@@ -83,20 +89,32 @@ function studentSignup() {
     });
 }
 
-function studentLogin() {
+function studentSignup() {
+  const name = document.getElementById("studentName").value.trim();
   const email = document.getElementById("emailBox").value.trim();
   const password = document.getElementById("passBox").value;
 
-  firebase.auth().signInWithEmailAndPassword(email, password)
-  .then(() => {
-    document.getElementById("emailMessage").innerText = "Login यशस्वी!";
-    document.getElementById("studentDashboard").style.display = "block";
+  if (!name) {
+    document.getElementById("emailMessage").innerText =
+      "कृपया तुमचे पूर्ण नाव टाका.";
+    return;
+  }
 
-    firebase.auth().onAuthStateChanged(function(user) {
-      if (user) {
-        document.getElementById("studentEmail").innerText =
-          "Student Email: " + user.email;
-      }
+  firebase.auth().createUserWithEmailAndPassword(email, password)
+    .then((result) => {
+      return result.user.updateProfile({
+        displayName: name
+      });
+    })
+    .then(() => {
+      document.getElementById("emailMessage").innerText =
+        "Account तयार झाले! स्वागत आहे " + name;
+    })
+    .catch(error => {
+      document.getElementById("emailMessage").innerText =
+        error.message;
+    });
+}
     });
 
   })
