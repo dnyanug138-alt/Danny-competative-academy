@@ -699,5 +699,53 @@ function selectPoliceAnswer(selected) {
   showPoliceQuestion();
 }
 </script>
+  
+<!-- ADMIN LOGIN -->
+<div style="max-width:400px;margin:30px auto;padding:20px;background:white;border-radius:12px;text-align:center;">
+  <h2>Admin Login</h2>
+
+  <input id="adminEmail" type="email"
+  placeholder="Admin Email"
+  style="width:100%;padding:12px;margin:8px 0;">
+
+  <input id="adminPassword" type="password"
+  placeholder="Password"
+  style="width:100%;padding:12px;margin:8px 0;">
+
+  <button onclick="adminLogin()"
+  style="padding:12px 25px;background:#1769aa;color:white;border:0;border-radius:6px;">
+  Admin Login
+  </button>
+
+  <p id="adminMessage"></p>
+
+  <div id="adminDashboard" style="display:none;">
+    <h3>Welcome Admin!</h3>
+    <p>Danny Competitive Academy</p>
+  </div>
+</div>
+
+<script>
+function adminLogin() {
+  const email = document.getElementById("adminEmail").value;
+  const password = document.getElementById("adminPassword").value;
+  const msg = document.getElementById("adminMessage");
+
+  firebase.auth().signInWithEmailAndPassword(email, password)
+  .then((result) => {
+    if (result.user.email === "dnyanug138@gmail.com") {
+      msg.innerText = "Admin Login Successful!";
+      document.getElementById("adminDashboard").style.display = "block";
+    } else {
+      firebase.auth().signOut();
+      msg.innerText = "तुम्ही Admin नाही!";
+    }
+  })
+  .catch((error) => {
+    msg.innerText = "Login Failed: " + error.message;
+  });
+}
+</script>
+  
 </body>
 </html>
