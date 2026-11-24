@@ -473,13 +473,48 @@ function showPoliceQuestion() {
   const quiz = document.getElementById("policeQuiz");
 
   if (policeIndex >= policeQuestions.length) {
-    clearInterval(policeTimer);
-    quiz.innerHTML = `
-      <h3>टेस्ट पूर्ण झाली! 🎉</h3>
-      <h2>तुमचे गुण: ${policeScore}/${policeQuestions.length}</h2>
-      <button onclick="startPoliceTest()">पुन्हा टेस्ट द्या</button>
-    `;
+   
+  if (policeIndex >= policeQuestions.length) {
+  clearInterval(policeTimer);
+
+  const user = auth.currentUser;
+
+  if (!user) {
+    quiz.innerHTML = "<h3>कृपया पुन्हा Login करा.</h3>";
     return;
+  }
+
+  quiz.innerHTML = "<h3>निकाल सेव्ह होत आहे...</h3>";
+
+  db.collection("users")
+    .doc(user.uid)
+    .collection("testResults")
+    .add({
+      testName: "Police Bharti",
+      score: policeScore,
+      totalQuestions: policeQuestions.length,
+      studentName: user.displayName || user.email,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    })
+    .then(() => {
+      quiz.innerHTML = `
+        <h3>टेस्ट पूर्ण झाली! 🎉</h3>
+        <h2>तुमचे गुण: ${policeScore}/${policeQuestions.length}</h2>
+        <p>निकाल यशस्वीपणे सेव्ह झाला!</p>
+        <button onclick="startPoliceTest()">पुन्हा टेस्ट द्या</button>
+      `;
+    })
+    .catch((error) => {
+      quiz.innerHTML = `
+        <h3>टेस्ट पूर्ण झाली!</h3>
+        <h2>तुमचे गुण: ${policeScore}/${policeQuestions.length}</h2>
+        <p>निकाल सेव्ह झाला नाही: ${error.message}</p>
+        <button onclick="startPoliceTest()">पुन्हा टेस्ट द्या</button>
+      `;
+    });
+
+  return;
+}
   }
 
   const q = policeQuestions[policeIndex];
