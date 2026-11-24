@@ -472,66 +472,7 @@ auth.onAuthStateChanged(function(user) {
 
 });
 
-// SEND OTP
 
-function sendOTP() {
-
-  const phone = document.getElementById("phone").value.trim();
-
-  if (!phone) {
-    document.getElementById("message").innerText =
-      "मोबाइल नंबर टाका.";
-    return;
-  }
-
-  if (window.recaptchaVerifier) {
-    window.recaptchaVerifier.clear();
-  }
-
-  window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier(
-    "recaptcha-container",
-    { size: "normal" }
-  );
-
-  auth.signInWithPhoneNumber(phone, window.recaptchaVerifier)
-
-    .then(result => {
-      confirmationResult = result;
-
-      document.getElementById("message").innerText =
-        "OTP पाठवला आहे!";
-    })
-
-    .catch(error => {
-      document.getElementById("message").innerText =
-        error.message;
-    });
-}
-
-// VERIFY OTP
-
-function verifyOTP() {
-
-  const otp = document.getElementById("otp").value.trim();
-
-  if (!confirmationResult) {
-    document.getElementById("message").innerText =
-      "आधी OTP पाठवा.";
-    return;
-  }
-
-  confirmationResult.confirm(otp)
-
-    .then(() => {
-      document.getElementById("message").innerText =
-        "Login यशस्वी!";
-    })
-
-    .catch(error => {
-      document.getElementById("message").innerText =
-        "OTP चुकीचा आहे. पुन्हा तपासा.";
-    });
-}
 function studentLogout() {
   auth.signOut().then(() => {
     alert("Logout यशस्वी!");
