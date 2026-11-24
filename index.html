@@ -438,10 +438,12 @@ let policeIndex = 0;
 let policeScore = 0;
   let policeTimer;
   let policeTimeLeft = 0;
+  let policeResultSaved = false;
 
 function startPoliceTest() {
   policeIndex = 0;
   policeScore = 0;
+  policeResultSaved = false;
   policeTimeLeft = 90 * 60;
 
   clearInterval(policeTimer);
