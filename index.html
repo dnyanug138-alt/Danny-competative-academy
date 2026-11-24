@@ -1,4 +1,4 @@
-ñ<!DOCTYPE html>
+hñ<!DOCTYPE html>
 <html lang="mr">
 <head>
 <meta charset="UTF-8">
@@ -299,6 +299,9 @@ button:hover {
   <p>Dream Big • Prepare Well • Succeed Surely</p>
 </div>
   <!-- LIVE NEWS TICKER -->
+  <div id="liveDateTime">
+  🕒 वेळ आणि तारीख Loading...
+  </div>
 <div id="liveNewsSlider">
   <strong>🔴 LIVE NEWS</strong>
 
@@ -1547,7 +1550,18 @@ function finishFreeTest() {
     <button onclick="openFreeTest(1)">पुन्हा टेस्ट द्या</button>
   `;
 }
-  
+  function updateLiveDateTime() {
+  const now = new Date();
+
+  document.getElementById("liveDateTime").innerText =
+    "🕒 " +
+    now.toLocaleDateString("mr-IN") +
+    " | " +
+    now.toLocaleTimeString("en-IN");
+}
+
+updateLiveDateTime();
+setInterval(updateLiveDateTime, 1000);
 </script>
  <hr>
 
