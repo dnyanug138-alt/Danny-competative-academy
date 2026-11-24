@@ -5,6 +5,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Danny Competitive Academy</title>
+
 <style>
 body {
   margin: 0;
@@ -17,7 +18,6 @@ header {
   color: white;
   padding: 25px 10px;
 }
-h1 { margin: 0; }
 .container { padding: 20px; }
 .card {
   background: white;
@@ -26,167 +26,127 @@ h1 { margin: 0; }
   max-width: 400px;
   border-radius: 12px;
 }
+input {
+  padding: 12px;
+  margin: 8px;
+  width: 85%;
+}
 button {
   background: #12345a;
   color: white;
   padding: 12px 25px;
+  margin: 8px;
   border: 0;
   border-radius: 8px;
 }
 </style>
 </head>
+
 <body>
+
 <header>
 <h1>DANNY COMPETITIVE ACADEMY</h1>
 <p>तुमच्या यशाची तयारी आजपासून!</p>
 </header>
+
 <div class="container">
 <h2>आपल्या टेस्ट सिरीज</h2>
+
 <div class="card">
 <h3>पोलीस भरती</h3>
 <p>ऑनलाइन Mock Test</p>
 <button>Test सुरू करा</button>
 </div>
+
 <div class="card">
 <h3>तलाठी भरती</h3>
 <p>लवकरच उपलब्ध</p>
 </div>
+
 <div class="card">
 <h3>MPSC</h3>
 <p>लवकरच उपलब्ध</p>
 </div>
-</div><div style="max-width:350px;margin:30px auto;padding:20px;border:1px solid #ddd;text-align:center;">
-  <h2>Student Signup / Login</h2>
-
-  <input id="emailBox" type="email" placeholder="Email Address">
-
-  <input id="passBox" type="password" placeholder="Password">
-  <input
-  type="text"
-  id="studentName"
-  placeholder="Enter Full Name"
-  required>
-
-  <button onclick="studentSignup()">Create Account</button>
-
-  <button onclick="studentLogin()">Login</button>
-
-  <p id="emailMessage"></p>
 </div>
 
-<script>
-function studentSignup() {
-  const email = document.getElementById("emailBox").value.trim();
-  const name = document.getElementById("studentName").value.trim();
-  const password = document.getElementById("passBox").value;
+<!-- STUDENT SIGNUP / LOGIN -->
 
-  firebase.auth().createUserWithEmailAndPassword(email, password)
-    .then(() => {
-      document.getElementById("emailMessage").innerText = "Account तयार झाले!";
-    })
-    .catch(error => {
-      document.getElementById("emailMessage").innerText = error.message;
-    });
-}
+<div style="max-width:350px;margin:30px auto;padding:20px;background:white;border:1px solid #ddd;border-radius:12px;">
 
-function studentSignup() {
-  const name = document.getElementById("studentName").value.trim();
-  const email = document.getElementById("emailBox").value.trim();
-  const password = document.getElementById("passBox").value;
+<h2>Student Signup / Login</h2>
 
-  if (!name) {
-    document.getElementById("emailMessage").innerText =
-      "कृपया तुमचे पूर्ण नाव टाका.";
-    return;
-  }
+<input id="studentName" type="text" placeholder="Full Name">
 
-  firebase.auth().createUserWithEmailAndPassword(email, password)
-    .then((result) => {
-      return result.user.updateProfile({
-        displayName: name
-      });
-    })
-    .then(() => {
-      document.getElementById("emailMessage").innerText =
-        "Account तयार झाले! स्वागत आहे " + name;
-    })
-    .catch(error => {
-      document.getElementById("emailMessage").innerText =
-        error.message;
-    });
-}
-    });
+<input id="emailBox" type="email" placeholder="Email Address">
 
-  })
-  .catch(error => {
-    document.getElementById("emailMessage").innerText = error.message;
-  });
-</script>
-<div id="studentDashboard" style="display:none;max-width:500px;margin:25px auto;padding:20px;text-align:center;background:#f2f5ff;border-radius:12px;">
-  <p id="studentEmail"></p>
-  <h2>🎓 Danny Competitive Academy</h2>
-  <h3>Student Dashboard</h3>
+<input id="passBox" type="password" placeholder="Password">
 
-  <p>Welcome, Student!</p>
-  <p id="studentEmail"></p>
+<button onclick="studentSignup()">Create Account</button>
 
-  <hr>
+<button onclick="studentLogin()">Login</button>
 
-  <h3>📚 उपलब्ध परीक्षा</h3>
-  <p>Police Bharti</p>
-  <p>Talathi</p>
-  <p>MPSC</p>
-
-  <hr>
-
-  <h3>📝 Mock Tests</h3>
-  <p>Free Mock Tests – लवकरच उपलब्ध</p>
-  <p>Paid Mock Tests – लवकरच उपलब्ध</p>
-
-  <h3>🏆 My Results</h3>
-  <p>तुझे निकाल येथे दिसतील.</p>
-
-  <button onclick="firebase.auth().signOut()">
-    Logout
-  </button>
+<p id="emailMessage"></p>
 </div>
 
-<script>
-firebase.auth().onAuthStateChanged(function(user) {
-  const dashboard = document.getElementById("studentDashboard");
+<!-- STUDENT DASHBOARD -->
 
-  if (user) {
-    dashboard.style.display = "block";
-    document.getElementById("studentEmail").innerText = user.email;
-    document.getElementById("studentNameDisplay").innerText =
-  "Student Name: " + (user.displayName || "Student");
-  } else {
-    dashboard.style.display = "none";
-  }
-});
-</script></body>
-</html>
- <div style="max-width:350px;margin:30px auto;padding:20px;border:1px solid #ddd;border-radius:12px;text-align:center;">
-  <h2>Student Login</h2>
-  <input id="phone" type="tel" placeholder="+91 मोबाइल नंबर"
-    style="width:90%;padding:12px;margin:8px;">
-  <div id="recaptcha-container"></div>
-  <button onclick="sendOTP()" style="padding:12px;margin:8px;">
-    Send OTP
-  </button>
+<div id="studentDashboard" style="display:none;max-width:500px;margin:25px auto;padding:20px;background:#f2f5ff;border-radius:12px;">
 
-  <input id="otp" type="text" placeholder="OTP टाका"
-    style="width:90%;padding:12px;margin:8px;">
-  <button onclick="verifyOTP()" style="padding:12px;margin:8px;">
-    Verify OTP
-  </button>
-  <p id="message"></p>
+<h2>🎓 Danny Competitive Academy</h2>
+<h3>Student Dashboard</h3>
+
+<p id="studentNameDisplay"></p>
+<p id="studentEmail"></p>
+
+<hr>
+
+<h3>📚 उपलब्ध परीक्षा</h3>
+<p>Police Bharti</p>
+<p>Talathi</p>
+<p>MPSC</p>
+
+<hr>
+
+<h3>📝 Mock Tests</h3>
+<p>Free Mock Tests – लवकरच उपलब्ध</p>
+<p>Paid Mock Tests – लवकरच उपलब्ध</p>
+
+<h3>🏆 My Results</h3>
+<p>तुझे निकाल येथे दिसतील.</p>
+
+<button onclick="firebase.auth().signOut()">Logout</button>
+
 </div>
+
+<!-- PHONE OTP LOGIN -->
+
+<div style="max-width:350px;margin:30px auto;padding:20px;background:white;border:1px solid #ddd;border-radius:12px;">
+
+<h2>Student Phone Login</h2>
+
+<input id="phone" type="tel" placeholder="+91 मोबाइल नंबर">
+
+<div id="recaptcha-container"></div>
+
+<button onclick="sendOTP()">Send OTP</button>
+
+<input id="otp" type="text" placeholder="OTP टाका">
+
+<button onclick="verifyOTP()">Verify OTP</button>
+
+<p id="message"></p>
+
+</div>
+
+<!-- FIREBASE SDK -->
 
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 
 <script>
+
+// FIREBASE CONFIGURATION
+
 const firebaseConfig = {
   apiKey: "AIzaSyAQlAw96dP_2TbMNsP94olt1Q4f-TB1kNQ",
   authDomain: "danny-competative-academy.firebaseapp.com",
@@ -194,43 +154,150 @@ const firebaseConfig = {
 };
 
 firebase.initializeApp(firebaseConfig);
+
 const auth = firebase.auth();
+
 let confirmationResult;
 
-function sendOTP() {
-  const phone = document.getElementById("phone").value.trim();
-  window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier(
-    "recaptcha-container", { size: "normal" }
-  );
+// STUDENT SIGNUP
 
-  auth.signInWithPhoneNumber(phone, window.recaptchaVerifier)
-    .then(result => {
-      confirmationResult = result;
-      document.getElementById("message").innerText = "OTP पाठवला आहे!";
+function studentSignup() {
+
+  const name = document.getElementById("studentName").value.trim();
+  const email = document.getElementById("emailBox").value.trim();
+  const password = document.getElementById("passBox").value;
+
+  if (!name) {
+    document.getElementById("emailMessage").innerText =
+      "कृपया पूर्ण नाव टाका.";
+    return;
+  }
+
+  auth.createUserWithEmailAndPassword(email, password)
+
+    .then((result) => {
+      return result.user.updateProfile({
+        displayName: name
+      });
     })
+
+    .then(() => {
+      document.getElementById("emailMessage").innerText =
+        "Account तयार झाले! स्वागत आहे " + name;
+    })
+
     .catch(error => {
-      document.getElementById("message").innerText = error.message;
-      if (window.recaptchaVerifier) {
-        window.recaptchaVerifier.clear();
-      }
+      document.getElementById("emailMessage").innerText =
+        error.message;
     });
 }
 
+// STUDENT LOGIN
+
+function studentLogin() {
+
+  const email = document.getElementById("emailBox").value.trim();
+  const password = document.getElementById("passBox").value;
+
+  auth.signInWithEmailAndPassword(email, password)
+
+    .then(() => {
+      document.getElementById("emailMessage").innerText =
+        "Login यशस्वी!";
+    })
+
+    .catch(error => {
+      document.getElementById("emailMessage").innerText =
+        error.message;
+    });
+}
+
+// DASHBOARD
+
+auth.onAuthStateChanged(function(user) {
+
+  const dashboard = document.getElementById("studentDashboard");
+
+  if (user) {
+
+    dashboard.style.display = "block";
+
+    document.getElementById("studentNameDisplay").innerText =
+      "Student Name: " + (user.displayName || "Student");
+
+    document.getElementById("studentEmail").innerText =
+      "Student Email: " + (user.email || user.phoneNumber || "");
+
+  } else {
+
+    dashboard.style.display = "none";
+
+  }
+
+});
+
+// SEND OTP
+
+function sendOTP() {
+
+  const phone = document.getElementById("phone").value.trim();
+
+  if (!phone) {
+    document.getElementById("message").innerText =
+      "मोबाइल नंबर टाका.";
+    return;
+  }
+
+  if (window.recaptchaVerifier) {
+    window.recaptchaVerifier.clear();
+  }
+
+  window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier(
+    "recaptcha-container",
+    { size: "normal" }
+  );
+
+  auth.signInWithPhoneNumber(phone, window.recaptchaVerifier)
+
+    .then(result => {
+      confirmationResult = result;
+
+      document.getElementById("message").innerText =
+        "OTP पाठवला आहे!";
+    })
+
+    .catch(error => {
+      document.getElementById("message").innerText =
+        error.message;
+    });
+}
+
+// VERIFY OTP
+
 function verifyOTP() {
+
   const otp = document.getElementById("otp").value.trim();
+
   if (!confirmationResult) {
-    document.getElementById("message").innerText = "आधी OTP पाठवा.";
+    document.getElementById("message").innerText =
+      "आधी OTP पाठवा.";
     return;
   }
 
   confirmationResult.confirm(otp)
+
     .then(() => {
-      document.getElementById("message").innerText = "Login यशस्वी!";
+      document.getElementById("message").innerText =
+        "Login यशस्वी!";
     })
-    .catch(() => {
-      document.getElementById("message").innerText = "OTP चुकीचा आहे.";
+
+    .catch(error => {
+      document.getElementById("message").innerText =
+        "OTP चुकीचा आहे. पुन्हा तपासा.";
     });
 }
+
 </script>
+
 </body>
 </html>
