@@ -91,6 +91,8 @@ function studentLogin() {
     .then(() => {
       document.getElementById("emailMessage").innerText = "Login यशस्वी!";
       document.getElementById("studentDashboard").style.display = "block";
+      document.getElementById("studentEmail").innerText =
+  firebase.auth().currentUser.email;
     })
     .catch(error => {
       document.getElementById("emailMessage").innerText = error.message;
@@ -98,6 +100,7 @@ function studentLogin() {
 }
 </script>
 <div id="studentDashboard" style="display:none;max-width:500px;margin:25px auto;padding:20px;text-align:center;background:#f2f5ff;border-radius:12px;">
+  <p id="studentEmail"></p>
   <h2>🎓 Danny Competitive Academy</h2>
   <h3>Student Dashboard</h3>
 
