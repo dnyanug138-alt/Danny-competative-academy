@@ -269,8 +269,25 @@ button:hover {
 
 <h3>📝 Mock Tests</h3>
 <p>Free Mock Tests – लवकरच उपलब्ध</p>
-<p>Paid Mock Tests – लवकरच उपलब्ध</p>
+<p>Paid Mock Tests</p>
 
+<button onclick="showPayment()">
+💳 Paid Test खरेदी करा – ₹10
+</button>
+
+<div id="paymentSection" style="display:none;background:white;padding:15px;margin-top:15px;border-radius:10px;">
+
+<h3>💳 Payment Details</h3>
+
+<p>Test Fee: ₹10</p>
+
+<p>UPI ID: dmgaik138@ybl</p>
+
+<button onclick="alert('Payment verification पुढील टप्प्यात जोडूया.')">
+Payment केले
+</button>
+
+</div>
 <h3>🏆 My Results</h3>
 <p>तुझे निकाल येथे दिसतील.</p>
 
@@ -784,7 +801,9 @@ function loadStudents() {
       list.innerText = "Error: " + error.message;
     });
 }
-  
+  function showPayment() {
+  document.getElementById("paymentSection").style.display = "block";
+  }
 </script>
   
 </body>
