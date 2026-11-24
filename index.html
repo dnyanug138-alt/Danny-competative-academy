@@ -105,6 +105,7 @@ button {
   <button onclick="startPoliceTest()">
 🚔 Police Bharti Test सुरू करा
   </button>
+  <div id="policeQuiz"></div>
   
   <button 
   onclick="studentLogout()">Logout</button>
@@ -314,7 +315,20 @@ function studentLogout() {
   });
 }
   function startPoliceTest() {
-  alert("Police Bharti Test लवकरच सुरू होईल!");
+  document.getElementById("policeQuiz").innerHTML = `
+    <h3>🚔 Police Bharti Test</h3>
+    <p>प्रश्न 1: महाराष्ट्राची राजधानी कोणती?</p>
+    <button onclick="checkPoliceAnswer('Mumbai')">मुंबई</button>
+    <button onclick="checkPoliceAnswer('Pune')">पुणे</button>
+    <button onclick="checkPoliceAnswer('Nagpur')">नागपूर</button>
+    <button onclick="checkPoliceAnswer('Nashik')">नाशिक</button>
+    <p id="policeResult"></p>
+  `;
+}
+
+function checkPoliceAnswer(answer) {
+  document.getElementById("policeResult").innerText =
+    answer === "Mumbai" ? "बरोबर उत्तर! 🎉" : "चुकीचे उत्तर. योग्य उत्तर मुंबई आहे.";
 }
 </script>
 
