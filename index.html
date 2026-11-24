@@ -751,13 +751,19 @@ let policeTimer;
 let policeTimeLeft = 0;
 let policeResultSaved = false;
 
+  let policeAnswers = [];
+let policeMarked = [];
+let policeCurrentQuestion = 0;
+
 // START POLICE TEST
 function startPoliceTest() {
   policeIndex = 0;
   policeScore = 0;
   policeResultSaved = false;
   policeTimeLeft = 90 * 60;
-
+policeAnswers = [];
+policeMarked = [];
+policeCurrentQuestion = 0;
   clearInterval(policeTimer);
 
   showPoliceQuestion();
@@ -838,34 +844,91 @@ function showPoliceQuestion() {
 
   const q = policeQuestions[policeIndex];
 
-  quiz.innerHTML = `
-    <h3>🚔 Police Bharti Mock Test</h3>
-
-    <h3 id="policeTimerDisplay">
-      वेळ: ${String(Math.floor(policeTimeLeft / 60)).padStart(2,"0")}:${String(policeTimeLeft % 60).padStart(2,"0")}
-    </h3>
-
-    <p>प्रश्न ${policeIndex + 1} / ${policeQuestions.length}</p>
-
-    <h4>${q.q}</h4>
-
-    ${q.options.map((option, i) => `
-      <button type="button" onclick="selectPoliceAnswer(${i})">
-        ${option}
-      </button><br><br>
-    `).join("")}
-  `;
+if (policeAnswers[policeIndex] === undefined) {
+  policeAnswers[policeIndex] = null;
 }
 
-// SELECT ANSWER
-function selectPoliceAnswer(selected) {
-  if (policeIndex >= policeQuestions.length) return;
+quiz.innerHTML = `
+  <div style="background:#102b50;color:white;padding:15px;border-radius:8px;">
+    <h3>🎓 Danny Academy - CBT Exam</h3>
+    <h3 id="policeTimerDisplay">वेळ: 90:00</h3>
+  </div>
 
-  if (selected === policeQuestions[policeIndex].answer) {
-    policeScore++;
+  <p>प्रश्न ${policeIndex + 1} / ${policeQuestions.length}</p>
+
+  <h3>${q.q}</h3>
+
+  ${q.options.map((option, i) => `
+    <label style="display:block;padding:12px;margin:8px;border:1px solid #ccc;border-radius:6px;">
+      <input type="radio" name="policeOption"
+        value="${i}"
+        ${policeAnswers[policeIndex] === i ? "checked" : ""}
+        onchange="policeAnswers[policeIndex] = ${i}">
+      ${option}
+    </label>
+  `).join("")}
+
+  <button onclick="policePrevious()">Previous</button>
+  <button onclick="policeSaveNext()">Save & Next</button>
+  <button onclick="policeMarkReview()">Mark for Review</button>
+
+  <h3>प्रश्न पॅलेट</h3>
+  <div style="display:flex;flex-wrap:wrap;gap:6px;">
+    ${policeQuestions.map((item, i) => `
+      <button onclick="policeGoTo(${i})"
+        style="padding:10px;background:${i === policeIndex ? '#1769aa' : policeAnswers[i] !== null && policeAnswers[i] !== undefined ? '#198754' : '#ddd'};color:${i === policeIndex || policeAnswers[i] !== null && policeAnswers[i] !== undefined ? 'white' : 'black'}">
+        ${i + 1}
+      </button>
+    `).join("")}
+  </div>
+
+  <button onclick="policeSubmitTest()">Submit Test</button>
+`;
+}
+
+// POLICE TEST NAVIGATION
+
+function policePrevious() {
+  if (policeIndex > 0) {
+    policeIndex--;
+    showPoliceQuestion();
   }
+}
 
-  policeIndex++;
+function policeSaveNext() {
+  if (policeIndex < policeQuestions.length - 1) {
+    policeIndex++;
+    showPoliceQuestion();
+  } else {
+    policeSubmitTest();
+  }
+}
+
+function policeMarkReview() {
+  policeMarked[policeIndex] = true;
+  if (policeIndex < policeQuestions.length - 1) {
+    policeIndex++;
+    showPoliceQuestion();
+  }
+}
+
+function policeGoTo(index) {
+  policeIndex = index;
+  showPoliceQuestion();
+}
+
+function policeSubmitTest() {
+  if (!confirm("तुम्हाला टेस्ट Submit करायची आहे का?")) return;
+
+  policeScore = 0;
+
+  policeAnswers.forEach((answer, i) => {
+    if (answer === policeQuestions[i].answer) {
+      policeScore++;
+    }
+  });
+
+  policeIndex = policeQuestions.length;
   showPoliceQuestion();
 }
 </script>
