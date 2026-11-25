@@ -634,15 +634,24 @@ button:hover {
 </div>
 
   
+
 <h2>आपल्या टेस्ट सिरीज</h2>
 
 <div class="card" id="login">
-<h3>पोलीस भरती</h3>
-<p>ऑनलाइन Mock Test</p>
-<button onclick="startPoliceTest()">
-  Test सुरू करा
-</button>
+  <h3>पोलीस भरती</h3>
+  <p>ऑनलाइन Mock Test</p>
+  <button onclick="showPoliceTests()">
+    Test सुरू करा
+  </button>
 </div>
+
+<div id="policeTestList" style="display:none;" class="card">
+  <h3>पोलीस भरती टेस्ट लिस्ट</h3>
+  <div id="policeTestsContainer">
+    टेस्ट लोड होत आहेत...
+  </div>
+</div>
+
 
 <div class="card">
 <h3>तलाठी भरती</h3>
@@ -2055,6 +2064,12 @@ async function loadLeaderboard() {
     console.error(error);
   }
 }
+  
+function showPoliceTests() {
+  document.getElementById("login").style.display = "none";
+
+  document.getElementById("policeTestList").style.display = "block";
+  }
   
 </script>
   
