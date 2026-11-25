@@ -1556,17 +1556,15 @@ function addNews() {
 }
   // LOAD NEWS FROM FIRESTORE
 
+
 function loadNews() {
-
   const list = document.getElementById("adminNewsList");
-
   list.innerHTML = "बातम्या Loading...";
 
   db.collection("news")
     .orderBy("createdAt", "desc")
     .get()
     .then(snapshot => {
-
       list.innerHTML = "";
 
       if (snapshot.empty) {
@@ -1575,9 +1573,7 @@ function loadNews() {
       }
 
       snapshot.forEach(doc => {
-
         const news = doc.data();
-
         const item = document.createElement("div");
 
         const heading = document.createElement("h4");
@@ -1602,16 +1598,45 @@ function loadNews() {
           item.appendChild(link);
         }
 
+        const deleteBtn = document.createElement("button");
+        deleteBtn.textContent = "🗑️ बातमी Delete करा";
+        deleteBtn.style.background = "red";
+        deleteBtn.style.color = "white";
+        deleteBtn.style.padding = "10px";
+        deleteBtn.style.margin = "10px";
+
+        deleteBtn.onclick = function() {
+          deleteNews(doc.id);
+        };
+
+        item.appendChild(deleteBtn);
+
+        item.style.border = "1px solid #ddd";
+        item.style.padding = "12px";
+        item.style.margin = "10px";
+
         list.appendChild(item);
       });
-
     })
     .catch(error => {
-      list.textContent = "बातम्या लोड झाल्या नाहीत: " + error.message;
+      list.textContent = "Error: " + error.message;
     });
 }
 
-let newsItems = [];
+function deleteNews(id) {
+  if (!confirm("ही बातमी Delete करायची आहे का?")) {
+    return;
+  }
+
+  db.collection("news").doc(id).delete()
+    .then(() => {
+      alert("बातमी Delete झाली!");
+      loadNews();
+    })
+    .catch(error => {
+      alert("Error: " + error.message);
+    });
+}
 
 function loadLiveNews() {
   db.collection("news")
