@@ -1,4 +1,4 @@
-4hñ<!DOCTYPE html>
+ho4hñ<!DOCTYPE html>
 <html lang="mr">
 <head>
 <meta charset="UTF-8">
@@ -1525,7 +1525,7 @@ function adminLogin() {
   const email = document.getElementById("adminEmail").value;
   const password = document.getElementById("adminPassword").value;
   const msg = document.getElementById("adminMessage");
-
+console.log("Admin Login Button Clicked");
   firebase.auth().signInWithEmailAndPassword(email, password)
     .then(async (result) => {
       const user = result.user;
