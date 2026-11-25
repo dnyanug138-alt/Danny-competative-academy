@@ -708,14 +708,67 @@ button:hover {
 
   
 
-<h2>आपल्या टेस्ट सिरीज</h2>
 
-<div class="card" id="login">
-  <h3>पोलीस भरती</h3>
-  <p>ऑनलाइन Mock Test</p>
-  <button onclick="showPoliceTests()">
-    Test सुरू करा
-  </button>
+<h2 class="test-heading">🏆 आपल्या टेस्ट सिरीज</h2>
+
+<div class="test-series-grid">
+
+  <div class="card test-card" id="login">
+    <div class="test-icon">👮</div>
+    <h3>पोलीस भरती</h3>
+    <p>ऑनलाइन Mock Test</p>
+    <button onclick="showPoliceTests()">Test सुरू करा →</button>
+  </div>
+
+  <div class="card test-card" id="talathiLogin">
+    <div class="test-icon">📋</div>
+    <h3>तलाठी भरती</h3>
+    <p>ऑनलाइन Mock Test</p>
+    <button onclick="showTalathiTests()">Test सुरू करा →</button>
+  </div>
+
+  <div class="card test-card">
+    <div class="test-icon">🏥</div>
+    <h3>आरोग्य सेवक</h3>
+    <p>ऑनलाइन Mock Test</p>
+    <button disabled>लवकरच उपलब्ध</button>
+  </div>
+
+  <div class="card test-card">
+    <div class="test-icon">📝</div>
+    <h3>SSC CHSL</h3>
+    <p>ऑनलाइन Mock Test</p>
+    <button disabled>लवकरच उपलब्ध</button>
+  </div>
+
+  <div class="card test-card">
+    <div class="test-icon">🎓</div>
+    <h3>SSC CGL</h3>
+    <p>ऑनलाइन Mock Test</p>
+    <button disabled>लवकरच उपलब्ध</button>
+  </div>
+
+  <div class="card test-card">
+    <div class="test-icon">🏛️</div>
+    <h3>Combined Group C</h3>
+    <p>ऑनलाइन Mock Test</p>
+    <button disabled>लवकरच उपलब्ध</button>
+  </div>
+
+  <div class="card test-card">
+    <div class="test-icon">🚆</div>
+    <h3>रेल्वे भरती</h3>
+    <p>ऑनलाइन Mock Test</p>
+    <button disabled>लवकरच उपलब्ध</button>
+  </div>
+
+  <div class="card test-card">
+    <div class="test-icon">📚</div>
+    <h3>MPSC</h3>
+    <p>ऑनलाइन Mock Test</p>
+    <button disabled>लवकरच उपलब्ध</button>
+  </div>
+
 </div>
 
 <div id="policeTestList" style="display:none;" class="card">
@@ -725,16 +778,6 @@ button:hover {
   </div>
 </div>
 
-
-
-<div class="card" id="talathiLogin">
-  <h3>तलाठी भरती</h3>
-  <p>ऑनलाइन Mock Test</p>
-  <button onclick="showTalathiTests()">
-    Test सुरू करा
-  </button>
-</div>
-
 <div id="talathiTestList" style="display:none;" class="card">
   <h3>तलाठी भरती टेस्ट लिस्ट</h3>
   <div id="talathiTestsContainer">
@@ -742,12 +785,79 @@ button:hover {
   </div>
 </div>
 
+<style>
+.test-heading {
+  text-align: center;
+  color: #123b68;
+  margin: 25px 0;
+}
 
-<div class="card">
-<h3>MPSC</h3>
-<p>लवकरच उपलब्ध</p>
-</div>
-</div>
+.test-series-grid {
+  max-width: 1100px;
+  margin: auto;
+  padding: 10px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.test-card {
+  width: 100%;
+  margin: 0;
+  padding: 22px 12px;
+  text-align: center;
+  border-radius: 16px;
+  border: 1px solid #dce6f5;
+  background: linear-gradient(145deg,#ffffff,#edf4ff);
+  box-shadow: 0 5px 16px rgba(0,45,100,0.10);
+}
+
+.test-icon {
+  font-size: 36px;
+  margin-bottom: 10px;
+}
+
+.test-card h3 {
+  color: #123b68;
+  font-size: 17px;
+}
+
+.test-card p {
+  color: #64748b;
+  font-size: 13px;
+}
+
+.test-card button {
+  width: 100%;
+  padding: 11px 5px;
+  border: none;
+  border-radius: 9px;
+  background: #1769aa;
+  color: white;
+  font-weight: bold;
+}
+
+.test-card button:disabled {
+  background: #9aa9b8;
+}
+
+@media(max-width:700px) {
+  .test-series-grid {
+    grid-template-columns: repeat(2,minmax(0,1fr));
+    gap: 10px;
+    padding: 8px;
+  }
+
+  .test-card {
+    padding: 16px 9px;
+  }
+
+  .test-card h3 {
+    font-size: 14px;
+  }
+}
+</style>
+
   
 <!-- ADVERTISEMENT SPACE 2 -->
 <div id="adSpaceCourses" style="
