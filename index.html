@@ -2325,9 +2325,16 @@ function loadDashboardSummary() {
 
 }
   
+
 function addMCQ() {
   alert("MCQ Function चालू आहे!");
+
   const exam = document.getElementById("mcqExam").value;
+
+  const testNumber = exam === "Police Bharti"
+    ? Number(document.getElementById("mcqTestNumber").value)
+    : null;
+
   const question = document.getElementById("mcqQuestion").value.trim();
   const A = document.getElementById("optionA").value.trim();
   const B = document.getElementById("optionB").value.trim();
@@ -2343,6 +2350,7 @@ function addMCQ() {
 
   db.collection("mcqQuestions").add({
     exam: exam,
+    testNumber: testNumber,
     question: question,
     options: { A, B, C, D },
     answer: answer,
@@ -2361,6 +2369,7 @@ function addMCQ() {
     msg.innerText = "Error: " + error.message;
   });
 }
+
   
 </script>
   
