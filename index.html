@@ -712,41 +712,44 @@ function studentLogin() {
     });
 }
 
+
 auth.onAuthStateChanged(async function(user) {
 
   const dashboard = document.getElementById("studentDashboard");
   const adminPanel = document.getElementById("adminPanel");
 
-  if (user) {
+  dashboard.style.display = "none";
+  adminPanel.style.display = "none";
 
-    dashboard.style.display = "block";
-    loadLeaderboard();
-    document.getElementById("studentNameDisplay").innerText =
-      "Student Name: " + (user.displayName || "Student");
+  if (!user) return;
 
-    document.getElementById("studentEmail").innerText =
-      "Student Email: " + (user.email || "");
+  try {
+    const adminDoc = await db.collection("Admins")
+      .doc(user.uid).get();
 
-    try {
-      const adminDoc = await db.collection("Admins")
-        .doc(user.uid).get();
+    if (adminDoc.exists && adminDoc.data().role === "admin") {
 
-      if (adminDoc.exists && adminDoc.data().role === "admin") {
-        adminPanel.style.display = "block";
-      } else {
-        adminPanel.style.display = "none";
-      }
+      adminPanel.style.display = "block";
+      dashboard.style.display = "none";
 
-    } catch (error) {
+    } else {
+
+      dashboard.style.display = "block";
       adminPanel.style.display = "none";
-      console.error("Admin check error:", error);
+
+      loadLeaderboard();
+
+      document.getElementById("studentNameDisplay").innerText =
+        "Student Name: " + (user.displayName || "Student");
+
+      document.getElementById("studentEmail").innerText =
+        "Student Email: " + (user.email || "");
     }
 
-  } else {
-
+  } catch (error) {
     dashboard.style.display = "none";
     adminPanel.style.display = "none";
-
+    console.error("Admin check error:", error);
   }
 
 });
