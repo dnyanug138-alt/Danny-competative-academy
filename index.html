@@ -1021,7 +1021,7 @@ function studentLogout() {
   });
 }
   
-const policeQuestions = [
+let policeQuestions = [
   {q:"नाम म्हणजे काय?",options:["नाव","क्रिया","गुण","अव्यय"],answer:0},
   {q:"'सुंदर' हा कोणता शब्दप्रकार आहे?",options:["नाम","सर्वनाम","विशेषण","क्रियापद"],answer:2},
   {q:"'तो शाळेत जातो' या वाक्यातील सर्वनाम कोणते?",options:["तो","शाळेत","जातो","यापैकी नाही"],answer:0},
@@ -1123,6 +1123,7 @@ const policeQuestions = [
   {q:"भारताचे राष्ट्रीय गीत कोणते?",options:["जन गण मन","वंदे मातरम्","सारे जहाँ से अच्छा","ऐ मेरे वतन"],answer:1},
   {q:"भारताचे राष्ट्रगीत कोणते?",options:["वंदे मातरम्","जन गण मन","सारे जहाँ से अच्छा","जय हिंद"],answer:1},
  ];
+  const defaultPoliceQuestions = [...policeQuestions];
 let policeIndex = 0;
 let policeScore = 0;
 let policeTimer;
@@ -1144,7 +1145,58 @@ policeMarked = [];
 policeCurrentQuestion = 0;
   clearInterval(policeTimer);
 
-  showPoliceQuestion();
+  policeQuestions = [...defaultPoliceQuestions];
+
+db.collection("mcqQuestions")
+  .where("exam", "==", "Police Bharti")
+  .get()
+  .then((snapshot) => {
+
+    snapshot.forEach((doc) => {
+      const data = doc.data();
+
+      policeQuestions.push({
+        q: data.question,
+        options: [
+          data.options.A,
+          data.options.B,
+          data.options.C,
+          data.options.D
+        ],
+        answer: ["A", "B", "C", "D"].indexOf(data.answer)
+      });
+    });
+
+    policeAnswers = [];
+    policeMarked = [];
+    policeIndex = 0;
+
+    showPoliceQuestion();
+
+    policeTimer = setInterval(function() {
+      policeTimeLeft--;
+
+      let timerDisplay = document.getElementById("policeTimerDisplay");
+
+      if (timerDisplay) {
+        timerDisplay.innerText =
+          "वेळ: " +
+          String(Math.floor(policeTimeLeft / 60)).padStart(2, "0") +
+          ":" +
+          String(policeTimeLeft % 60).padStart(2, "0");
+      }
+
+      if (policeTimeLeft <= 0) {
+        clearInterval(policeTimer);
+        policeIndex = policeQuestions.length;
+        showPoliceQuestion();
+      }
+    }, 1000);
+
+  })
+  .catch((error) => {
+    alert("प्रश्न लोड झाले नाहीत: " + error.message);
+  });
 
   policeTimer = setInterval(function() {
     policeTimeLeft--;
