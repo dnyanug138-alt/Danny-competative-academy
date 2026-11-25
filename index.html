@@ -1525,6 +1525,10 @@ function adminLogin() {
   const email = document.getElementById("adminEmail").value;
   const password = document.getElementById("adminPassword").value;
   const msg = document.getElementById("adminMessage");
+  console.log("Email:", email);
+console.log("Password field found:", !!document.getElementById("adminPassword"));
+console.log("Firebase:", typeof firebase);
+console.log("DB:", typeof db);
 console.log("Admin Login Button Clicked");
   msg.innerText = "Admin Login सुरू...";
 console.log("Admin Login Button Clicked");
