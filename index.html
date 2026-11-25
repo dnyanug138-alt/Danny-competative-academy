@@ -1335,6 +1335,24 @@ function policeSubmitTest() {
 <div id="adminDashboard" style="display:none;">
   <h3>Welcome Admin!</h3>
   <h2>Prayag Study Hub</h2>
+  
+<hr>
+<h3>📊 Admin Dashboard Summary</h3>
+
+<div style="display:flex;gap:10px;flex-wrap:wrap;">
+
+  <div class="card">
+    <h3>👨‍🎓 एकूण विद्यार्थी</h3>
+    <h2 id="totalStudents">0</h2>
+  </div>
+
+  <div class="card">
+    <h3>📰 एकूण बातम्या</h3>
+    <h2 id="totalNews">0</h2>
+  </div>
+
+</div>
+  
 
   <button onclick="loadStudents()">
     विद्यार्थ्यांची यादी पहा
@@ -1420,6 +1438,7 @@ function adminLogin() {
 
         document.getElementById("studentDashboard").style.display = "none";
         document.getElementById("adminDashboard").style.display = "block";
+        loadDashboardSummary();
 
         loadNews();
         loadStudents();
@@ -2122,6 +2141,24 @@ function showTalathiTests() {
   document.getElementById("talathiLogin").style.display = "none";
 
   document.getElementById("talathiTestList").style.display = "block";
+}
+  
+function loadDashboardSummary() {
+
+  db.collection("students").get()
+    .then(snapshot => {
+      document.getElementById("totalStudents").innerText =
+        snapshot.size;
+    })
+    .catch(error => console.log(error));
+
+  db.collection("news").get()
+    .then(snapshot => {
+      document.getElementById("totalNews").innerText =
+        snapshot.size;
+    })
+    .catch(error => console.log(error));
+
 }
   
 </script>
