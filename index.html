@@ -324,6 +324,31 @@ button:hover {
   </header>
 </div>
 
+<!-- LATEST NEWS SECTION -->
+<section id="latestNewsSection" style="
+  max-width:1100px;
+  margin:25px auto;
+  padding:20px;
+  background:white;
+  border-radius:12px;
+  text-align:left;
+  box-shadow:0 4px 15px rgba(0,0,0,0.08);
+">
+
+  <h2 style="color:#123b68;text-align:center;">
+    📰 ताज्या बातम्या
+  </h2>
+
+  <p style="text-align:center;color:green;">
+    🔴 Automatic News Updates
+  </p>
+
+  <div id="latestNewsList">
+    बातम्या Loading...
+  </div>
+
+</section>
+  
 <!-- FULL NEWS DISPLAY -->
 <div id="selectedNews" style="display:none;">
   <h3 id="selectedNewsTitle"></h3>
@@ -522,6 +547,15 @@ Payment केले
 
 <hr>
 
+<h2>🏆 Student Leaderboard</h2>
+<p>सर्वाधिक गुण मिळवणारे विद्यार्थी</p>
+
+<div id="leaderboard">
+  🏆 Leaderboard Loading...
+</div>
+  
+<hr>
+
 <div id="adminPanel" style="display:none;background:white;padding:15px;margin-top:15px;border-radius:10px;">
 
   <h2>🔐 Danny Academy Admin Panel</h2>
@@ -628,7 +662,7 @@ auth.onAuthStateChanged(async function(user) {
   if (user) {
 
     dashboard.style.display = "block";
-
+    loadLeaderboard();
     document.getElementById("studentNameDisplay").innerText =
       "Student Name: " + (user.displayName || "Student");
 
@@ -1622,21 +1656,48 @@ function selectFreeAnswer(selected) {
   showFreeTestQuestion();
   }
   
-function finishFreeTest() {
+
+async function finishFreeTest() {
   clearInterval(freeTestTimer);
 
   const area = document.getElementById("freeTestArea");
+  const user = auth.currentUser;
+  const total = freeTestQuestions.length;
 
-  area.innerHTML = `
-    <h2>🎉 टेस्ट पूर्ण झाली!</h2>
-    <h3>तुमचा निकाल</h3>
-    <p>एकूण प्रश्न: 100</p>
-    <p>बरोबर उत्तरे: ${freeTestScore}</p>
-    <p>चुकीची / न सोडवलेली उत्तरे: ${100 - freeTestScore}</p>
-    <h2>मिळालेले गुण: ${freeTestScore} / 100</h2>
-    <button onclick="openFreeTest(1)">पुन्हा टेस्ट द्या</button>
-  `;
+  area.innerHTML = "<h3>निकाल सेव्ह होत आहे...</h3>";
+
+  try {
+    if (user) {
+      await db.collection("testResults").add({
+        uid: user.uid,
+        name: user.displayName || "Student",
+        email: user.email,
+        testName: "Free Mock Test 1",
+        score: freeTestScore,
+        totalQuestions: total,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
+    }
+
+    area.innerHTML = `
+      <h2>🎉 टेस्ट पूर्ण झाली!</h2>
+      <h3>तुमचा निकाल</h3>
+      <p>एकूण प्रश्न: ${total}</p>
+      <p>बरोबर उत्तरे: ${freeTestScore}</p>
+      <p>चुकीची / न सोडवलेली उत्तरे: ${total - freeTestScore}</p>
+      <h2>मिळालेले गुण: ${freeTestScore} / ${total}</h2>
+      <p>${user ? "निकाल सेव्ह झाला!" : "निकाल सेव्ह करण्यासाठी Login करा."}</p>
+      <button onclick="openFreeTest(1)">पुन्हा टेस्ट द्या</button>
+    `;
+  } catch (error) {
+    area.innerHTML = `
+      <h3>निकाल सेव्ह झाला नाही.</h3>
+      <p>कृपया पुन्हा प्रयत्न करा.</p>
+    `;
+    console.error(error);
+  }
 }
+
   function updateLiveDateTime() {
   const now = new Date();
 
@@ -1652,6 +1713,50 @@ setInterval(updateLiveDateTime, 1000);
   function startDemoTest() {
   alert("FREE DEMO TEST लवकरच सुरू होईल!");
   }
+  
+async function loadLeaderboard() {
+  const board = document.getElementById("leaderboard");
+
+  board.innerHTML = "🏆 निकाल Loading...";
+
+  try {
+    const snapshot = await db.collection("testResults")
+      .orderBy("score", "desc")
+      .limit(10)
+      .get();
+
+    if (snapshot.empty) {
+      board.innerHTML = "अजून कोणतेही निकाल उपलब्ध नाहीत.";
+      return;
+    }
+
+    let html = "";
+
+    let rank = 1;
+
+    snapshot.forEach(doc => {
+      const data = doc.data();
+
+      html += `
+        <div class="notice-item">
+          🏅 क्रमांक ${rank} :
+          ${data.name || "Student"}
+          <br>
+          गुण: ${data.score} / ${data.totalQuestions}
+        </div>
+      `;
+
+      rank++;
+    });
+
+    board.innerHTML = html;
+
+  } catch (error) {
+    board.innerHTML = "Leaderboard लोड झाले नाही.";
+    console.error(error);
+  }
+}
+  
 </script>
  <hr>
 
