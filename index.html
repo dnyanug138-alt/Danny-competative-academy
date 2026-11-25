@@ -441,13 +441,23 @@ button:hover {
   </div>
   </div>
   
+
 <div class="card" style="text-align:center; margin:20px 0;">
   <h2>📚 अभ्यास साहित्य</h2>
-  <p>स्पर्धा परीक्षांसाठी महत्त्वाच्या नोट्स आणि अभ्यास साहित्य लवकरच उपलब्ध होईल.</p>
-  <button onclick="alert('अभ्यास साहित्य लवकरच उपलब्ध होईल!')">
+  <p>स्पर्धा परीक्षांसाठी विषयानुसार नोट्स आणि अभ्यास साहित्य.</p>
+  <button onclick="document.getElementById('studyMaterialPage').style.display='block'; document.getElementById('studyMaterialPage').scrollIntoView({behavior:'smooth'});">
     अभ्यास साहित्य पहा
   </button>
 </div>
+
+<div id="studyMaterialPage" class="container" style="display:none; margin:20px auto;">
+  <h2>📚 अभ्यास साहित्य विभाग</h2>
+  <div class="card"><h3>📘 मराठी व्याकरण</h3><p>नोट्स लवकरच उपलब्ध होतील.</p></div>
+  <div class="card"><h3>➗ गणित</h3><p>नोट्स लवकरच उपलब्ध होतील.</p></div>
+  <div class="card"><h3>🧠 बुद्धिमत्ता चाचणी</h3><p>नोट्स लवकरच उपलब्ध होतील.</p></div>
+  <div class="card"><h3>🌍 सामान्य ज्ञान</h3><p>नोट्स लवकरच उपलब्ध होतील.</p></div>
+</div>
+
   
 <h2>आपल्या टेस्ट सिरीज</h2>
 
