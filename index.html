@@ -2371,6 +2371,112 @@ function addMCQ() {
 }
 
   
+function startFirestoreTest() {
+  firestoreTestIndex = 0;
+  firestoreTestScore = 0;
+  freeTestTimeLeft = 90 * 60;
+
+  clearInterval(freeTestTimer);
+
+  showFirestoreTestQuestion();
+
+  freeTestTimer = setInterval(function() {
+    freeTestTimeLeft--;
+
+    const timer = document.getElementById("firestoreTimer");
+
+    if (timer) {
+      timer.innerText =
+        "वेळ: " +
+        Math.floor(freeTestTimeLeft / 60) + ":" +
+        String(freeTestTimeLeft % 60).padStart(2, "0");
+    }
+
+    if (freeTestTimeLeft <= 0) {
+      finishFirestoreTest();
+    }
+  }, 1000);
+}
+
+function showFirestoreTestQuestion() {
+  const area = document.getElementById("freeTestArea");
+
+  if (firestoreTestIndex >= firestoreTestQuestions.length) {
+    finishFirestoreTest();
+    return;
+  }
+
+  const q = firestoreTestQuestions[firestoreTestIndex];
+
+  let html =
+    "<h3>Free Mock Test " + activeFreeTestNumber + "</h3>" +
+    "<p id='firestoreTimer'>वेळ: 90:00</p>" +
+    "<p>प्रश्न: " + (firestoreTestIndex + 1) + " / 100</p>" +
+    "<h4>" + q.q + "</h4>";
+
+  q.options.forEach(function(option, index) {
+    html +=
+      "<button onclick='selectFirestoreTestAnswer(" + index + ")'>" +
+      String.fromCharCode(65 + index) + ". " + option +
+      "</button><br><br>";
+  });
+
+  area.innerHTML = html;
+}
+
+function selectFirestoreTestAnswer(selected) {
+  const q = firestoreTestQuestions[firestoreTestIndex];
+
+  if (selected === q.answer) {
+    firestoreTestScore++;
+  }
+
+  firestoreTestIndex++;
+  showFirestoreTestQuestion();
+  }
+    
+async function finishFirestoreTest() {
+  clearInterval(freeTestTimer);
+
+  const area = document.getElementById("freeTestArea");
+  const user = auth.currentUser;
+  const total = firestoreTestQuestions.length;
+  const testName = "Free Mock Test " + activeFreeTestNumber;
+
+  area.innerHTML = "<h3>निकाल सेव्ह होत आहे...</h3>";
+
+  try {
+    if (user) {
+      await db.collection("testResults").add({
+        uid: user.uid,
+        name: user.displayName || "Student",
+        email: user.email,
+        testName: testName,
+        score: firestoreTestScore,
+        totalQuestions: total,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
+    }
+
+    area.innerHTML = `
+      <h2>🎉 टेस्ट पूर्ण झाली!</h2>
+      <h3>${testName}</h3>
+      <p>एकूण प्रश्न: ${total}</p>
+      <p>बरोबर उत्तरे: ${firestoreTestScore}</p>
+      <p>चुकीची / न सोडवलेली उत्तरे: ${total - firestoreTestScore}</p>
+      <h2>मिळालेले गुण: ${firestoreTestScore} / ${total}</h2>
+      <p>${user ? "निकाल सेव्ह झाला!" : "निकाल सेव्ह करण्यासाठी Login करा."}</p>
+      <button onclick="openFreeTest(${activeFreeTestNumber})">
+        पुन्हा टेस्ट द्या
+      </button>
+    `;
+
+  } catch (error) {
+    area.innerHTML = "<h3>निकाल सेव्ह झाला नाही.</h3><p>" +
+      error.message + "</p>";
+  }
+                              }
+  
 </script>
   
 <!-- STUDY GUIDANCE SECTION -->
