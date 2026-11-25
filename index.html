@@ -2209,6 +2209,43 @@ function loadDashboardSummary() {
 
 }
   
+function addMCQ() {
+
+  const exam = document.getElementById("mcqExam").value;
+  const question = document.getElementById("mcqQuestion").value.trim();
+  const A = document.getElementById("optionA").value.trim();
+  const B = document.getElementById("optionB").value.trim();
+  const C = document.getElementById("optionC").value.trim();
+  const D = document.getElementById("optionD").value.trim();
+  const answer = document.getElementById("correctAnswer").value;
+  const msg = document.getElementById("mcqMessage");
+
+  if (!question || !A || !B || !C || !D) {
+    msg.innerText = "कृपया सर्व माहिती भरा.";
+    return;
+  }
+
+  db.collection("mcqQuestions").add({
+    exam: exam,
+    question: question,
+    options: { A, B, C, D },
+    answer: answer,
+    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+  })
+  .then(() => {
+    msg.innerText = "प्रश्न यशस्वीपणे Save झाला!";
+
+    document.getElementById("mcqQuestion").value = "";
+    document.getElementById("optionA").value = "";
+    document.getElementById("optionB").value = "";
+    document.getElementById("optionC").value = "";
+    document.getElementById("optionD").value = "";
+  })
+  .catch(error => {
+    msg.innerText = "Error: " + error.message;
+  });
+}
+  
 </script>
   
 <!-- STUDY GUIDANCE SECTION -->
