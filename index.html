@@ -1150,19 +1150,29 @@ function adminLogin() {
   const msg = document.getElementById("adminMessage");
 
   firebase.auth().signInWithEmailAndPassword(email, password)
-  .then((result) => {
-    if (result.user.email === "dnyanug138@gmail.com") {
-      msg.innerText = "Admin Login Successful!";
-      document.getElementById("adminDashboard").style.display = "block";
-      loadNews();
-    } else {
-      firebase.auth().signOut();
-      msg.innerText = "तुम्ही Admin नाही!";
-    }
-  })
-  .catch((error) => {
-    msg.innerText = "Login Failed: " + error.message;
-  });
+    .then(async (result) => {
+      const user = result.user;
+
+      const adminDoc = await db.collection("Admins")
+        .doc(user.uid).get();
+
+      if (adminDoc.exists && adminDoc.data().role === "admin") {
+        msg.innerText = "Admin Login Successful!";
+
+        document.getElementById("studentDashboard").style.display = "none";
+        document.getElementById("adminDashboard").style.display = "block";
+
+        loadNews();
+        loadStudents();
+
+      } else {
+        await firebase.auth().signOut();
+        msg.innerText = "तुम्ही Admin नाही!";
+      }
+    })
+    .catch((error) => {
+      msg.innerText = "Login Failed: " + error.message;
+    });
 }
   
 function loadStudents() {
