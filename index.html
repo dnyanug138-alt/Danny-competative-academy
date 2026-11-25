@@ -653,10 +653,22 @@ button:hover {
 </div>
 
 
-<div class="card">
-<h3>तलाठी भरती</h3>
-<p>लवकरच उपलब्ध</p>
+
+<div class="card" id="talathiLogin">
+  <h3>तलाठी भरती</h3>
+  <p>ऑनलाइन Mock Test</p>
+  <button onclick="showTalathiTests()">
+    Test सुरू करा
+  </button>
 </div>
+
+<div id="talathiTestList" style="display:none;" class="card">
+  <h3>तलाठी भरती टेस्ट लिस्ट</h3>
+  <div id="talathiTestsContainer">
+    टेस्ट लोड होत आहेत...
+  </div>
+</div>
+
 
 <div class="card">
 <h3>MPSC</h3>
@@ -2070,6 +2082,12 @@ function showPoliceTests() {
 
   document.getElementById("policeTestList").style.display = "block";
   }
+  
+function showTalathiTests() {
+  document.getElementById("talathiLogin").style.display = "none";
+
+  document.getElementById("talathiTestList").style.display = "block";
+}
   
 </script>
   
