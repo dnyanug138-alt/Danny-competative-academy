@@ -1856,6 +1856,14 @@ placeholder="प्रश्न लिहा"></textarea>
 <div id="mcqMessage"></div>
 
 <hr>
+  <h3>📋 प्रश्न व्यवस्थापन</h3>
+  <button onclick="loadMCQQuestions()">
+  🔄 प्रश्नांची यादी दाखवा
+  </button>
+
+<div id="mcqQuestionList">
+  प्रश्नांची यादी येथे दिसेल.
+</div>
   
   <h2>📰 News Management</h2>
 
@@ -2712,6 +2720,82 @@ function addMCQ() {
   });
 }
 
+function loadMCQQuestions() {
+
+  const exam = document.getElementById("mcqExam").value;
+
+  const testNumber = exam === "Police Bharti"
+    ? Number(document.getElementById("mcqTestNumber").value)
+    : null;
+
+  const list = document.getElementById("mcqQuestionList");
+
+  list.innerHTML = "प्रश्न लोड होत आहेत...";
+
+  db.collection("mcqQuestions")
+    .where("exam", "==", exam)
+    .where("testNumber", "==", testNumber)
+    .get()
+
+    .then((snapshot) => {
+
+      list.innerHTML = "";
+
+      if (snapshot.empty) {
+        list.innerHTML = "या टेस्टमध्ये प्रश्न उपलब्ध नाहीत.";
+        return;
+      }
+
+      snapshot.forEach((doc) => {
+
+        const data = doc.data();
+
+        const item = document.createElement("div");
+        item.style.border = "1px solid gray";
+        item.style.padding = "10px";
+        item.style.margin = "10px 0";
+
+        const question = document.createElement("p");
+        question.textContent = data.question;
+
+        const options = document.createElement("p");
+        options.textContent =
+          "A. " + data.options.A + " | " +
+          "B. " + data.options.B + " | " +
+          "C. " + data.options.C + " | " +
+          "D. " + data.options.D;
+
+        const answer = document.createElement("p");
+        answer.textContent = "योग्य उत्तर: " + data.answer;
+
+        const editButton = document.createElement("button");
+        editButton.textContent = "✏️ Edit";
+        editButton.onclick = function() {
+          editMCQ(doc.id);
+        };
+
+        const deleteButton = document.createElement("button");
+        deleteButton.textContent = "🗑️ Delete";
+        deleteButton.onclick = function() {
+          deleteMCQ(doc.id);
+        };
+
+        item.appendChild(question);
+        item.appendChild(options);
+        item.appendChild(answer);
+        item.appendChild(editButton);
+        item.appendChild(deleteButton);
+
+        list.appendChild(item);
+      });
+
+    })
+    .catch((error) => {
+      list.innerHTML = "Error: " + error.message;
+      console.error(error);
+    });
+  }
+  
 
   
 function startFirestoreTest() {
