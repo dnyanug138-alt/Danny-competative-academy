@@ -1270,6 +1270,13 @@ auth.onAuthStateChanged(async function(user) {
 
       dashboard.style.display = "block";
       adminPanel.style.display = "none";
+  const urlParams = new URLSearchParams(window.location.search);
+const selectedTest = Number(urlParams.get("freeTest"));
+
+if (selectedTest >= 1 && selectedTest <= 50) {
+  openFreeTest(selectedTest);
+  return;
+}
 
       if (typeof loadLeaderboard === "function") {
   loadLeaderboard();
@@ -1541,17 +1548,12 @@ function openFreeTest(testNumber) {
         });
       });
 
-      if (policeQuestions.length === 0) {
-        if (policeQuestions.length !== 100) {
+      if (policeQuestions.length !== 100) {
   quiz.innerHTML =
     "<h3>या टेस्टमध्ये 100 प्रश्न असणे आवश्यक आहे. सध्या " +
     policeQuestions.length + " प्रश्न उपलब्ध आहेत.</h3>";
   return;
-        }
-        quiz.innerHTML =
-          "<h3>या टेस्टमध्ये अजून प्रश्न उपलब्ध नाहीत.</h3>";
-        return;
-      }
+}
 
       policeAnswers = [];
       policeMarked = [];
@@ -2082,7 +2084,16 @@ firebase.auth().onAuthStateChanged(function(user) {
   }
 
 });
+const urlParams = new URLSearchParams(window.location.search);
+const selectedTest = Number(urlParams.get("freeTest"));
 
+if (selectedTest >= 1 && selectedTest <= 50) {
+  auth.onAuthStateChanged(function(user) {
+    if (user) {
+      openFreeTest(selectedTest);
+    }
+  });
+  }
 // Student Activity Check
 
 ["click", "touchstart", "pointerdown", "keydown", "scroll"]
