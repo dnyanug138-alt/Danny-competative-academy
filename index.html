@@ -1285,7 +1285,9 @@ function studentLogin() {
     });
 }
 
-
+function openPoliceStudyCenter() {
+  window.location.href = "police-bharti.html";
+}
 auth.onAuthStateChanged(async function(user) {
 
   const dashboard = document.getElementById("studentDashboard");
