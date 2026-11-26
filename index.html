@@ -1241,6 +1241,7 @@ function studentLogin() {
 
       document.getElementById("emailMessage").innerText =
         "Login यशस्वी! स्वागत आहे.";
+      alert("UID: " + user.uid);
     })
     .catch(error => {
       document.getElementById("emailMessage").innerText =
