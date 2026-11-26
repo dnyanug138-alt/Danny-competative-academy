@@ -1,0 +1,139 @@
+
+<!DOCTYPE html>
+<html lang="mr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>पोलीस भरती अभ्यास केंद्र | Prayag Study Hub</title>
+
+<style>
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #f1f5f9;
+  color: #172554;
+}
+.header {
+  background: #123d70;
+  color: white;
+  text-align: center;
+  padding: 25px 12px;
+}
+.container {
+  max-width: 650px;
+  margin: 25px auto;
+  padding: 12px;
+}
+.cards {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+}
+.card {
+  background: white;
+  padding: 20px 10px;
+  border-radius: 14px;
+  text-align: center;
+  box-shadow: 0 3px 10px #00000012;
+}
+.card h2 {
+  font-size: 30px;
+  margin: 5px;
+}
+.card h3 {
+  font-size: 16px;
+}
+.card p {
+  font-size: 13px;
+  color: #64748b;
+}
+.card button {
+  background: #1565c0;
+  color: white;
+  border: none;
+  padding: 10px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+.wide {
+  grid-column: span 2;
+}
+.back {
+  display: block;
+  margin: 20px auto;
+  padding: 12px 25px;
+  background: #123d70;
+  color: white;
+  border: none;
+  border-radius: 8px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">
+  <h2>👮 PRAYAG STUDY HUB</h2>
+  <h3>पोलीस भरती अभ्यास केंद्र</h3>
+  <p>Online Mock Test & Study Platform</p>
+</div>
+
+<div class="container">
+  <h2 style="text-align:center;">📚 पोलीस भरती विभाग</h2>
+
+  <div class="cards">
+
+    <div class="card">
+      <h2>📝</h2>
+      <h3>Free Mock Test</h3>
+      <p>50 मोफत टेस्ट</p>
+      <button onclick="openFreeTests()">Start Now →</button>
+    </div>
+
+    <div class="card">
+      <h2>💳</h2>
+      <h3>Monthly Paid Mock Test</h3>
+      <p>मासिक टेस्ट सीरिज</p>
+      <button onclick="comingSoon()">Explore →</button>
+    </div>
+
+    <div class="card">
+      <h2>🏆</h2>
+      <h3>Yearly Paid Mock Test</h3>
+      <p>वार्षिक टेस्ट सीरिज</p>
+      <button onclick="comingSoon()">Explore →</button>
+    </div>
+
+    <div class="card">
+      <h2>📚</h2>
+      <h3>मागील प्रश्नपत्रिका</h3>
+      <p>Previous Year Papers</p>
+      <button onclick="comingSoon()">View →</button>
+    </div>
+
+    <div class="card wide">
+      <h2>📰</h2>
+      <h3>Current Affairs</h3>
+      <p>चालू घडामोडी आणि महत्त्वाच्या बातम्या</p>
+      <button onclick="comingSoon()">Read Now →</button>
+    </div>
+
+  </div>
+
+  <button class="back" onclick="location.href='index.html'">
+    ← मुख्य पेजवर जा
+  </button>
+</div>
+
+<script>
+function openFreeTests() {
+  window.location.href = "index.html#freeTestSeries";
+}
+
+function comingSoon() {
+  alert("हा विभाग लवकरच सुरू होईल!");
+}
+</script>
+
+</body>
+</html>
