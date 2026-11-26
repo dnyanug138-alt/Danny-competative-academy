@@ -1406,6 +1406,7 @@ let policeScore = 0;
 let policeTimer;
 let policeTimeLeft = 0;
 let policeResultSaved = false;
+let selectedFreeTestNumber = null;
 
   let policeAnswers = [];
 let policeMarked = [];
@@ -1495,6 +1496,104 @@ db.collection("mcqQuestions")
     }
   }, 1000);
 }
+  
+function openFreeTest(testNumber) {
+
+  if (testNumber === 1) {
+    startFreeTest1();
+    return;
+  }
+
+  selectedFreeTestNumber = Number(testNumber);
+
+  policeIndex = 0;
+  policeScore = 0;
+  policeResultSaved = false;
+  policeTimeLeft = 90 * 60;
+  policeAnswers = [];
+  policeMarked = [];
+  policeCurrentQuestion = 0;
+
+  clearInterval(policeTimer);
+
+  const quiz = document.getElementById("policeQuiz");
+  quiz.innerHTML = "<h3>प्रश्न लोड होत आहेत...</h3>";
+
+  policeQuestions = [];
+
+  db.collection("mcqQuestions")
+    .where("exam", "==", "Police Bharti")
+    .where("testNumber", "==", selectedFreeTestNumber)
+    .get()
+
+    .then((snapshot) => {
+
+      snapshot.forEach((doc) => {
+        const data = doc.data();
+
+        policeQuestions.push({
+          q: data.question,
+          options: [
+            data.options.A,
+            data.options.B,
+            data.options.C,
+            data.options.D
+          ],
+          answer: ["A", "B", "C", "D"].indexOf(data.answer)
+        });
+      });
+
+      if (policeQuestions.length === 0) {
+        quiz.innerHTML =
+          "<h3>या टेस्टमध्ये अजून प्रश्न उपलब्ध नाहीत.</h3>";
+        return;
+      }
+
+      policeAnswers = [];
+      policeMarked = [];
+      policeIndex = 0;
+
+      showPoliceQuestion();
+
+      policeTimer = setInterval(function() {
+
+        policeTimeLeft--;
+
+        const timerDisplay =
+          document.getElementById("policeTimerDisplay");
+
+        if (timerDisplay) {
+          timerDisplay.innerText =
+            "वेळ: " +
+            String(Math.floor(policeTimeLeft / 60)).padStart(2, "0") +
+            ":" +
+            String(policeTimeLeft % 60).padStart(2, "0");
+        }
+
+        if (policeTimeLeft <= 0) {
+          clearInterval(policeTimer);
+          policeIndex = policeQuestions.length;
+          showPoliceQuestion();
+        }
+
+      }, 1000);
+
+    })
+
+    .catch((error) => {
+      quiz.innerHTML =
+        "<h3>प्रश्न लोड झाले नाहीत: " + error.message + "</h3>";
+    });
+}
+
+function retryPoliceTest() {
+  if (selectedFreeTestNumber !== null) {
+    openFreeTest(selectedFreeTestNumber);
+  } else {
+    startPoliceTest();
+  }
+        }
+  
 
 // SHOW POLICE QUESTION
 function showPoliceQuestion() {
@@ -1519,7 +1618,9 @@ function showPoliceQuestion() {
       .doc(user.uid)
       .collection("testResults")
       .add({
-        testName: "Police Bharti",
+        testName: selectedFreeTestNumber !== null
+  ? "Police Bharti - Free Test " + selectedFreeTestNumber
+  : "Police Bharti",
         score: policeScore,
         totalQuestions: policeQuestions.length,
         studentName: user.displayName || user.email || "Student",
@@ -1531,7 +1632,7 @@ function showPoliceQuestion() {
           <h3>टेस्ट पूर्ण झाली! 🎉</h3>
           <h2>तुमचे गुण: ${policeScore}/${policeQuestions.length}</h2>
           <p>निकाल यशस्वीपणे सेव्ह झाला!</p>
-          <button onclick="startPoliceTest()">पुन्हा टेस्ट द्या</button>
+          <button onclick="retryPoliceTest()">पुन्हा टेस्ट द्या</button>
         `;
       })
 
@@ -1542,7 +1643,7 @@ function showPoliceQuestion() {
           <h3>टेस्ट पूर्ण झाली!</h3>
           <h2>तुमचे गुण: ${policeScore}/${policeQuestions.length}</h2>
           <p>निकाल सेव्ह झाला नाही: ${error.message}</p>
-          <button onclick="startPoliceTest()">पुन्हा टेस्ट द्या</button>
+          <button onclick="retryPoliceTest()">पुन्हा टेस्ट द्या</button>
         `;
       });
 
