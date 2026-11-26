@@ -2739,11 +2739,12 @@ saveOperation
     msg.innerText = "Error: " + error.message;
     console.error(error);
   });
-
+       }
 
 function loadMCQQuestions() {
+}
 
-function editMCQ(docId) {
+function editMCQ(docId) {docId) {
 
   db.collection("mcqQuestions").doc(docId).get()
     .then((doc) => {
