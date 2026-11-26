@@ -1252,6 +1252,7 @@ function studentLogin() {
 auth.onAuthStateChanged(async function(user) {
 
   const dashboard = document.getElementById("studentDashboard");
+  console.log("Dashboard element:", dashboard);
   const adminPanel = document.getElementById("adminPanel");
 
   dashboard.style.display = "none";
