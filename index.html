@@ -1166,6 +1166,7 @@ Payment केले
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+  <script>
 const firebaseConfig = {
   apiKey: "AIzaSyAQlAw96dP_2TbMNsP94olt1Q4f-TB1kNQ",
   authDomain: "danny-competative-academy.firebaseapp.com",
@@ -2084,16 +2085,7 @@ firebase.auth().onAuthStateChanged(function(user) {
   }
 
 });
-const urlParams = new URLSearchParams(window.location.search);
-const selectedTest = Number(urlParams.get("freeTest"));
 
-if (selectedTest >= 1 && selectedTest <= 50) {
-  auth.onAuthStateChanged(function(user) {
-    if (user) {
-      openFreeTest(selectedTest);
-    }
-  });
-  }
 // Student Activity Check
 
 ["click", "touchstart", "pointerdown", "keydown", "scroll"]
