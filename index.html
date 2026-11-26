@@ -964,24 +964,70 @@ button:hover {
 
   
 
+
+
 <!-- STUDENT SIGNUP / LOGIN -->
 
-<div style="max-width:350px;margin:30px auto;padding:20px;background:white;border:1px solid #ddd;border-radius:12px;">
+<div id="studentAuth" style="max-width:350px;margin:30px auto;padding:20px;background:white;border:1px solid #ddd;border-radius:12px;">
 
-<h2>Student Signup / Login</h2>
+  <h2 style="text-align:center;">🎓 Student Account</h2>
 
-<input id="studentName" type="text" placeholder="Full Name">
+  <div id="authOptions">
+    <button onclick="showStudentSignup()" style="width:100%;margin:8px 0;">
+      📝 New Student - Register
+    </button>
+    <button onclick="showStudentLogin()" style="width:100%;margin:8px 0;">
+      🔐 Already Registered - Login
+    </button>
+  </div>
 
-<input id="emailBox" type="email" placeholder="Email Address">
+  <div id="studentForm" style="display:none;">
+    <h3 id="formTitle"></h3>
 
-<input id="passBox" type="password" placeholder="Password">
+    <input id="studentName" type="text" placeholder="Full Name">
+    <input id="emailBox" type="email" placeholder="Email Address">
+    <input id="passBox" type="password" placeholder="Password">
 
-<button onclick="studentSignup()">Create Account</button>
+    <button id="signupButton" onclick="studentSignup()">Create Account</button>
+    <button id="loginButton" onclick="studentLogin()" style="display:none;">Login</button>
+    <button onclick="showAuthOptions()">Back</button>
+  </div>
 
-<button onclick="studentLogin()">Login</button>
-
-<p id="emailMessage"></p>
+  <p id="emailMessage"></p>
 </div>
+
+<script>
+function showStudentSignup() {
+  document.getElementById("authOptions").style.display = "none";
+  document.getElementById("studentForm").style.display = "block";
+  document.getElementById("formTitle").innerText = "New Student Register";
+  document.getElementById("studentName").style.display = "block";
+  document.getElementById("signupButton").style.display = "inline-block";
+  document.getElementById("loginButton").style.display = "none";
+  document.getElementById("emailMessage").innerText = "";
+}
+
+function showStudentLogin() {
+  document.getElementById("authOptions").style.display = "none";
+  document.getElementById("studentForm").style.display = "block";
+  document.getElementById("formTitle").innerText = "Student Login";
+  document.getElementById("studentName").style.display = "none";
+  document.getElementById("signupButton").style.display = "none";
+  document.getElementById("loginButton").style.display = "inline-block";
+  document.getElementById("emailMessage").innerText = "";
+}
+
+function showAuthOptions() {
+  document.getElementById("authOptions").style.display = "block";
+  document.getElementById("studentForm").style.display = "none";
+  document.getElementById("studentName").value = "";
+  document.getElementById("emailBox").value = "";
+  document.getElementById("passBox").value = "";
+  document.getElementById("emailMessage").innerText = "";
+}
+</script>
+
+
 
 <!-- STUDENT DASHBOARD -->
 
