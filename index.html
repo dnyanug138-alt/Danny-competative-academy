@@ -1041,60 +1041,20 @@ function showAuthOptions() {
 <p>विद्यार्थ्यांसाठी 10 मोफत टेस्ट सीरिज</p>
 
 
-<div id="freeTestSeries">
+<div id="freeTestSeries"></div>
 
-  <div class="test-item">
-    <span>Free Test 1</span>
-    <button onclick="openFreeTest(1)">Start Test</button>
-  </div>
+<script>
+  const testSeries = document.getElementById("freeTestSeries");
 
-  <div class="test-item">
-    <span>Free Test 2</span>
-    <button onclick="openFreeTest(2)">Start Test</button>
-  </div>
-
-  <div class="test-item">
-    <span>Free Test 3</span>
-    <button onclick="openFreeTest(3)">Start Test</button>
-  </div>
-
-  <div class="test-item">
-    <span>Free Test 4</span>
-    <button onclick="openFreeTest(4)">Start Test</button>
-  </div>
-
-  <div class="test-item">
-    <span>Free Test 5</span>
-    <button onclick="openFreeTest(5)">Start Test</button>
-  </div>
-
-  <div class="test-item">
-    <span>Free Test 6</span>
-    <button onclick="openFreeTest(6)">Start Test</button>
-  </div>
-
-  <div class="test-item">
-    <span>Free Test 7</span>
-    <button onclick="openFreeTest(7)">Start Test</button>
-  </div>
-
-  <div class="test-item">
-    <span>Free Test 8</span>
-    <button onclick="openFreeTest(8)">Start Test</button>
-  </div>
-
-  <div class="test-item">
-    <span>Free Test 9</span>
-    <button onclick="openFreeTest(9)">Start Test</button>
-  </div>
-
-  <div class="test-item">
-    <span>Free Test 10</span>
-    <button onclick="openFreeTest(10)">Start Test</button>
-  </div>
-
-</div>
-
+  for (let i = 1; i <= 50; i++) {
+    testSeries.innerHTML += `
+      <div class="test-item">
+        <span>Free Test ${i}</span>
+        <button onclick="openFreeTest(${i})">Start Test</button>
+      </div>
+    `;
+  }
+</script>
 
 <div id="freeTestArea"></div>
 
@@ -1543,10 +1503,7 @@ db.collection("mcqQuestions")
   
 function openFreeTest(testNumber) {
 
-  if (testNumber === 1) {
-    startFreeTest1();
-    return;
-  }
+  
 
   selectedFreeTestNumber = Number(testNumber);
 
@@ -1588,6 +1545,12 @@ function openFreeTest(testNumber) {
       });
 
       if (policeQuestions.length === 0) {
+        if (policeQuestions.length !== 100) {
+  quiz.innerHTML =
+    "<h3>या टेस्टमध्ये 100 प्रश्न असणे आवश्यक आहे. सध्या " +
+    policeQuestions.length + " प्रश्न उपलब्ध आहेत.</h3>";
+  return;
+        }
         quiz.innerHTML =
           "<h3>या टेस्टमध्ये अजून प्रश्न उपलब्ध नाहीत.</h3>";
         return;
@@ -1854,6 +1817,8 @@ function policeSubmitTest() {
 <label>Police Bharti Test निवडा:</label>
 
 <select id="mcqTestNumber">
+  <option value="">Test निवडा</option>
+  <option value="1">Free Test 1</option>
   <option value="2">Free Test 2</option>
   <option value="3">Free Test 3</option>
   <option value="4">Free Test 4</option>
@@ -1863,6 +1828,46 @@ function policeSubmitTest() {
   <option value="8">Free Test 8</option>
   <option value="9">Free Test 9</option>
   <option value="10">Free Test 10</option>
+  <option value="11">Free Test 11</option>
+  <option value="12">Free Test 12</option>
+  <option value="13">Free Test 13</option>
+  <option value="14">Free Test 14</option>
+  <option value="15">Free Test 15</option>
+  <option value="16">Free Test 16</option>
+  <option value="17">Free Test 17</option>
+  <option value="18">Free Test 18</option>
+  <option value="19">Free Test 19</option>
+  <option value="20">Free Test 20</option>
+  <option value="21">Free Test 21</option>
+  <option value="22">Free Test 22</option>
+  <option value="23">Free Test 23</option>
+  <option value="24">Free Test 24</option>
+  <option value="25">Free Test 25</option>
+  <option value="26">Free Test 26</option>
+  <option value="27">Free Test 27</option>
+  <option value="28">Free Test 28</option>
+  <option value="29">Free Test 29</option>
+  <option value="30">Free Test 30</option>
+  <option value="31">Free Test 31</option>
+  <option value="32">Free Test 32</option>
+  <option value="33">Free Test 33</option>
+  <option value="34">Free Test 34</option>
+  <option value="35">Free Test 35</option>
+  <option value="36">Free Test 36</option>
+  <option value="37">Free Test 37</option>
+  <option value="38">Free Test 38</option>
+  <option value="39">Free Test 39</option>
+  <option value="40">Free Test 40</option>
+  <option value="41">Free Test 41</option>
+  <option value="42">Free Test 42</option>
+  <option value="43">Free Test 43</option>
+  <option value="44">Free Test 44</option>
+  <option value="45">Free Test 45</option>
+  <option value="46">Free Test 46</option>
+  <option value="47">Free Test 47</option>
+  <option value="48">Free Test 48</option>
+  <option value="49">Free Test 49</option>
+  <option value="50">Free Test 50</option>
 </select>
 
 <br><br>
@@ -2739,9 +2744,9 @@ function addMCQ() {
   }
 
   if (exam === "Police Bharti" &&
-      (!Number.isInteger(testNumber) || testNumber < 2 || testNumber > 10)) {
-    msg.innerText = "योग्य Test Number निवडा.";
-    return;
+    (!Number.isInteger(testNumber) || testNumber < 1 || testNumber > 50)) {
+  msg.innerText = "Test Number 1 ते 50 निवडा.";
+  return;
   }
 
   
@@ -2766,6 +2771,7 @@ saveOperation
   .then(() => {
     editingMCQId = null;
     msg.innerText = "प्रश्न यशस्वीपणे Save / Update झाला!";
+    loadMCQQuestions();
 
     document.getElementById("mcqQuestion").value = "";
     document.getElementById("optionA").value = "";
@@ -2780,6 +2786,70 @@ saveOperation
        }
 
 function loadMCQQuestions() {
+
+  const list = document.getElementById("mcqQuestionList");
+
+  list.innerHTML = "प्रश्न लोड होत आहेत...";
+
+  db.collection("mcqQuestions").get()
+
+    .then(snapshot => {
+
+      list.innerHTML = "";
+
+      if (snapshot.empty) {
+        list.innerHTML = "अजून प्रश्न उपलब्ध नाहीत.";
+        return;
+      }
+
+      const questions = [];
+
+      snapshot.forEach(doc => {
+        questions.push({
+          id: doc.id,
+          ...doc.data()
+        });
+      });
+
+      questions.sort((a, b) =>
+        (a.testNumber || 0) - (b.testNumber || 0)
+      );
+
+      questions.forEach(data => {
+
+        const item = document.createElement("div");
+        item.className = "notice-item";
+
+        const title = document.createElement("h4");
+        title.textContent =
+          data.exam + " - Test " + (data.testNumber || "-");
+
+        const question = document.createElement("p");
+        question.textContent = data.question;
+
+        const editButton = document.createElement("button");
+        editButton.textContent = "✏️ Edit";
+        editButton.onclick = () => editMCQ(data.id);
+
+        const deleteButton = document.createElement("button");
+        deleteButton.textContent = "🗑️ Delete";
+        deleteButton.onclick = () => deleteMCQ(data.id);
+
+        item.appendChild(title);
+        item.appendChild(question);
+        item.appendChild(editButton);
+        item.appendChild(deleteButton);
+
+        list.appendChild(item);
+
+      });
+
+    })
+
+    .catch(error => {
+      list.innerHTML = "प्रश्न लोड झाले नाहीत: " + error.message;
+      console.error(error);
+    });
 }
 
 function editMCQ(docId) {
