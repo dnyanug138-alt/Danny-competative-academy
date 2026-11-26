@@ -1275,7 +1275,9 @@ auth.onAuthStateChanged(async function(user) {
       dashboard.style.display = "block";
       adminPanel.style.display = "none";
 
-      loadLeaderboard();
+      if (typeof loadLeaderboard === "function") {
+  loadLeaderboard();
+}
 
       document.getElementById("studentNameDisplay").innerText =
         "Student Name: " + (user.displayName || "Student");
