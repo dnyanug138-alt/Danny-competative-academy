@@ -1262,6 +1262,7 @@ auth.onAuthStateChanged(async function(user) {
   if (!user) return;
 
   try {
+    console.log("Auth State User:", user.email, user.uid);
     const adminDoc = await db.collection("Admins")
       .doc(user.uid).get();
 
