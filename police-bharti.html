@@ -66,6 +66,19 @@ body {
   color: white;
   border: none;
   border-radius: 8px;
+}#freeTestSeries {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  padding: 12px;
+}
+
+.test-item {
+  background: white;
+  padding: 15px 8px;
+  border-radius: 10px;
+  text-align: center;
+  box-shadow: 0 2px 8px #00000012;
 }
 </style>
 </head>
@@ -77,7 +90,11 @@ body {
   <h3>पोलीस भरती अभ्यास केंद्र</h3>
   <p>Online Mock Test & Study Platform</p>
 </div>
+<div id="freeTestsSection" style="display:none;">
+  <h2 style="text-align:center;">📝 Free Mock Test 1 ते 50</h2>
 
+  <div id="freeTestSeries"></div>
+</div>
 <div class="container">
   <h2 style="text-align:center;">📚 पोलीस भरती विभाग</h2>
 
@@ -127,11 +144,27 @@ body {
 
 <script>
 function openFreeTests() {
-  window.location.href = "index.html#freeTestSeries";
+  document.getElementById("freeTestsSection").style.display = "block";
 }
 
 function comingSoon() {
   alert("हा विभाग लवकरच सुरू होईल!");
+}
+  const testSeries = document.getElementById("freeTestSeries");
+
+for (let i = 1; i <= 50; i++) {
+  testSeries.innerHTML += `
+    <div class="test-item">
+      <h3>Free Test ${i}</h3>
+      <button onclick="selectFreeTest(${i})">
+        Start Test →
+      </button>
+    </div>
+  `;
+}
+
+function selectFreeTest(testNumber) {
+  alert("Free Test " + testNumber + " निवडली आहे.");
 }
 </script>
 
