@@ -1287,6 +1287,7 @@ auth.onAuthStateChanged(async function(user) {
     dashboard.style.display = "none";
     adminPanel.style.display = "none";
     console.error("Admin check error:", error);
+    alert("Dashboard Error: " + error.message);
   }
 
 });
