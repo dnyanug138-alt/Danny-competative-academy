@@ -2661,8 +2661,8 @@ function loadDashboardSummary() {
 }
   
 
+
 function addMCQ() {
-  alert("MCQ Function चालू आहे!");
 
   const exam = document.getElementById("mcqExam").value;
 
@@ -2680,6 +2680,12 @@ function addMCQ() {
 
   if (!question || !A || !B || !C || !D) {
     msg.innerText = "कृपया सर्व माहिती भरा.";
+    return;
+  }
+
+  if (exam === "Police Bharti" &&
+      (!Number.isInteger(testNumber) || testNumber < 2 || testNumber > 10)) {
+    msg.innerText = "योग्य Test Number निवडा.";
     return;
   }
 
@@ -2702,8 +2708,10 @@ function addMCQ() {
   })
   .catch(error => {
     msg.innerText = "Error: " + error.message;
+    console.error(error);
   });
 }
+
 
   
 function startFirestoreTest() {
