@@ -2216,11 +2216,11 @@ loadLiveNews();
 
 // FREE MOCK TEST SERIES
 
-function openFreeTest(testNumber) {
+function startAdminFreeTest(testNumber) {
 
-  if (testNumber !== 1) {
-    alert("ही टेस्ट लवकरच उपलब्ध होईल!");
-    return;
+  if (Number(testNumber) !== 1) {
+  startAdminFreeTest(testNumber);
+  return;
   }
 
   let allQuestions = [
