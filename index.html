@@ -2669,7 +2669,8 @@ function loadDashboardSummary() {
 }
   
 
-
+editingMCQId = null;
+  
 function addMCQ() {
 
   const exam = document.getElementById("mcqExam").value;
@@ -2697,16 +2698,28 @@ function addMCQ() {
     return;
   }
 
-  db.collection("mcqQuestions").add({
-    exam: exam,
-    testNumber: testNumber,
-    question: question,
-    options: { A, B, C, D },
-    answer: answer,
-    createdAt: firebase.firestore.FieldValue.serverTimestamp()
-  })
+  
+const saveOperation = editingMCQId
+  ? db.collection("mcqQuestions").doc(editingMCQId).update({
+      exam: exam,
+      testNumber: testNumber,
+      question: question,
+      options: { A, B, C, D },
+      answer: answer
+    })
+  : db.collection("mcqQuestions").add({
+      exam: exam,
+      testNumber: testNumber,
+      question: question,
+      options: { A, B, C, D },
+      answer: answer,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+
+saveOperation
   .then(() => {
-    msg.innerText = "प्रश्न यशस्वीपणे Save झाला!";
+    editingMCQId = null;
+    msg.innerText = "प्रश्न यशस्वीपणे Save / Update झाला!";
 
     document.getElementById("mcqQuestion").value = "";
     document.getElementById("optionA").value = "";
@@ -2718,83 +2731,79 @@ function addMCQ() {
     msg.innerText = "Error: " + error.message;
     console.error(error);
   });
-}
+
 
 function loadMCQQuestions() {
 
-  const exam = document.getElementById("mcqExam").value;
+function editMCQ(docId) {
 
-  const testNumber = exam === "Police Bharti"
-    ? Number(document.getElementById("mcqTestNumber").value)
-    : null;
+  db.collection("mcqQuestions").doc(docId).get()
+    .then((doc) => {
 
-  const list = document.getElementById("mcqQuestionList");
-
-  list.innerHTML = "प्रश्न लोड होत आहेत...";
-
-  db.collection("mcqQuestions")
-    .where("exam", "==", exam)
-    .where("testNumber", "==", testNumber)
-    .get()
-
-    .then((snapshot) => {
-
-      list.innerHTML = "";
-
-      if (snapshot.empty) {
-        list.innerHTML = "या टेस्टमध्ये प्रश्न उपलब्ध नाहीत.";
+      if (!doc.exists) {
+        alert("प्रश्न सापडला नाही!");
         return;
       }
 
-      snapshot.forEach((doc) => {
+      const data = doc.data();
 
-        const data = doc.data();
+      editingMCQId = docId;
 
-        const item = document.createElement("div");
-        item.style.border = "1px solid gray";
-        item.style.padding = "10px";
-        item.style.margin = "10px 0";
+      document.getElementById("mcqExam").value = data.exam;
 
-        const question = document.createElement("p");
-        question.textContent = data.question;
+      if (data.testNumber !== null) {
+        document.getElementById("mcqTestNumber").value =
+          data.testNumber;
+      }
 
-        const options = document.createElement("p");
-        options.textContent =
-          "A. " + data.options.A + " | " +
-          "B. " + data.options.B + " | " +
-          "C. " + data.options.C + " | " +
-          "D. " + data.options.D;
+      document.getElementById("mcqQuestion").value =
+        data.question;
 
-        const answer = document.createElement("p");
-        answer.textContent = "योग्य उत्तर: " + data.answer;
+      document.getElementById("optionA").value =
+        data.options.A;
 
-        const editButton = document.createElement("button");
-        editButton.textContent = "✏️ Edit";
-        editButton.onclick = function() {
-          editMCQ(doc.id);
-        };
+      document.getElementById("optionB").value =
+        data.options.B;
 
-        const deleteButton = document.createElement("button");
-        deleteButton.textContent = "🗑️ Delete";
-        deleteButton.onclick = function() {
-          deleteMCQ(doc.id);
-        };
+      document.getElementById("optionC").value =
+        data.options.C;
 
-        item.appendChild(question);
-        item.appendChild(options);
-        item.appendChild(answer);
-        item.appendChild(editButton);
-        item.appendChild(deleteButton);
+      document.getElementById("optionD").value =
+        data.options.D;
 
-        list.appendChild(item);
-      });
+      document.getElementById("correctAnswer").value =
+        data.answer;
+
+      document.getElementById("mcqMessage").innerText =
+        "प्रश्न Edit करण्यासाठी तयार आहे. बदल करून Save करा.";
+
+      window.scrollTo(0, 0);
 
     })
     .catch((error) => {
-      list.innerHTML = "Error: " + error.message;
+      alert("Error: " + error.message);
+    });
+}
+
+function deleteMCQ(docId) {
+
+  if (!confirm("हा प्रश्न कायमचा Delete करायचा आहे का?")) {
+    return;
+  }
+
+  db.collection("mcqQuestions").doc(docId).delete()
+
+    .then(() => {
+      alert("प्रश्न यशस्वीपणे Delete झाला!");
+      loadMCQQuestions();
+    })
+
+    .catch((error) => {
+      alert("Delete Error: " + error.message);
       console.error(error);
     });
-  }
+}
+  
   
 
   
