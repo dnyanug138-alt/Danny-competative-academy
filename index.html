@@ -399,6 +399,21 @@ button:hover {
 .cbt-palette button{margin:0;padding:10px 4px}
 .exam-test-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(175px,1fr));gap:10px;margin-top:14px}
 .exam-test-card{background:#fff;border:1px solid #dce4ef;border-radius:10px;padding:12px;text-align:center}
+
+/* DESKTOP LAYOUT POLISH */
+@media (min-width: 900px) {
+  body { text-align: center; }
+  .site-header { padding: 18px clamp(24px, 4vw, 64px); }
+  .site-header nav { flex-wrap: wrap; justify-content: flex-end; align-items: center; }
+  .container, #homeSections { max-width: 1320px; padding-left: 28px; padding-right: 28px; }
+  .test-series-grid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:20px; }
+  .test-series-grid .card { max-width:none; width:100%; margin:0; }
+  #latestNewsSection, .notice-board, .welcome-section { max-width:1320px; }
+  #examHub { width: min(100% - 56px, 1320px); }
+}
+.test-series-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:16px; }
+#examInlineArea .cbt-shell { max-width:100%; margin:12px 0; }
+
 </style>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
@@ -566,6 +581,9 @@ button:hover {
       <p id="genericExamCategoryText">हा विभाग लवकरच उपलब्ध होईल.</p>
     </div>
   </div>
+  <div id="examInlineArea" style="display:none;margin-top:18px;text-align:left;">
+    <button type="button" onclick="backToExamTests()">← टेस्ट यादीकडे जा</button>
+  </div>
   <button type="button" onclick="closeExamHub()">← मागे जा</button>
 </section>
 
@@ -594,53 +612,7 @@ button:hover {
 </div>
 
 
-<div class="card" style="border-left:5px solid #ff9800; margin:20px 0;">
- 
-<div class="container" style="margin:25px auto;">
-  <h2 style="text-align:center;">📚 परीक्षा विभाग</h2>
-  <p style="text-align:center;">तुमच्या आवडीची परीक्षा निवडा</p>
 
-  <div style="display:grid; grid-template-columns:repeat(2,1fr); gap:12px;">
-
-    <div class="card" style="text-align:center;background:#e3f2fd;">
-  <h3>👮 पोलीस भरती</h3>
-  <p>ऑनलाइन Mock Test</p>
-  <button onclick="showExamHub('police')">
-    Test सुरू करा →
-  </button>
-</div>
-    <div class="card" style="text-align:center;background:#e8f5e9;">
-      <h3>📋 तलाठी भरती</h3>
-      <p>नोट्स आणि सराव</p>
-      <button type="button" onclick="showExamHub('talathi')">Start Test →</button>
-    </div>
-
-    <div class="card" style="text-align:center;background:#fff3e0;">
-      <h3>🏛️ MPSC</h3>
-      <p>अभ्यास साहित्य</p>
-      <button type="button" onclick="showExamHub('mpsc')">Start Test →</button>
-    </div>
-
-    <div class="card" style="text-align:center;background:#f3e5f5;">
-      <h3>🚆 रेल्वे भरती</h3>
-      <p>प्रश्नपत्रिका आणि सराव</p>
-      <button type="button" onclick="showExamHub('railway')">Start Test →</button>
-    </div>
-
-    <div class="card" style="text-align:center;background:#fce4ec;">
-      <h3>🏦 बँकिंग</h3>
-      <p>गणित आणि बुद्धिमत्ता</p>
-      <button type="button" onclick="showExamHub('banking')">Start Test →</button>
-    </div>
-
-    <div class="card" style="text-align:center;background:#e0f2f1;">
-      <h3>📝 SSC</h3>
-      <p>नोट्स आणि Mock Test</p>
-      <button type="button" onclick="showExamHub('ssc')">Start Test →</button>
-    </div>
-
-  </div>
-</div>
   <div class="container" id="courses">
 <div class="container" id="coursesSecondary">
   <div class="notice-board">
@@ -2282,6 +2254,37 @@ function closeSelectedNews() {
 
 loadLiveNews();
 
+// AUTOMATIC LIVE NEWS: Google News RSS (Marathi/Maharashtra) + Admin-posted Firestore news.
+async function loadAutomaticLiveNews() {
+  const list = document.getElementById("latestNewsList");
+  if (!list) return;
+  try {
+    const feedUrl = "https://news.google.com/rss/search?q=Maharashtra+India+government+jobs+OR+current+affairs&hl=mr&gl=IN&ceid=IN:mr";
+    const apiUrl = "https://api.rss2json.com/v1/api.json?rss_url=" + encodeURIComponent(feedUrl);
+    const response = await fetch(apiUrl);
+    if (!response.ok) throw new Error("News feed unavailable");
+    const payload = await response.json();
+    if (payload.status !== "ok" || !Array.isArray(payload.items) || !payload.items.length) throw new Error("No news items");
+    list.innerHTML = "";
+    payload.items.slice(0, 8).forEach(item => {
+      const article = document.createElement("article");
+      article.className = "notice-item";
+      const link = document.createElement("a");
+      link.href = item.link; link.target = "_blank"; link.rel = "noopener noreferrer";
+      link.textContent = item.title || "ताजी बातमी";
+      link.style.cssText = "font-weight:bold;color:#123b68;text-decoration:none";
+      const date = document.createElement("small");
+      date.style.display = "block"; date.textContent = item.pubDate ? new Date(item.pubDate).toLocaleString("mr-IN") : "ताजे अपडेट";
+      article.append(link, date); list.appendChild(article);
+    });
+  } catch (error) {
+    if (!list.children.length) list.textContent = "Automatic Live News सध्या उपलब्ध नाही. Admin Panel मधील बातम्या खाली दिसतील.";
+    console.warn("Automatic news feed:", error);
+  }
+}
+loadAutomaticLiveNews();
+setInterval(loadAutomaticLiveNews, 15 * 60 * 1000);
+
 // FREE MOCK TEST SERIES
 
 function startAdminFreeTest(testNumber) {
@@ -2722,6 +2725,8 @@ function showExamHub(examKey) {
   document.getElementById("examHubTitle").textContent = examNames[activeExamKey] + " अभ्यास केंद्र";
   document.getElementById("examHubSubtitle").textContent = examNames[activeExamKey] + " साठी Free आणि Paid टेस्ट, Study Material, Old Papers व Current Affairs";
   document.getElementById("examCategoryContent").style.display = "none";
+  const inlineArea = document.getElementById("examInlineArea");
+  if (inlineArea) inlineArea.style.display = "none";
   hub.style.display = "block";
   hub.scrollIntoView({behavior:"smooth", block:"start"});
 }
@@ -2785,9 +2790,32 @@ function startExamTestFromHome(examKey, testType, testNumber) {
     if (options) options.style.display = "block";
     return;
   }
-  document.getElementById("studentDashboard").style.display = "block";
-  document.getElementById("studentDashboard").scrollIntoView({behavior:"smooth", block:"start"});
+  const hub = document.getElementById("examHub");
+  const inlineArea = document.getElementById("examInlineArea");
+  const quiz = document.getElementById("policeQuiz");
+  if (!hub || !inlineArea || !quiz) { alert("परीक्षा सुरू करण्यासाठी आवश्यक भाग सापडला नाही."); return; }
+  hub.style.display = "block";
+  document.getElementById("examCategoryContent").style.display = "none";
+  inlineArea.style.display = "block";
+  inlineArea.appendChild(quiz);
+  quiz.style.display = "block";
+  const backButton = inlineArea.querySelector("button");
+  if (backButton) backButton.style.display = "inline-block";
+  document.getElementById("examHubTitle").textContent = (examNames[examKey] || "परीक्षा") + " - परीक्षा सुरू";
+  quiz.scrollIntoView({behavior:"smooth", block:"start"});
   startExamCBT(examKey, testType, testNumber);
+}
+
+function backToExamTests() {
+  clearInterval(policeTimer);
+  const inlineArea = document.getElementById("examInlineArea");
+  const quiz = document.getElementById("policeQuiz");
+  if (quiz) { quiz.innerHTML = ""; quiz.style.display = "none"; }
+  if (inlineArea) inlineArea.style.display = "none";
+  document.getElementById("examCategoryContent").style.display = "block";
+  document.getElementById("examTestListSection").style.display = "block";
+  document.getElementById("examHubTitle").textContent = (examNames[activeExamKey] || "परीक्षा") + " अभ्यास केंद्र";
+  document.getElementById("examHub").scrollIntoView({behavior:"smooth", block:"start"});
 }
 
 function startPoliceFreeTestFromHome(testNumber) {
