@@ -387,6 +387,18 @@ button:hover {
   }
 }
   
+
+.student-nav-link{background:#fff;color:#123b68!important;padding:9px 14px;border-radius:8px;font-weight:700;border:2px solid #d9e8ff}
+.student-nav-link:hover{background:#eaf3ff}
+#studentAuthPanel{scroll-margin-top:90px;border:2px solid #1769aa}
+.cbt-shell{max-width:1050px;margin:18px auto;padding:14px;background:#f5f7fb;border:1px solid #d7dfeb;border-radius:12px;text-align:left}
+.cbt-topbar{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;background:#102b50;color:#fff;padding:14px;border-radius:9px}
+.cbt-question{background:#fff;padding:18px;margin:14px 0;border:1px solid #dbe3ef;border-radius:9px}
+.cbt-option{display:block;background:#fff;padding:12px;margin:9px 0;border:1px solid #ccd6e5;border-radius:8px;text-align:left}
+.cbt-palette{display:grid;grid-template-columns:repeat(auto-fill,minmax(42px,1fr));gap:7px;margin:12px 0}
+.cbt-palette button{margin:0;padding:10px 4px}
+.exam-test-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(175px,1fr));gap:10px;margin-top:14px}
+.exam-test-card{background:#fff;border:1px solid #dce4ef;border-radius:10px;padding:12px;text-align:center}
 </style>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
@@ -427,7 +439,7 @@ button:hover {
     <a href="#courses">Courses</a>
     <a href="#premiumSeries">🏆 Premium Plans</a>
     <a href="#studyGuidance">📚 अभ्यास मार्गदर्शन</a>
-    <a href="#studentAuthPanel">Student Login</a>
+    <a href="#studentAuthPanel" class="student-nav-link">🎓 Student Login</a>
     <a href="#adminLoginPage" class="admin-nav-link">🔐 Admin Login</a>
     <a href="#aboutUs">About Us</a>
 <a href="#contactUs">Contact Us</a>
@@ -546,9 +558,9 @@ button:hover {
   </div>
   <div id="examCategoryContent" style="display:none;margin-top:22px;">
     <h3 id="examCategoryTitle"></h3>
-    <div id="policeFreeTestsSection" style="display:none;margin-top:15px;">
-      <p>प्रत्येक टेस्टमध्ये 100 प्रश्न आणि 90 मिनिटांचा कालावधी आहे.</p>
-      <div id="policeFreeTestSeries" class="police-free-test-grid"></div>
+    <div id="examTestListSection" style="display:none;margin-top:15px;">
+      <p>प्रत्येक टेस्टसाठी 100 प्रश्न आणि 90 मिनिटांचा कालावधी ठेवला आहे. प्रश्न Admin Panel मधून जोडा.</p>
+      <div id="examTestSeriesList" class="police-free-test-grid"></div>
     </div>
     <div id="genericExamCategory" class="card" style="display:none;">
       <p id="genericExamCategoryText">हा विभाग लवकरच उपलब्ध होईल.</p>
@@ -1060,7 +1072,8 @@ function showAuthOptions() {
 
 <!-- STUDENT LOGIN / REGISTRATION -->
 <section id="studentAuthPanel" class="card" style="max-width:500px;margin:25px auto;">
-  <h2>🎓 विद्यार्थी Login / Register</h2>
+  <h2>🎓 Student Login / Register</h2>
+  <p>Free किंवा Paid टेस्ट सुरू करण्यासाठी येथे Login करा. Login नसेल तर नवीन खाते तयार करा.</p>
   <div id="authOptions">
     <p>टेस्ट सुरू करण्यासाठी विद्यार्थी खाते वापरा.</p>
     <button type="button" onclick="showStudentLogin()">Student Login</button>
@@ -1460,6 +1473,8 @@ let policeTimer;
 let policeTimeLeft = 0;
 let policeResultSaved = false;
 let selectedFreeTestNumber = null;
+let selectedExamKey = "police";
+let selectedExamFirestoreName = "Police Bharti";
 
   let policeAnswers = [];
 let policeMarked = [];
@@ -1533,108 +1548,80 @@ db.collection("mcqQuestions")
 }
   
 function openFreeTest(testNumber) {
-  const number = Number(testNumber);
-  if (!Number.isInteger(number) || number < 1 || number > 50) {
-    alert("कृपया 1 ते 50 मधील टेस्ट निवडा.");
-    return;
-  }
-
-  selectedFreeTestNumber = number;
-
-  if (number === 1) {
-    document.getElementById("studentDashboard").scrollIntoView({behavior:"smooth"});
-    startFreeTest1();
-    return;
-  }
-
-  policeIndex = 0;
-  policeScore = 0;
-  policeResultSaved = false;
-  policeTimeLeft = 90 * 60;
-  policeAnswers = [];
-  policeMarked = [];
-  policeCurrentQuestion = 0;
-
-  clearInterval(policeTimer);
-
-  const quiz = document.getElementById("policeQuiz");
-  quiz.innerHTML = "<h3>प्रश्न लोड होत आहेत...</h3>";
-
-  policeQuestions = [];
-
-  db.collection("mcqQuestions")
-    .where("exam", "==", "Police Bharti")
-    .where("testNumber", "==", selectedFreeTestNumber)
-    .get()
-
-    .then((snapshot) => {
-
-      snapshot.forEach((doc) => {
-        const data = doc.data();
-
-        policeQuestions.push({
-          q: data.question,
-          options: [
-            data.options.A,
-            data.options.B,
-            data.options.C,
-            data.options.D
-          ],
-          answer: ["A", "B", "C", "D"].indexOf(data.answer)
-        });
-      });
-
-      if (policeQuestions.length !== 100) {
-  quiz.innerHTML =
-    "<h3>या टेस्टमध्ये 100 प्रश्न असणे आवश्यक आहे. सध्या " +
-    policeQuestions.length + " प्रश्न उपलब्ध आहेत.</h3>";
-  return;
+  startExamCBT("police", "free", Number(testNumber));
 }
 
-      policeAnswers = [];
-      policeMarked = [];
-      policeIndex = 0;
+async function startExamCBT(examKey, testType, testNumber) {
+  const examName = examFirestoreNames[examKey] || examFirestoreNames.police;
+  const type = testType === "paid" ? "paid" : "free";
+  const number = Number(testNumber);
+  if (!Number.isInteger(number) || number < 1 || number > 50) {
+    alert("कृपया 1 ते 50 मधील टेस्ट निवडा."); return;
+  }
+  selectedExamKey = examKey;
+  selectedExamFirestoreName = examName;
+  selectedTestType = type;
+  selectedFreeTestNumber = number;
+  activeTestName = examName + " - " + (type === "paid" ? "Paid" : "Free") + " Test " + number;
+  policeIndex = 0; policeScore = 0; policeResultSaved = false;
+  policeTimeLeft = 90 * 60; policeAnswers = []; policeMarked = [];
+  clearInterval(policeTimer);
+  const quiz = document.getElementById("policeQuiz");
+  const oldArea = document.getElementById("freeTestArea");
+  if (oldArea) oldArea.innerHTML = "";
+  quiz.innerHTML = '<div class="cbt-shell"><h3>प्रश्न लोड होत आहेत...</h3></div>';
 
-      showPoliceQuestion();
-
-      policeTimer = setInterval(function() {
-
-        policeTimeLeft--;
-
-        const timerDisplay =
-          document.getElementById("policeTimerDisplay");
-
-        if (timerDisplay) {
-          timerDisplay.innerText =
-            "वेळ: " +
-            String(Math.floor(policeTimeLeft / 60)).padStart(2, "0") +
-            ":" +
-            String(policeTimeLeft % 60).padStart(2, "0");
-        }
-
-        if (policeTimeLeft <= 0) {
-          clearInterval(policeTimer);
-          policeIndex = policeQuestions.length;
-          showPoliceQuestion();
-        }
-
-      }, 1000);
-
-    })
-
-    .catch((error) => {
-      quiz.innerHTML =
-        "<h3>प्रश्न लोड झाले नाहीत: " + error.message + "</h3>";
+  try {
+    const snapshot = await db.collection("mcqQuestions").get();
+    const docs = [];
+    snapshot.forEach(doc => {
+      const data = doc.data();
+      const savedType = String(data.testType || data.category || "free").toLowerCase();
+      if (data.exam === examName && Number(data.testNumber) === number && savedType === type) {
+        docs.push({id:doc.id, ...data});
+      }
     });
+    docs.sort((a,b) => (Number(a.questionNumber)||0) - (Number(b.questionNumber)||0));
+
+    policeQuestions = docs.map(data => ({
+      q: data.question,
+      options: [data.options?.A, data.options?.B, data.options?.C, data.options?.D],
+      answer: ["A","B","C","D"].indexOf(data.answer)
+    }));
+
+    // Preserve the existing built-in Police Free Test 1 if no Admin questions have been added yet.
+    if (!policeQuestions.length && examKey === "police" && type === "free" && number === 1) {
+      policeQuestions = [...freeTest1Marathi, ...freeTest1Math, ...freeTest1Reasoning, ...freeTest1GK].map(q => ({q:q.q, options:q.options, answer:q.answer}));
+    }
+    if (!policeQuestions.length) {
+      quiz.innerHTML = `<div class="cbt-shell"><h3>${activeTestName}</h3><p>या टेस्टमध्ये अजून प्रश्न जोडलेले नाहीत. Admin Panel मधून प्रश्न जोडा.</p></div>`;
+      return;
+    }
+    if (policeQuestions.length < 100) {
+      quiz.innerHTML = `<div class="cbt-shell"><h3>${activeTestName}</h3><p>या टेस्टमध्ये सध्या ${policeQuestions.length} प्रश्न आहेत. टेस्ट सुरू करण्यासाठी 100 प्रश्न पूर्ण करा.</p></div>`;
+      return;
+    }
+    policeAnswers = new Array(policeQuestions.length).fill(null);
+    policeMarked = new Array(policeQuestions.length).fill(false);
+    showPoliceQuestion();
+    policeTimer = setInterval(() => {
+      policeTimeLeft--;
+      const timerDisplay = document.getElementById("policeTimerDisplay");
+      if (timerDisplay) timerDisplay.textContent = "वेळ: " + String(Math.floor(policeTimeLeft/60)).padStart(2,"0") + ":" + String(policeTimeLeft%60).padStart(2,"0");
+      if (policeTimeLeft <= 0) { clearInterval(policeTimer); policeSubmitTest(true); }
+    }, 1000);
+  } catch (error) {
+    quiz.innerHTML = `<div class="cbt-shell"><h3>प्रश्न लोड झाले नाहीत</h3><p>${error.message}</p></div>`;
+  }
 }
 
 function retryPoliceTest() {
   if (selectedFreeTestNumber !== null) {
-    openFreeTest(selectedFreeTestNumber);
+    startExamCBT(selectedExamKey || "police", selectedTestType || "free", selectedFreeTestNumber);
   } else {
     startPoliceTest();
   }
-        }
+}
   
 
 // SHOW POLICE QUESTION
@@ -1661,9 +1648,7 @@ function showPoliceQuestion() {
         uid: user.uid,
         name: user.displayName || user.email || "Student",
         email: user.email || "",
-        testName: selectedFreeTestNumber !== null
-          ? "Police Bharti - Free Test " + selectedFreeTestNumber
-          : "Police Bharti",
+        testName: activeTestName || ("Police Bharti - Free Test " + selectedFreeTestNumber),
         score: policeScore,
         totalQuestions: policeQuestions.length,
         createdAt: firebase.firestore.FieldValue.serverTimestamp()
@@ -1699,17 +1684,15 @@ if (policeAnswers[policeIndex] === undefined) {
 }
 
 quiz.innerHTML = `
-  <div style="background:#102b50;color:white;padding:15px;border-radius:8px;">
-    <h3>🎓 Danny Academy - CBT Exam</h3>
-    <h3 id="policeTimerDisplay">वेळ: 90:00</h3>
-  </div>
-
-  <p>प्रश्न ${policeIndex + 1} / ${policeQuestions.length}</p>
+  <div class="cbt-shell">
+    <div class="cbt-topbar"><strong>🎓 PRAYAG STUDY HUB • CBT EXAM</strong><strong>${activeTestName}</strong><strong id="policeTimerDisplay">वेळ: ${String(Math.floor(policeTimeLeft/60)).padStart(2,"0")}:${String(policeTimeLeft%60).padStart(2,"0")}</strong></div>
+    <div class="cbt-question">
+  <p><strong>प्रश्न ${policeIndex + 1} / ${policeQuestions.length}</strong></p>
 
   <h3>${q.q}</h3>
 
   ${q.options.map((option, i) => `
-    <label style="display:block;padding:12px;margin:8px;border:1px solid #ccc;border-radius:6px;">
+    <label class="cbt-option">
       <input type="radio" name="policeOption"
         value="${i}"
         ${policeAnswers[policeIndex] === i ? "checked" : ""}
@@ -1726,13 +1709,15 @@ quiz.innerHTML = `
   <div style="display:flex;flex-wrap:wrap;gap:6px;">
     ${policeQuestions.map((item, i) => `
       <button onclick="policeGoTo(${i})"
-        style="padding:10px;background:${i === policeIndex ? '#1769aa' : policeAnswers[i] !== null && policeAnswers[i] !== undefined ? '#198754' : '#ddd'};color:${i === policeIndex || policeAnswers[i] !== null && policeAnswers[i] !== undefined ? 'white' : 'black'}">
+        style="padding:10px;background:${i === policeIndex ? '#1769aa' : policeMarked[i] ? '#f0ad4e' : policeAnswers[i] !== null && policeAnswers[i] !== undefined ? '#198754' : '#ddd'};color:${i === policeIndex || policeMarked[i] || (policeAnswers[i] !== null && policeAnswers[i] !== undefined) ? 'white' : 'black'}">
         ${i + 1}
       </button>
     `).join("")}
   </div>
 
   <button onclick="policeSubmitTest()">Submit Test</button>
+    </div>
+  </div>
 `;
 }
 
@@ -1767,8 +1752,8 @@ function policeGoTo(index) {
   showPoliceQuestion();
 }
 
-function policeSubmitTest() {
-  if (!confirm("तुम्हाला टेस्ट Submit करायची आहे का?")) return;
+function policeSubmitTest(autoSubmit = false) {
+  if (!autoSubmit && !confirm("तुम्हाला टेस्ट Submit करायची आहे का?")) return;
 
   policeScore = 0;
 
@@ -2714,13 +2699,19 @@ async function loadLeaderboard() {
 }
   
 const examNames = {
-  police: "👮 पोलीस भरती", talathi: "📋 तलाठी भरती",
-  health: "🏥 आरोग्य सेवक", sscchsl: "📝 SSC CHSL",
-  ssccgl: "🎓 SSC CGL", groupc: "🏛️ Combined Group C",
-  railway: "🚆 रेल्वे भरती", mpsc: "📚 MPSC",
-  banking: "🏦 बँकिंग", ssc: "📝 SSC"
+  police: "पोलीस भरती", talathi: "तलाठी भरती", health: "आरोग्य सेवक",
+  sscchsl: "SSC CHSL", ssccgl: "SSC CGL", groupc: "Combined Group C",
+  railway: "रेल्वे भरती", mpsc: "MPSC", banking: "बँकिंग", ssc: "SSC"
+};
+const examFirestoreNames = {
+  police:"Police Bharti", talathi:"Talathi Bharti", health:"Health Worker",
+  sscchsl:"SSC CHSL", ssccgl:"SSC CGL", groupc:"Combined Group C",
+  railway:"Railway", mpsc:"MPSC", banking:"Banking", ssc:"SSC"
 };
 let activeExamKey = "police";
+let activeExamCategory = "free";
+let selectedTestType = "free";
+let activeTestName = "Police Bharti - Free Test 1";
 
 function showExamHub(examKey) {
   activeExamKey = examNames[examKey] ? examKey : "police";
@@ -2729,8 +2720,7 @@ function showExamHub(examKey) {
   if (grid) grid.style.display = "none";
   if (!hub) { alert("परीक्षा विभाग सापडला नाही. पेज Refresh करा."); return; }
   document.getElementById("examHubTitle").textContent = examNames[activeExamKey] + " अभ्यास केंद्र";
-  document.getElementById("examHubSubtitle").textContent =
-    examNames[activeExamKey] + " साठी Free Mock Test, Paid Mock Test, Study Material, Old Question Papers आणि Current Affairs";
+  document.getElementById("examHubSubtitle").textContent = examNames[activeExamKey] + " साठी Free आणि Paid टेस्ट, Study Material, Old Papers व Current Affairs";
   document.getElementById("examCategoryContent").style.display = "none";
   hub.style.display = "block";
   hub.scrollIntoView({behavior:"smooth", block:"start"});
@@ -2740,26 +2730,43 @@ function showTalathiTests() { showExamHub("talathi"); }
 
 function showExamCategory(category) {
   const content = document.getElementById("examCategoryContent");
-  const policeFree = document.getElementById("policeFreeTestsSection");
+  const tests = document.getElementById("examTestListSection");
   const generic = document.getElementById("genericExamCategory");
   const title = document.getElementById("examCategoryTitle");
   const labels = {free:"📝 Free Mock Test",paid:"💳 Paid Mock Test",study:"📚 Study Material",papers:"📄 Old Question Papers",current:"📰 Current Affairs"};
   title.textContent = labels[category] || "अभ्यास विभाग";
   content.style.display = "block";
-  policeFree.style.display = "none";
+  tests.style.display = "none";
   generic.style.display = "none";
-  if (category === "free" && activeExamKey === "police") { showPoliceFreeTests(); return; }
+  activeExamCategory = category;
+  if (category === "free" || category === "paid") {
+    selectedTestType = category;
+    renderExamTestList(category);
+    tests.style.display = "block";
+    content.scrollIntoView({behavior:"smooth", block:"start"});
+    return;
+  }
   const messages = {
-    free:"या परीक्षेच्या मोफत टेस्ट लवकरच येथे उपलब्ध होतील.",
-    paid:"या परीक्षेच्या Paid Mock Test ची माहिती लवकरच येथे उपलब्ध होईल.",
-    study:"या परीक्षेचे Study Material लवकरच येथे उपलब्ध होईल.",
-    papers:"या परीक्षेच्या मागील प्रश्नपत्रिका लवकरच येथे उपलब्ध होतील.",
-    current:"या परीक्षेच्या चालू घडामोडी लवकरच येथे उपलब्ध होतील."
+    study:"या परीक्षेचे Study Material Admin Panel मधून जोडण्याची सुविधा पुढील टप्प्यात सुरू करू.",
+    papers:"या परीक्षेच्या मागील प्रश्नपत्रिका पुढील टप्प्यात जोडू.",
+    current:"या परीक्षेच्या चालू घडामोडी पुढील टप्प्यात जोडू."
   };
   document.getElementById("genericExamCategoryText").textContent = messages[category] || "हा विभाग लवकरच उपलब्ध होईल.";
   generic.style.display = "block";
   content.scrollIntoView({behavior:"smooth", block:"start"});
 }
+
+function renderExamTestList(testType) {
+  const container = document.getElementById("examTestSeriesList");
+  const typeLabel = testType === "paid" ? "Paid" : "Free";
+  let html = '<div class="exam-test-grid">';
+  for (let i = 1; i <= 50; i++) {
+    html += `<div class="exam-test-card"><h4>${typeLabel} Test ${i}</h4><p>100 प्रश्न • 90 मिनिटे</p><button type="button" onclick="startExamTestFromHome('${activeExamKey}','${testType}',${i})">Start Test →</button></div>`;
+  }
+  html += '</div>';
+  container.innerHTML = html;
+}
+
 function closeExamHub() {
   const hub = document.getElementById("examHub");
   if (hub) hub.style.display = "none";
@@ -2770,33 +2777,23 @@ function closeExamHub() {
 function closePoliceTests() { closeExamHub(); }
 function closeTalathiTests() { closeExamHub(); }
 
-function showPoliceFreeTests() {
-  const section = document.getElementById("policeFreeTestsSection");
-  const container = document.getElementById("policeFreeTestSeries");
-  document.getElementById("examCategoryContent").style.display = "block";
-  document.getElementById("genericExamCategory").style.display = "none";
-  document.getElementById("examCategoryTitle").textContent = "📝 Free Mock Test 1 ते 50";
-  section.style.display = "block";
-  if (!container.dataset.loaded) {
-    let html = "";
-    for (let i = 1; i <= 50; i++) {
-      html += `<div class="test-item"><h4>Free Test ${i}</h4><button type="button" onclick="startPoliceFreeTestFromHome(${i})">Start Test →</button></div>`;
-    }
-    container.innerHTML = html;
-    container.dataset.loaded = "true";
-  }
-  section.scrollIntoView({behavior:"smooth", block:"start"});
-}
-function startPoliceFreeTestFromHome(testNumber) {
+function startExamTestFromHome(examKey, testType, testNumber) {
   if (!auth.currentUser) {
-    alert("टेस्ट सुरू करण्यासाठी आधी विद्यार्थी Login करा.");
+    alert("टेस्ट सुरू करण्यासाठी आधी Student Login करा.");
     document.getElementById("studentAuthPanel").scrollIntoView({behavior:"smooth", block:"center"});
+    const options = document.getElementById("authOptions");
+    if (options) options.style.display = "block";
     return;
   }
   document.getElementById("studentDashboard").style.display = "block";
   document.getElementById("studentDashboard").scrollIntoView({behavior:"smooth", block:"start"});
-  openFreeTest(testNumber);
+  startExamCBT(examKey, testType, testNumber);
 }
+
+function startPoliceFreeTestFromHome(testNumber) {
+  startExamTestFromHome("police", "free", testNumber);
+}
+
 function comingSoon() { alert("हा विभाग लवकरच सुरू होईल!"); }
 
 function loadDashboardSummary() {
