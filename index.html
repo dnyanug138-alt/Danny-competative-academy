@@ -1271,12 +1271,7 @@ auth.onAuthStateChanged(async function(user) {
       .doc(user.uid).get();
 
     if (adminDoc.exists && adminDoc.data().role === "admin") {
-      window.location.href = "admin.html";
-return;
-
-      adminPanel.style.display = "block";
-      dashboard.style.display = "none";
-
+      
     } else {
 
       dashboard.style.display = "block";
