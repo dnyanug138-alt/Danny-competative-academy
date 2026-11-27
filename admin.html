@@ -12,6 +12,223 @@
     <h1>Prayag Study Hub</h1>
     <h2>Admin Dashboard</h2>
     <hr>
+  
+  <h3>Welcome Admin!</h3>
+  <h2>Prayag Study Hub</h2>
+  
+<hr>
+<h3>📊 Admin Dashboard Summary</h3>
+
+<div style="display:flex;gap:10px;flex-wrap:wrap;">
+
+  <div class="card">
+    <h3>👨‍🎓 एकूण विद्यार्थी</h3>
+    <h2 id="totalStudents">0</h2>
+  </div>
+
+  <div class="card">
+    <h3>📰 एकूण बातम्या</h3>
+    <h2 id="totalNews">0</h2>
+  </div>
+
+</div>
+  
+
+  <button onclick="loadStudents()">
+    विद्यार्थ्यांची यादी पहा
+  </button>
+
+  <div id="studentList">
+    विद्यार्थी यादी येथे दिसेल.
+  </div>
+
+  <hr>
+
+<hr>
+
+<h2>📝 MCQ Question Management</h2>
+
+<h3>नवीन प्रश्न तयार करा</h3>
+
+<select id="mcqExam">
+  <option value="Police Bharti">पोलीस भरती</option>
+  <option value="Talathi Bharti">तलाठी भरती</option>
+  <option value="MPSC">MPSC</option>
+</select>
+  <br><br>
+
+<label>Police Bharti Test निवडा:</label>
+
+<select id="mcqTestNumber">
+  <option value="">Test निवडा</option>
+  <option value="1">Free Test 1</option>
+  <option value="2">Free Test 2</option>
+  <option value="3">Free Test 3</option>
+  <option value="4">Free Test 4</option>
+  <option value="5">Free Test 5</option>
+  <option value="6">Free Test 6</option>
+  <option value="7">Free Test 7</option>
+  <option value="8">Free Test 8</option>
+  <option value="9">Free Test 9</option>
+  <option value="10">Free Test 10</option>
+  <option value="11">Free Test 11</option>
+  <option value="12">Free Test 12</option>
+  <option value="13">Free Test 13</option>
+  <option value="14">Free Test 14</option>
+  <option value="15">Free Test 15</option>
+  <option value="16">Free Test 16</option>
+  <option value="17">Free Test 17</option>
+  <option value="18">Free Test 18</option>
+  <option value="19">Free Test 19</option>
+  <option value="20">Free Test 20</option>
+  <option value="21">Free Test 21</option>
+  <option value="22">Free Test 22</option>
+  <option value="23">Free Test 23</option>
+  <option value="24">Free Test 24</option>
+  <option value="25">Free Test 25</option>
+  <option value="26">Free Test 26</option>
+  <option value="27">Free Test 27</option>
+  <option value="28">Free Test 28</option>
+  <option value="29">Free Test 29</option>
+  <option value="30">Free Test 30</option>
+  <option value="31">Free Test 31</option>
+  <option value="32">Free Test 32</option>
+  <option value="33">Free Test 33</option>
+  <option value="34">Free Test 34</option>
+  <option value="35">Free Test 35</option>
+  <option value="36">Free Test 36</option>
+  <option value="37">Free Test 37</option>
+  <option value="38">Free Test 38</option>
+  <option value="39">Free Test 39</option>
+  <option value="40">Free Test 40</option>
+  <option value="41">Free Test 41</option>
+  <option value="42">Free Test 42</option>
+  <option value="43">Free Test 43</option>
+  <option value="44">Free Test 44</option>
+  <option value="45">Free Test 45</option>
+  <option value="46">Free Test 46</option>
+  <option value="47">Free Test 47</option>
+  <option value="48">Free Test 48</option>
+  <option value="49">Free Test 49</option>
+  <option value="50">Free Test 50</option>
+</select>
+
+<br><br>
+
+<textarea id="mcqQuestion"
+placeholder="प्रश्न लिहा"></textarea>
+
+<br><br>
+
+<input id="optionA" placeholder="पर्याय A">
+<br><br>
+
+<input id="optionB" placeholder="पर्याय B">
+<br><br>
+
+<input id="optionC" placeholder="पर्याय C">
+<br><br>
+
+<input id="optionD" placeholder="पर्याय D">
+<br><br>
+
+<select id="correctAnswer">
+  <option value="A">योग्य उत्तर A</option>
+  <option value="B">योग्य उत्तर B</option>
+  <option value="C">योग्य उत्तर C</option>
+  <option value="D">योग्य उत्तर D</option>
+</select>
+
+<br><br>
+
+<button onclick="addMCQ()">
+  💾 प्रश्न Save करा
+</button>
+
+<div id="mcqMessage"></div>
+
+<hr>
+  <h3>📋 प्रश्न व्यवस्थापन</h3>
+  <button onclick="loadMCQQuestions()">
+  🔄 प्रश्नांची यादी दाखवा
+  </button>
+
+<div id="mcqQuestionList">
+  प्रश्नांची यादी येथे दिसेल.
+</div>
+  <hr>
+<h2>📢 वर्तमान भरती व्यवस्थापन</h2>
+
+<input id="bhartiTitle" placeholder="भरतीचे नाव">
+
+<input id="bhartiPosts" placeholder="एकूण पदे">
+
+<textarea id="bhartiDetails"
+placeholder="भरतीची संपूर्ण माहिती"></textarea>
+
+<input id="bhartiLastDate"
+placeholder="अर्ज करण्याची शेवटची तारीख">
+
+<input id="bhartiPDF"
+placeholder="अधिकृत जाहिरात PDF लिंक">
+
+<input id="bhartiApply"
+placeholder="ऑनलाइन अर्ज लिंक">
+
+<button onclick="addBharti()">
+  📢 भरती Publish करा
+</button>
+
+<div id="bhartiMessage"></div>
+  <h2>📰 News Management</h2>
+
+  <h3>नवीन बातमी पोस्ट करा</h3>
+
+  <select id="newsCategory">
+    <option value="भरती अपडेट">सरकारी भरती अपडेट</option>
+    <option value="चालू घडामोडी">चालू घडामोडी</option>
+    <option value="महाराष्ट्र बातम्या">महाराष्ट्र बातम्या</option>
+  </select>
+
+  <br><br>
+
+  <input
+    type="text"
+    id="newsTitle"
+    placeholder="बातमीचे शीर्षक"
+  >
+
+  <br><br>
+
+  <textarea
+    id="newsDescription"
+    placeholder="बातमीची संपूर्ण माहिती"
+  ></textarea>
+
+  <br><br>
+
+  <input
+    type="url"
+    id="newsLink"
+    placeholder="अधिकृत बातमीची लिंक"
+  >
+
+  <br><br>
+
+  <button onclick="addNews()">
+    📢 बातमी Publish करा
+  </button>
+
+  <div id="newsMessage"></div>
+
+  <hr>
+
+  <h3>📋 पोस्ट केलेल्या बातम्या</h3>
+
+  <div id="adminNewsList">
+    बातम्या येथे दिसतील.
+  </div>
+
   </div>
 
   <!-- Firebase Code इथे राहू दे -->
