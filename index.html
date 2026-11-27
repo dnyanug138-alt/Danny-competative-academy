@@ -1,4 +1,4 @@
-ojho4hñ<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="mr">
 <head>
 <meta charset="UTF-8">
@@ -427,8 +427,8 @@ button:hover {
     <a href="#courses">Courses</a>
     <a href="#premiumSeries">🏆 Premium Plans</a>
     <a href="#studyGuidance">📚 अभ्यास मार्गदर्शन</a>
-    <a href="#login">Student Login</a>
-    <a href="#adminLoginPage">🔐 Admin Login</a>
+    <a href="#studentAuthPanel">Student Login</a>
+    <a href="#adminLoginPage" class="admin-nav-link">🔐 Admin Login</a>
     <a href="#aboutUs">About Us</a>
 <a href="#contactUs">Contact Us</a>
   </nav>
@@ -476,114 +476,86 @@ button:hover {
 
 <div class="test-series-grid">
 
-  <div class="card test-card" id="login">
+  <div class="card test-card">
     <div class="test-icon">👮</div>
     <h3>पोलीस भरती</h3>
     <p>ऑनलाइन Mock Test</p>
-    <button onclick="showPoliceTests()">Test सुरू करा →</button>
+    <button type="button" onclick="showExamHub('police')">Start Test →</button>
   </div>
 
   <div class="card test-card" id="talathiLogin">
     <div class="test-icon">📋</div>
     <h3>तलाठी भरती</h3>
     <p>ऑनलाइन Mock Test</p>
-    <button onclick="showTalathiTests()">Test सुरू करा →</button>
+    <button type="button" onclick="showExamHub('talathi')">Start Test →</button>
   </div>
 
   <div class="card test-card">
     <div class="test-icon">🏥</div>
     <h3>आरोग्य सेवक</h3>
     <p>ऑनलाइन Mock Test</p>
-    <button disabled>लवकरच उपलब्ध</button>
+    <button type="button" onclick="showExamHub('health')">Start Test →</button>
   </div>
 
   <div class="card test-card">
     <div class="test-icon">📝</div>
     <h3>SSC CHSL</h3>
     <p>ऑनलाइन Mock Test</p>
-    <button disabled>लवकरच उपलब्ध</button>
+    <button type="button" onclick="showExamHub('sscchsl')">Start Test →</button>
   </div>
 
   <div class="card test-card">
     <div class="test-icon">🎓</div>
     <h3>SSC CGL</h3>
     <p>ऑनलाइन Mock Test</p>
-    <button disabled>लवकरच उपलब्ध</button>
+    <button type="button" onclick="showExamHub('ssccgl')">Start Test →</button>
   </div>
 
   <div class="card test-card">
     <div class="test-icon">🏛️</div>
     <h3>Combined Group C</h3>
     <p>ऑनलाइन Mock Test</p>
-    <button disabled>लवकरच उपलब्ध</button>
+    <button type="button" onclick="showExamHub('groupc')">Start Test →</button>
   </div>
 
   <div class="card test-card">
     <div class="test-icon">🚆</div>
     <h3>रेल्वे भरती</h3>
     <p>ऑनलाइन Mock Test</p>
-    <button disabled>लवकरच उपलब्ध</button>
+    <button type="button" onclick="showExamHub('railway')">Start Test →</button>
   </div>
 
   <div class="card test-card">
     <div class="test-icon">📚</div>
     <h3>MPSC</h3>
     <p>ऑनलाइन Mock Test</p>
-    <button disabled>लवकरच उपलब्ध</button>
+    <button type="button" onclick="showExamHub('mpsc')">Start Test →</button>
   </div>
 
 </div>
 
-<section id="policeTestList" class="card" style="display:none;max-width:1000px;margin:20px auto;">
-  <h2>👮 पोलीस भरती अभ्यास केंद्र</h2>
-  <p>Prayag Study Hub – Online Mock Test & Study Platform</p>
-
-  <div class="test-series-grid">
-    <div class="card test-card">
-      <div class="test-icon">📝</div>
-      <h3>Free Mock Test</h3>
-      <p>50 मोफत टेस्ट</p>
-      <button type="button" onclick="showPoliceFreeTests()">Start Now →</button>
+<section id="examHub" class="card" style="display:none;max-width:1000px;margin:20px auto;">
+  <h2 id="examHubTitle">परीक्षा अभ्यास केंद्र</h2>
+  <p id="examHubSubtitle">या परीक्षेसाठी सर्व अभ्यास सुविधा एकाच ठिकाणी</p>
+  <div class="exam-category-grid">
+    <div class="card test-card"><div class="test-icon">📝</div><h3>Free Mock Test</h3><p>मोफत सराव परीक्षा</p><button type="button" onclick="showExamCategory('free')">Open →</button></div>
+    <div class="card test-card"><div class="test-icon">💳</div><h3>Paid Mock Test</h3><p>मासिक आणि वार्षिक टेस्ट</p><button type="button" onclick="showExamCategory('paid')">Open →</button></div>
+    <div class="card test-card"><div class="test-icon">📚</div><h3>Study Material</h3><p>नोट्स आणि अभ्यास साहित्य</p><button type="button" onclick="showExamCategory('study')">Open →</button></div>
+    <div class="card test-card"><div class="test-icon">📄</div><h3>Old Question Papers</h3><p>मागील वर्षांच्या प्रश्नपत्रिका</p><button type="button" onclick="showExamCategory('papers')">Open →</button></div>
+    <div class="card test-card"><div class="test-icon">📰</div><h3>Current Affairs</h3><p>चालू घडामोडी</p><button type="button" onclick="showExamCategory('current')">Open →</button></div>
+  </div>
+  <div id="examCategoryContent" style="display:none;margin-top:22px;">
+    <h3 id="examCategoryTitle"></h3>
+    <div id="policeFreeTestsSection" style="display:none;margin-top:15px;">
+      <p>प्रत्येक टेस्टमध्ये 100 प्रश्न आणि 90 मिनिटांचा कालावधी आहे.</p>
+      <div id="policeFreeTestSeries" class="police-free-test-grid"></div>
     </div>
-    <div class="card test-card">
-      <div class="test-icon">💳</div>
-      <h3>Monthly Paid Mock Test</h3>
-      <p>मासिक टेस्ट सीरिज</p>
-      <button type="button" onclick="comingSoon()">Explore →</button>
-    </div>
-    <div class="card test-card">
-      <div class="test-icon">🏆</div>
-      <h3>Yearly Paid Mock Test</h3>
-      <p>वार्षिक टेस्ट सीरिज</p>
-      <button type="button" onclick="comingSoon()">Explore →</button>
-    </div>
-    <div class="card test-card">
-      <div class="test-icon">📚</div>
-      <h3>मागील प्रश्नपत्रिका</h3>
-      <p>Previous Year Papers</p>
-      <button type="button" onclick="comingSoon()">View →</button>
-    </div>
-    <div class="card test-card">
-      <div class="test-icon">📰</div>
-      <h3>Current Affairs</h3>
-      <p>चालू घडामोडी आणि महत्त्वाच्या बातम्या</p>
-      <button type="button" onclick="comingSoon()">Read Now →</button>
+    <div id="genericExamCategory" class="card" style="display:none;">
+      <p id="genericExamCategoryText">हा विभाग लवकरच उपलब्ध होईल.</p>
     </div>
   </div>
-
-  <div id="policeFreeTestsSection" style="display:none;margin-top:20px;">
-    <h3>📝 Free Mock Test 1 ते 50</h3>
-    <p>प्रत्येक टेस्टमध्ये 100 प्रश्न आणि 90 मिनिटांचा कालावधी आहे.</p>
-    <div id="policeFreeTestSeries" class="police-free-test-grid"></div>
-  </div>
-  <button type="button" onclick="closePoliceTests()">← मागे जा</button>
+  <button type="button" onclick="closeExamHub()">← मागे जा</button>
 </section>
-
-<div id="talathiTestList" style="display:none;" class="card">
-  <h3>तलाठी भरती टेस्ट लिस्ट</h3>
-  <p>तलाठी भरती टेस्ट सीरिज लवकरच उपलब्ध होईल.</p>
-  <button type="button" onclick="closeTalathiTests()">← मागे जा</button>
-</div>
 
 <div class="home-small-tabs">
 
@@ -621,33 +593,38 @@ button:hover {
     <div class="card" style="text-align:center;background:#e3f2fd;">
   <h3>👮 पोलीस भरती</h3>
   <p>ऑनलाइन Mock Test</p>
-  <button onclick="showPoliceTests()">
+  <button onclick="showExamHub('police')">
     Test सुरू करा →
   </button>
 </div>
     <div class="card" style="text-align:center;background:#e8f5e9;">
       <h3>📋 तलाठी भरती</h3>
       <p>नोट्स आणि सराव</p>
+      <button type="button" onclick="showExamHub('talathi')">Start Test →</button>
     </div>
 
     <div class="card" style="text-align:center;background:#fff3e0;">
       <h3>🏛️ MPSC</h3>
       <p>अभ्यास साहित्य</p>
+      <button type="button" onclick="showExamHub('mpsc')">Start Test →</button>
     </div>
 
     <div class="card" style="text-align:center;background:#f3e5f5;">
       <h3>🚆 रेल्वे भरती</h3>
       <p>प्रश्नपत्रिका आणि सराव</p>
+      <button type="button" onclick="showExamHub('railway')">Start Test →</button>
     </div>
 
     <div class="card" style="text-align:center;background:#fce4ec;">
       <h3>🏦 बँकिंग</h3>
       <p>गणित आणि बुद्धिमत्ता</p>
+      <button type="button" onclick="showExamHub('banking')">Start Test →</button>
     </div>
 
     <div class="card" style="text-align:center;background:#e0f2f1;">
       <h3>📝 SSC</h3>
       <p>नोट्स आणि Mock Test</p>
+      <button type="button" onclick="showExamHub('ssc')">Start Test →</button>
     </div>
 
   </div>
@@ -923,6 +900,8 @@ button:hover {
 }
 .police-free-test-grid .test-item h4 { margin: 4px 0 8px; }
 .police-free-test-grid .test-item button { width: 100%; margin: 0; padding: 9px 5px; }
+.exam-category-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(145px,1fr)); gap:12px; margin:20px 0; }
+#examHub { scroll-margin-top:20px; }
 </style>
 
   
@@ -1805,8 +1784,7 @@ function policeSubmitTest() {
 </script>
   
 <!-- ADMIN LOGIN -->
-<div id="adminLoginPage" 
-style="max-width:400px;margin:30px auto;padding:20px;background:white;border-radius:12px;text-align:center;">
+<div id="adminLoginPage" style="scroll-margin-top:100px;max-width:400px;margin:30px auto;padding:20px;background:white;border-radius:12px;text-align:center;">
   <h2>Admin Login</h2>
 
   <input id="adminEmail" type="email"
@@ -2735,28 +2713,69 @@ async function loadLeaderboard() {
   }
 }
   
-window.showPoliceTests = function() {
-  const card = document.getElementById("login");
-  const list = document.getElementById("policeTestList");
-  if (!list) {
-    alert("पोलीस भरती विभाग सापडला नाही. कृपया पेज Refresh करा.");
-    console.error("policeTestList element is missing");
-    return;
-  }
-  if (card) card.style.display = "none";
-  list.style.display = "block";
-  list.scrollIntoView({behavior:"smooth", block:"start"});
+const examNames = {
+  police: "👮 पोलीस भरती", talathi: "📋 तलाठी भरती",
+  health: "🏥 आरोग्य सेवक", sscchsl: "📝 SSC CHSL",
+  ssccgl: "🎓 SSC CGL", groupc: "🏛️ Combined Group C",
+  railway: "🚆 रेल्वे भरती", mpsc: "📚 MPSC",
+  banking: "🏦 बँकिंग", ssc: "📝 SSC"
 };
+let activeExamKey = "police";
 
-function closePoliceTests() {
-  document.getElementById("policeTestList").style.display = "none";
-  const card = document.getElementById("login");
-  if (card) card.style.display = "block";
+function showExamHub(examKey) {
+  activeExamKey = examNames[examKey] ? examKey : "police";
+  const grid = document.querySelector("#homeSections > .test-series-grid");
+  const hub = document.getElementById("examHub");
+  if (grid) grid.style.display = "none";
+  if (!hub) { alert("परीक्षा विभाग सापडला नाही. पेज Refresh करा."); return; }
+  document.getElementById("examHubTitle").textContent = examNames[activeExamKey] + " अभ्यास केंद्र";
+  document.getElementById("examHubSubtitle").textContent =
+    examNames[activeExamKey] + " साठी Free Mock Test, Paid Mock Test, Study Material, Old Question Papers आणि Current Affairs";
+  document.getElementById("examCategoryContent").style.display = "none";
+  hub.style.display = "block";
+  hub.scrollIntoView({behavior:"smooth", block:"start"});
 }
+function showPoliceTests() { showExamHub("police"); }
+function showTalathiTests() { showExamHub("talathi"); }
+
+function showExamCategory(category) {
+  const content = document.getElementById("examCategoryContent");
+  const policeFree = document.getElementById("policeFreeTestsSection");
+  const generic = document.getElementById("genericExamCategory");
+  const title = document.getElementById("examCategoryTitle");
+  const labels = {free:"📝 Free Mock Test",paid:"💳 Paid Mock Test",study:"📚 Study Material",papers:"📄 Old Question Papers",current:"📰 Current Affairs"};
+  title.textContent = labels[category] || "अभ्यास विभाग";
+  content.style.display = "block";
+  policeFree.style.display = "none";
+  generic.style.display = "none";
+  if (category === "free" && activeExamKey === "police") { showPoliceFreeTests(); return; }
+  const messages = {
+    free:"या परीक्षेच्या मोफत टेस्ट लवकरच येथे उपलब्ध होतील.",
+    paid:"या परीक्षेच्या Paid Mock Test ची माहिती लवकरच येथे उपलब्ध होईल.",
+    study:"या परीक्षेचे Study Material लवकरच येथे उपलब्ध होईल.",
+    papers:"या परीक्षेच्या मागील प्रश्नपत्रिका लवकरच येथे उपलब्ध होतील.",
+    current:"या परीक्षेच्या चालू घडामोडी लवकरच येथे उपलब्ध होतील."
+  };
+  document.getElementById("genericExamCategoryText").textContent = messages[category] || "हा विभाग लवकरच उपलब्ध होईल.";
+  generic.style.display = "block";
+  content.scrollIntoView({behavior:"smooth", block:"start"});
+}
+function closeExamHub() {
+  const hub = document.getElementById("examHub");
+  if (hub) hub.style.display = "none";
+  const grid = document.querySelector("#homeSections > .test-series-grid");
+  if (grid) grid.style.display = "grid";
+  document.getElementById("homeSections").scrollIntoView({behavior:"smooth", block:"start"});
+}
+function closePoliceTests() { closeExamHub(); }
+function closeTalathiTests() { closeExamHub(); }
 
 function showPoliceFreeTests() {
   const section = document.getElementById("policeFreeTestsSection");
   const container = document.getElementById("policeFreeTestSeries");
+  document.getElementById("examCategoryContent").style.display = "block";
+  document.getElementById("genericExamCategory").style.display = "none";
+  document.getElementById("examCategoryTitle").textContent = "📝 Free Mock Test 1 ते 50";
   section.style.display = "block";
   if (!container.dataset.loaded) {
     let html = "";
@@ -2768,7 +2787,6 @@ function showPoliceFreeTests() {
   }
   section.scrollIntoView({behavior:"smooth", block:"start"});
 }
-
 function startPoliceFreeTestFromHome(testNumber) {
   if (!auth.currentUser) {
     alert("टेस्ट सुरू करण्यासाठी आधी विद्यार्थी Login करा.");
@@ -2779,23 +2797,8 @@ function startPoliceFreeTestFromHome(testNumber) {
   document.getElementById("studentDashboard").scrollIntoView({behavior:"smooth", block:"start"});
   openFreeTest(testNumber);
 }
+function comingSoon() { alert("हा विभाग लवकरच सुरू होईल!"); }
 
-function showTalathiTests() {
-  const card = document.getElementById("talathiLogin");
-  if (card) card.style.display = "none";
-  document.getElementById("talathiTestList").style.display = "block";
-}
-
-function closeTalathiTests() {
-  document.getElementById("talathiTestList").style.display = "none";
-  const card = document.getElementById("talathiLogin");
-  if (card) card.style.display = "block";
-}
-
-function comingSoon() {
-  alert("हा विभाग लवकरच सुरू होईल!");
-}
-  
 function loadDashboardSummary() {
 
   db.collection("students").get()
