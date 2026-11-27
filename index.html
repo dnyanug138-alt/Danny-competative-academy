@@ -553,7 +553,7 @@ button:hover {
       <div id="examTestSeriesList" class="police-free-test-grid"></div>
     </div>
     <div id="genericExamCategory" class="card" style="display:none;">
-      <p id="genericExamCategoryText">हा विभाग लवकरच उपलब्ध होईल.</p>
+      <p id="genericExamCategoryText">हा विभाग लवकरच उपलब्ध होईल.</p><div id="premiumMaterialList"></div>
     </div>
   </div>
   <div id="examInlineArea" style="display:none;margin-top:18px;text-align:left;">
@@ -965,7 +965,7 @@ button:hover {
   padding: 12px 22px;
   border-radius: 8px;
   font-weight: bold;
-  cursor: not-allowed;
+  cursor: pointer;
 }
 
 .premium-card.yearly button {
@@ -974,41 +974,31 @@ button:hover {
 </style>
 
 <div id="premiumSeries" class="premium-section">
-
-  <h2>🏆 Premium Mock Test Series</h2>
-
-  <p>पोलीस भरती | तलाठी | MPSC</p>
-
-  <p>🎯 आपल्या परीक्षेची तयारी आता अधिक प्रभावी करा!</p>
-
+  <h2>👑 Exam-wise Premium Membership</h2>
+  <p>ज्या परीक्षेचे Premium घ्याल, त्याच परीक्षेचे Tests आणि Study Material मिळेल.</p>
   <div class="premium-plans">
-
-    <div class="premium-card">
-      <h3>📅 Monthly Plan</h3>
-      <h2>30 दिवस</h2>
-      <p>सर्व Paid Mock Tests चा प्रवेश</p>
-      <p>✅ सराव परीक्षा</p>
-      <p>✅ निकाल आणि गुण</p>
-      <p>✅ अभ्यासासाठी मदत</p>
-      <button disabled>लवकरच उपलब्ध</button>
-    </div>
-
-    <div class="premium-card yearly">
-      <h3>🏅 Yearly Plan</h3>
-      <h2>365 दिवस</h2>
-      <p>सर्व Paid Mock Tests चा प्रवेश</p>
-      <p>✅ सराव परीक्षा</p>
-      <p>✅ निकाल आणि गुण</p>
-      <p>✅ अभ्यासासाठी मदत</p>
-      <button disabled>लवकरच उपलब्ध</button>
-    </div>
-
+    <div class="premium-card"><h3>🛡️ पोलीस भरती</h3><h2>₹99</h2><p>3 महिन्यांचा Access</p><p>50 CBT Tests + PDF Notes + Study Material</p><button type="button" onclick="selectPremiumPlan('police')">Premium घ्या</button></div>
+    <div class="premium-card"><h3>📚 तलाठी भरती</h3><h2>₹199</h2><p>3 महिन्यांचा Access</p><p>50 CBT Tests + PDF Notes + Study Material</p><button type="button" onclick="selectPremiumPlan('talathi')">Premium घ्या</button></div>
+    <div class="premium-card"><h3>🏥 आरोग्य सेवक</h3><h2>₹199</h2><p>3 महिन्यांचा Access</p><p>50 CBT Tests + PDF Notes + Study Material</p><button type="button" onclick="selectPremiumPlan('health')">Premium घ्या</button></div>
+    <div class="premium-card"><h3>📘 SSC CHSL</h3><h2>₹299</h2><p>3 महिन्यांचा Access</p><p>50 CBT Tests + PDF Notes + Study Material</p><button type="button" onclick="selectPremiumPlan('sscchsl')">Premium घ्या</button></div>
+    <div class="premium-card"><h3>📘 SSC CGL</h3><h2>₹299</h2><p>3 महिन्यांचा Access</p><p>50 CBT Tests + PDF Notes + Study Material</p><button type="button" onclick="selectPremiumPlan('ssccgl')">Premium घ्या</button></div>
+    <div class="premium-card"><h3>🏦 Banking</h3><h2>₹299</h2><p>3 महिन्यांचा Access</p><p>50 CBT Tests + PDF Notes + Study Material</p><button type="button" onclick="selectPremiumPlan('banking')">Premium घ्या</button></div>
+    <div class="premium-card"><h3>🚆 Railway</h3><h2>₹399</h2><p>3 महिन्यांचा Access</p><p>50 CBT Tests + PDF Notes + Study Material</p><button type="button" onclick="selectPremiumPlan('railway')">Premium घ्या</button></div>
+    <div class="premium-card"><h3>🏅 Combined Group C</h3><h2>₹399</h2><p>3 महिन्यांचा Access</p><p>50 CBT Tests + PDF Notes + Study Material</p><button type="button" onclick="selectPremiumPlan('groupc')">Premium घ्या</button></div>
+    <div class="premium-card yearly"><h3>🏛️ MPSC</h3><h2>₹799</h2><p>3 महिन्यांचा Access</p><p>50 CBT Tests + PDF Notes + Study Material</p><button type="button" onclick="selectPremiumPlan('mpsc')">Premium घ्या</button></div>
   </div>
-
-  <p style="margin-top:20px;color:#174f7e;font-weight:bold;">
-    📚 Prayag Study Hub – Learn Today • Lead Tomorrow
-  </p>
-
+  <div id="premiumPurchaseBox" style="display:none;max-width:560px;margin:24px auto 0;background:white;padding:18px;border-radius:12px;text-align:left;">
+    <h3>💳 Premium Payment Request</h3>
+    <p id="premiumSelectedPlan"></p>
+    <p><strong>UPI ID:</strong> dmgaik138@ybl</p>
+    <p>वरील UPI वर योग्य रक्कम भरल्यानंतर Transaction ID / UTR येथे टाका. Admin तपासून Access सुरू करेल.</p>
+    <label for="premiumUTR">Transaction ID / UTR</label>
+    <input id="premiumUTR" type="text" maxlength="80" placeholder="Payment Transaction ID टाका" style="width:100%;padding:12px;margin:8px 0;">
+    <button type="button" onclick="submitPremiumPaymentRequest()">Payment Verification साठी पाठवा</button>
+    <button type="button" onclick="document.getElementById('premiumPurchaseBox').style.display='none'">बंद करा</button>
+    <p id="premiumPaymentMessage" role="status"></p>
+  </div>
+  <p style="margin-top:20px;color:#174f7e;font-weight:bold;">📚 Prayag Study Hub – Learn Today • Lead Tomorrow</p>
 </div>
 
   
@@ -1076,7 +1066,9 @@ function showAuthOptions() {
 
 <h2>🎓 Prayag Study Hub</h2>
 <h3>Student Dashboard</h3>
-  <h3>📝 Free Mock Test Series</h3>
+  <div id="myPremiumAccess" style="background:white;padding:12px;border-radius:10px;margin:12px 0;"><strong>👑 My Premium Access</strong><p>तुमचे Premium Membership तपासले जात आहे...</p></div>
+
+<h3>📝 Free Mock Test Series</h3>
 <p>विद्यार्थ्यांसाठी 50 मोफत टेस्ट सीरिज</p>
 
 
@@ -1098,23 +1090,7 @@ function showAuthOptions() {
 <div id="freeTestArea"></div>
 
 
-<button onclick="showPayment()">
-💳 Paid Test खरेदी करा – ₹10
-</button>
-
-<div id="paymentSection" style="display:none;background:white;padding:15px;margin-top:15px;border-radius:10px;">
-
-<h3>💳 Payment Details</h3>
-
-<p>Test Fee: ₹10</p>
-
-<p>UPI ID: dmgaik138@ybl</p>
-
-<button onclick="alert('Payment verification पुढील टप्प्यात जोडूया.')">
-Payment केले
-</button>
-
-</div>
+<button type="button" onclick="document.getElementById('premiumSeries').scrollIntoView({behavior:'smooth'});">👑 परीक्षा निवडून Premium घ्या</button>
 <h3>🏆 My Results</h3>
 <p>तुझे निकाल येथे दिसतील.</p>
 
@@ -1216,6 +1192,104 @@ firebase.initializeApp(firebaseConfig);
 
 const auth = firebase.auth();
 const db = firebase.firestore();
+
+const premiumPlans = {
+  police:{name:"पोलीस भरती", firestore:"Police Bharti", price:99},
+  talathi:{name:"तलाठी भरती", firestore:"Talathi Bharti", price:199},
+  health:{name:"आरोग्य सेवक", firestore:"Health Worker", price:199},
+  ssc:{name:"SSC", firestore:"SSC", price:299},
+  sscchsl:{name:"SSC CHSL", firestore:"SSC CHSL", price:299},
+  ssccgl:{name:"SSC CGL", firestore:"SSC CGL", price:299},
+  railway:{name:"Railway", firestore:"Railway", price:399},
+  groupc:{name:"Combined Group C", firestore:"Combined Group C", price:399},
+  mpsc:{name:"MPSC", firestore:"MPSC", price:799},
+  banking:{name:"Banking", firestore:"Banking", price:299}
+};
+let selectedPremiumPlanKey = null;
+
+function selectPremiumPlan(examKey){
+  if(!auth.currentUser){
+    alert("Premium घेण्यासाठी आधी Student Login करा.");
+    const panel=document.getElementById("studentAuthPanel");
+    if(panel) panel.scrollIntoView({behavior:"smooth",block:"center"});
+    return;
+  }
+  const plan=premiumPlans[examKey];
+  if(!plan){alert("ही परीक्षा सापडली नाही.");return;}
+  selectedPremiumPlanKey=examKey;
+  document.getElementById("premiumSelectedPlan").textContent=plan.name+" Premium – ₹"+plan.price+" (3 महिने)";
+  document.getElementById("premiumPurchaseBox").style.display="block";
+  document.getElementById("premiumPaymentMessage").textContent="";
+  document.getElementById("premiumPurchaseBox").scrollIntoView({behavior:"smooth",block:"center"});
+}
+
+async function submitPremiumPaymentRequest(){
+  const user=auth.currentUser;
+  const plan=premiumPlans[selectedPremiumPlanKey];
+  const utr=document.getElementById("premiumUTR").value.trim();
+  const msg=document.getElementById("premiumPaymentMessage");
+  if(!user){msg.textContent="कृपया आधी Login करा.";return;}
+  if(!plan){msg.textContent="परीक्षा निवडा.";return;}
+  if(utr.length<6){msg.textContent="योग्य Transaction ID / UTR टाका.";return;}
+  msg.textContent="Payment request पाठवत आहे...";
+  try{
+    await db.collection("paymentRequests").add({uid:user.uid,email:user.email||"",examKey:selectedPremiumPlanKey,examName:plan.name,exam:plan.firestore,amount:plan.price,utr,status:"pending",durationMonths:3,createdAt:firebase.firestore.FieldValue.serverTimestamp()});
+    msg.textContent="Payment request पाठवली आहे. Admin तपासून Premium सुरू करेल.";
+    document.getElementById("premiumUTR").value="";
+  }catch(error){msg.textContent="Request पाठवता आली नाही: "+error.message;}
+}
+
+async function hasActivePremiumAccess(examKey){
+  const user=auth.currentUser;
+  if(!user) return false;
+  try{
+    const snap=await db.collection("students").doc(user.uid).get();
+    const membership=(snap.exists && snap.data().memberships && snap.data().memberships[examKey]) || null;
+    if(!membership || membership.active!==true || !membership.expiresAt) return false;
+    const expiry=membership.expiresAt.toDate ? membership.expiresAt.toDate() : new Date(membership.expiresAt);
+    return expiry.getTime()>Date.now();
+  }catch(error){console.error("Premium access check failed",error);return false;}
+}
+
+async function loadMyPremiumAccess(){
+  const box=document.getElementById("myPremiumAccess");
+  if(!box || !auth.currentUser) return;
+  try{
+    const snap=await db.collection("students").doc(auth.currentUser.uid).get();
+    const memberships=(snap.exists && snap.data().memberships)||{};
+    const active=[];
+    for(const [key,plan] of Object.entries(premiumPlans)){
+      const m=memberships[key];
+      if(m && m.active===true && m.expiresAt){
+        const expiry=m.expiresAt.toDate?m.expiresAt.toDate():new Date(m.expiresAt);
+        if(expiry>Date.now()) active.push(plan.name+" ("+expiry.toLocaleDateString("en-IN")+" पर्यंत)");
+      }
+    }
+    box.innerHTML="<strong>👑 My Premium Access</strong>"+(active.length?"<p>"+active.join("<br>")+"</p>":"<p>सध्या कोणतेही Active Premium नाही. हवी ती परीक्षा निवडून Premium घ्या.</p>");
+  }catch(error){box.innerHTML="<strong>👑 My Premium Access</strong><p>माहिती लोड झाली नाही.</p>";}
+}
+
+async function loadPremiumMaterials(examKey){
+  const box=document.getElementById("premiumMaterialList");
+  if(!box) return;
+  if(!auth.currentUser){box.textContent="Study Material पाहण्यासाठी Login करा.";return;}
+  if(!(await hasActivePremiumAccess(examKey))){
+    box.innerHTML=`<p>🔒 हे Premium Study Material आहे. संबंधित परीक्षेचे Premium घ्या.</p><button type="button" onclick="selectPremiumPlan('${examKey}')">Premium घ्या</button>`;
+    return;
+  }
+  try{
+    const examName=examFirestoreNames[examKey];
+    const snap=await db.collection("studyMaterials").where("exam","==",examName).get();
+    box.innerHTML="";
+    if(snap.empty){box.textContent="या परीक्षेसाठी PDF Notes / Study Material Admin Panel मधून अजून जोडलेले नाही.";return;}
+    snap.forEach(doc=>{
+      const d=doc.data();
+      const item=document.createElement("p");
+      const a=document.createElement("a");a.href=d.url;a.target="_blank";a.rel="noopener noreferrer";a.textContent=(d.type==="notes"?"📄 PDF Notes: ":"📚 Study Material: ")+(d.title||"Open Material");
+      item.appendChild(a);box.appendChild(item);
+    });
+  }catch(error){box.textContent="साहित्य लोड झाले नाही: "+error.message;}
+}
   
 
 // STUDENT SIGNUP
@@ -1308,6 +1382,7 @@ auth.onAuthStateChanged(async function(user) {
 
       dashboard.style.display = "block";
       adminPanel.style.display = "none";
+      loadMyPremiumAccess();
   const urlParams = new URLSearchParams(window.location.search);
 const selectedTest = Number(urlParams.get("freeTest"));
 
@@ -1540,6 +1615,11 @@ async function startExamCBT(examKey, testType, testNumber) {
   }
   const examName = examFirestoreNames[examKey] || examFirestoreNames.police;
   const type = testType === "paid" ? "paid" : "free";
+  if(type === "paid" && !(await hasActivePremiumAccess(examKey))){
+    alert("या परीक्षेची Paid Test सुरू करण्यासाठी संबंधित Premium Membership आवश्यक आहे.");
+    selectPremiumPlan(examKey);
+    return;
+  }
   const number = Number(testNumber);
   if (!Number.isInteger(number) || number < 1 || number > 50) {
     alert("कृपया 1 ते 50 मधील टेस्ट निवडा."); return;
@@ -1558,21 +1638,20 @@ async function startExamCBT(examKey, testType, testNumber) {
   quiz.innerHTML = '<div class="cbt-shell"><h3>प्रश्न लोड होत आहेत...</h3></div>';
 
   try {
-    const snapshot = await db.collection("mcqQuestions").get();
+    const snapshot = await db.collection("mcqQuestions")
+      .where("exam", "==", examName)
+      .where("testNumber", "==", number)
+      .where("testType", "==", type)
+      .get();
     const docs = [];
-    snapshot.forEach(doc => {
-      const data = doc.data();
-      const savedType = String(data.testType || data.category || "free").toLowerCase();
-      if (data.exam === examName && Number(data.testNumber) === number && savedType === type) {
-        docs.push({id:doc.id, ...data});
-      }
-    });
+    snapshot.forEach(doc => docs.push({id:doc.id, ...doc.data()}));
     docs.sort((a,b) => (Number(a.questionNumber)||0) - (Number(b.questionNumber)||0));
 
     policeQuestions = docs.map(data => ({
       q: data.question,
       options: [data.options?.A, data.options?.B, data.options?.C, data.options?.D],
-      answer: ["A","B","C","D"].indexOf(data.answer)
+      answer: ["A","B","C","D"].indexOf(data.answer),
+      explanation: data.explanation || ""
     }));
 
     // Preserve the existing built-in Police Free Test 1 if no Admin questions have been added yet.
@@ -1635,8 +1714,14 @@ function showPoliceQuestion() {
         name: user.displayName || user.email || "Student",
         email: user.email || "",
         testName: activeTestName || ("Police Bharti - Free Test " + selectedFreeTestNumber),
+        exam: selectedExamFirestoreName,
+        testType: selectedTestType,
+        testNumber: selectedFreeTestNumber,
         score: policeScore,
         totalQuestions: policeQuestions.length,
+        wrongAnswers: policeAnswers.filter((answer,index)=>answer!==null && answer!==undefined && answer!==policeQuestions[index].answer).length,
+        unanswered: policeAnswers.filter(answer=>answer===null || answer===undefined).length,
+        accuracy: policeAnswers.length ? Math.round((policeScore / policeAnswers.filter(answer=>answer!==null && answer!==undefined).length || 0)*100) : 0,
         createdAt: firebase.firestore.FieldValue.serverTimestamp()
       })
 
@@ -1644,9 +1729,25 @@ function showPoliceQuestion() {
         quiz.innerHTML = `
           <h3>टेस्ट पूर्ण झाली! 🎉</h3>
           <h2>तुमचे गुण: ${policeScore}/${policeQuestions.length}</h2>
+          <p>चुकीची उत्तरे: ${policeAnswers.filter((answer,index)=>answer!==null && answer!==undefined && answer!==policeQuestions[index].answer).length}</p>
+          <p>अनुत्तरित प्रश्न: ${policeAnswers.filter(answer=>answer===null || answer===undefined).length}</p>
+          <p>अचूकता: ${Math.round((policeScore / (policeAnswers.filter(answer=>answer!==null && answer!==undefined).length || 1))*100)}%</p>
           <p>निकाल यशस्वीपणे सेव्ह झाला!</p>
           <button onclick="retryPoliceTest()">पुन्हा टेस्ट द्या</button>
         `;
+        if(selectedTestType === "paid"){
+          const review=document.createElement("details");
+          review.style="margin-top:18px;padding:12px;background:#f8fafc;border-radius:10px;";
+          const summary=document.createElement("summary");summary.textContent="📖 सर्व प्रश्नांची उत्तरे आणि स्पष्टीकरण पहा";review.appendChild(summary);
+          policeQuestions.forEach((q,index)=>{
+            const block=document.createElement("div");block.style="padding:10px;border-bottom:1px solid #ddd;";
+            const question=document.createElement("p");question.textContent=(index+1)+". "+q.q;
+            const answer=document.createElement("p");answer.textContent="योग्य उत्तर: "+(q.options[q.answer]||"उपलब्ध नाही");
+            const explanation=document.createElement("p");explanation.textContent="स्पष्टीकरण: "+(q.explanation||"या प्रश्नाचे स्पष्टीकरण Admin Panel मधून अजून जोडलेले नाही.");
+            block.append(question,answer,explanation);review.appendChild(block);
+          });
+          quiz.appendChild(review);
+        }
       })
 
       .catch((error) => {
@@ -2801,21 +2902,31 @@ function showExamCategory(category) {
     return;
   }
   const messages = {
-    study:"या परीक्षेचे Study Material Admin Panel मधून जोडण्याची सुविधा पुढील टप्प्यात सुरू करू.",
+    study:"Premium विद्यार्थ्यांसाठी या परीक्षेचे PDF Notes आणि Study Material.",
     papers:"या परीक्षेच्या मागील प्रश्नपत्रिका पुढील टप्प्यात जोडू.",
     current:"या परीक्षेच्या चालू घडामोडी पुढील टप्प्यात जोडू."
   };
   document.getElementById("genericExamCategoryText").textContent = messages[category] || "हा विभाग लवकरच उपलब्ध होईल.";
+  const materialList=document.getElementById("premiumMaterialList");
+  if(materialList) materialList.innerHTML="";
+  if(category === "study") loadPremiumMaterials(activeExamKey);
   generic.style.display = "block";
   content.scrollIntoView({behavior:"smooth", block:"start"});
 }
 
-function renderExamTestList(testType) {
+async function renderExamTestList(testType) {
   const container = document.getElementById("examTestSeriesList");
+  const examKey = activeExamKey;
   const typeLabel = testType === "paid" ? "Paid" : "Free";
-  let html = '<div class="exam-test-grid">';
+  const unlocked = testType !== "paid" || await hasActivePremiumAccess(examKey);
+  let html = '';
+  if(testType === "paid" && !unlocked){
+    const plan=premiumPlans[examKey];
+    html += `<div class="card"><h3>🔒 ${examNames[examKey]} Premium आवश्यक</h3><p>50 Paid CBT Tests + PDF Notes + Study Material</p><p>किंमत: ₹${plan?plan.price:"-"} • 3 महिन्यांचा Access</p><button type="button" onclick="selectPremiumPlan('${examKey}')">Premium घ्या</button></div>`;
+  }
+  html += '<div class="exam-test-grid">';
   for (let i = 1; i <= 50; i++) {
-    html += `<div class="exam-test-card"><h4>${typeLabel} Test ${i}</h4><p>100 प्रश्न • 90 मिनिटे</p><button type="button" onclick="startExamTestFromHome('${activeExamKey}','${testType}',${i})">Start Test →</button></div>`;
+    html += `<div class="exam-test-card"><h4>${typeLabel} Test ${i}</h4><p>100 प्रश्न • 90 मिनिटे</p><button type="button" ${unlocked?'':'disabled'} onclick="startExamTestFromHome('${examKey}','${testType}',${i})">${unlocked?'Start Test →':'🔒 Locked'}</button></div>`;
   }
   html += '</div>';
   container.innerHTML = html;
