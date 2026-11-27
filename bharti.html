@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="mr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>वर्तमान भरती | Prayag Study Hub</title>
+
+<style>
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #f3f6fc;
+  color: #183153;
+}
+header {
+  background: linear-gradient(135deg, #09264b, #1769aa);
+  color: white;
+  text-align: center;
+  padding: 25px 12px;
+}
+.container {
+  max-width: 850px;
+  margin: auto;
+  padding: 20px 12px;
+}
+.card {
+  background: white;
+  padding: 18px;
+  margin: 15px 0;
+  border-radius: 12px;
+  box-shadow: 0 3px 12px #0001;
+}
+.card h3 { color: #1769aa; }
+a.btn {
+  display: inline-block;
+  background: #1769aa;
+  color: white;
+  padding: 11px 16px;
+  margin: 7px 5px 0 0;
+  border-radius: 7px;
+  text-decoration: none;
+}
+.back {
+  color: white;
+  text-decoration: none;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>📢 वर्तमान भरती</h1>
+  <p>Prayag Study Hub</p>
+  <a class="back" href="index.html">← मुख्य पेजवर जा</a>
+</header>
+
+<div class="container">
+  <h2>नवीन सरकारी भरती</h2>
+  <div id="bhartiList">भरती माहिती Loading...</div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+
+<script>
+const firebaseConfig = {
+  apiKey: "AIzaSyAQlAw96dP_2TbMNsP94olt1Q4f-TB1kNQ",
+  authDomain: "danny-competative-academy.firebaseapp.com",
+  projectId: "danny-competative-academy"
+};
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+
+function loadBharti() {
+  const list = document.getElementById("bhartiList");
+  list.innerHTML = "भरती माहिती Loading...";
+
+  db.collection("bharti")
+    .orderBy("createdAt", "desc")
+    .get()
+    .then(snapshot => {
+      list.innerHTML = "";
+
+      if (snapshot.empty) {
+        list.innerHTML = "सध्या कोणतीही नवीन भरती उपलब्ध नाही.";
+        return;
+      }
+
+      snapshot.forEach(doc => {
+        const b = doc.data();
+        const card = document.createElement("div");
+        card.className = "card";
+
+        const title = document.createElement("h3");
+        title.textContent = b.title || "";
+        card.appendChild(title);
+
+        const posts = document.createElement("p");
+        posts.textContent = "एकूण पदे: " + (b.posts || "माहिती उपलब्ध नाही");
+        card.appendChild(posts);
+
+        const details = document.createElement("p");
+        details.textContent = b.details || "";
+        card.appendChild(details);
+
+        const date = document.createElement("p");
+        date.textContent = "शेवटची तारीख: " + (b.lastDate || "माहिती उपलब्ध नाही");
+        card.appendChild(date);
+
+        if (b.pdf) {
+          const pdf = document.createElement("a");
+          pdf.className = "btn";
+          pdf.href = b.pdf;
+          pdf.target = "_blank";
+          pdf.rel = "noopener noreferrer";
+          pdf.textContent = "अधिकृत जाहिरात PDF";
+          card.appendChild(pdf);
+        }
+
+        if (b.apply) {
+          const apply = document.createElement("a");
+          apply.className = "btn";
+          apply.href = b.apply;
+          apply.target = "_blank";
+          apply.rel = "noopener noreferrer";
+          apply.textContent = "ऑनलाइन अर्ज करा";
+          card.appendChild(apply);
+        }
+
+        list.appendChild(card);
+      });
+    })
+    .catch(error => {
+      list.textContent = "माहिती लोड झाली नाही: " + error.message;
+    });
+}
+
+loadBharti();
+</script>
+
+</body>
+</html>
