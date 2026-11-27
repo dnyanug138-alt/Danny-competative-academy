@@ -1628,8 +1628,20 @@ function openFreeTest(testNumber) {
 
 async function startExamCBT(examKey, testType, testNumber) {
   if (!auth.currentUser) {
-    alert("टेस्ट देण्यासाठी आधी Student Login करा.");
+    // Keep the exact test choice and automatically resume after student login/signup.
+    pendingExamLaunch = {
+      examKey: examKey,
+      testType: testType === "paid" ? "paid" : "free",
+      testNumber: Number(testNumber)
+    };
     const panel = document.getElementById("studentAuthPanel");
+    const options = document.getElementById("authOptions");
+    const form = document.getElementById("studentForm");
+    if (panel) panel.style.display = "block";
+    if (options) options.style.display = "block";
+    if (form) form.style.display = "none";
+    const message = document.getElementById("emailMessage");
+    if (message) message.textContent = "Login / Register करा. त्यानंतर तुमची निवडलेली टेस्ट लगेच सुरू होईल.";
     if (panel) panel.scrollIntoView({behavior:"smooth", block:"center"});
     return;
   }
