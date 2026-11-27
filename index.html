@@ -461,31 +461,6 @@ button:hover {
   </nav>
 </header>
 
-<!-- LATEST NEWS SECTION -->
-<section id="latestNewsSection" style="
-  max-width:1100px;
-  margin:25px auto;
-  padding:20px;
-  background:white;
-  border-radius:12px;
-  text-align:left;
-  box-shadow:0 4px 15px rgba(0,0,0,0.08);
-">
-
-  <h2 style="color:#123b68;text-align:center;">
-    📰 ताज्या बातम्या
-  </h2>
-
-  <p style="text-align:center;color:green;">
-    🔴 Automatic News Updates
-  </p>
-
-  <div id="latestNewsList">
-    बातम्या Loading...
-  </div>
-
-</section>
-  
 <!-- FULL NEWS DISPLAY -->
 <div id="selectedNews" style="display:none;">
   <h3 id="selectedNewsTitle"></h3>
@@ -587,6 +562,38 @@ button:hover {
   <button type="button" onclick="closeExamHub()">← मागे जा</button>
 </section>
 
+<!-- CURRENT RECRUITMENT: Firestore updates posted from Admin Panel -->
+<section id="homepageBhartiSection" class="notice-board" style="max-width:1320px;margin:24px auto;">
+  <h2 style="text-align:center;">📢 नवीन भरती / New Job Updates</h2>
+  <p style="text-align:center;color:#64748b;">अधिकृत भरती सूचना आणि अर्जाच्या तारखा येथे पहा</p>
+  <div id="homepageBhartiList">भरती अपडेट्स Loading...</div>
+</section>
+
+<!-- LATEST NEWS SECTION -->
+<section id="latestNewsSection" style="
+  max-width:1100px;
+  margin:25px auto;
+  padding:20px;
+  background:white;
+  border-radius:12px;
+  text-align:left;
+  box-shadow:0 4px 15px rgba(0,0,0,0.08);
+">
+
+  <h2 style="color:#123b68;text-align:center;">
+    📰 ताज्या बातम्या
+  </h2>
+
+  <p style="text-align:center;color:green;">
+    🔴 Automatic News Updates
+  </p>
+
+  <div id="latestNewsList">
+    बातम्या Loading...
+  </div>
+
+</section>
+  
 <div class="home-small-tabs">
 
   <a href="bharti.html" class="small-tab">
@@ -1279,6 +1286,7 @@ function openPoliceStudyCenter() {
 }
 auth.onAuthStateChanged(async function(user) {
 
+  loadHomepageBharti();
   const dashboard = document.getElementById("studentDashboard");
   const adminPanel = document.getElementById("adminPanel");
   const authPanel = document.getElementById("studentAuthPanel");
@@ -1524,6 +1532,12 @@ function openFreeTest(testNumber) {
 }
 
 async function startExamCBT(examKey, testType, testNumber) {
+  if (!auth.currentUser) {
+    alert("टेस्ट देण्यासाठी आधी Student Login करा.");
+    const panel = document.getElementById("studentAuthPanel");
+    if (panel) panel.scrollIntoView({behavior:"smooth", block:"center"});
+    return;
+  }
   const examName = examFirestoreNames[examKey] || examFirestoreNames.police;
   const type = testType === "paid" ? "paid" : "free";
   const number = Number(testNumber);
@@ -2253,6 +2267,41 @@ function closeSelectedNews() {
 }
 
 loadLiveNews();
+
+// HOMEPAGE CURRENT RECRUITMENT: shows verified/manual Admin Panel posts from Firestore.
+async function loadHomepageBharti(){
+  const list = document.getElementById("homepageBhartiList");
+  if (!list) return;
+  list.textContent = "भरती अपडेट्स लोड होत आहेत...";
+  try {
+    const snap = await db.collection("bharti").orderBy("createdAt", "desc").limit(30).get();
+    list.innerHTML = "";
+    if (snap.empty) {
+      list.textContent = "सध्या नवीन भरती अपडेट उपलब्ध नाहीत.";
+      return;
+    }
+    snap.forEach(doc => {
+      const d = doc.data();
+      const item = document.createElement("div");
+      item.className = "notice-item";
+      const title = document.createElement("h3");
+      title.textContent = d.title || "नवीन भरती";
+      const detail = document.createElement("p");
+      detail.textContent = d.details || "";
+      item.append(title);
+      if (d.posts) { const posts=document.createElement("p"); posts.textContent="एकूण पदे: "+d.posts; item.append(posts); }
+      if (d.startDate || d.lastDate) { const date=document.createElement("p"); date.textContent="अर्ज कालावधी: "+(d.startDate || "-")+" ते "+(d.lastDate || "-"); item.append(date); }
+      item.append(detail);
+      if (d.pdf) { const a=document.createElement("a"); a.href=d.pdf; a.target="_blank"; a.rel="noopener noreferrer"; a.textContent="अधिकृत जाहिरात PDF"; item.append(a); }
+      if (d.apply) { const a=document.createElement("a"); a.href=d.apply; a.target="_blank"; a.rel="noopener noreferrer"; a.textContent=" | ऑनलाइन अर्ज करा"; item.append(a); }
+      if (d.source) { const a=document.createElement("a"); a.href=d.source; a.target="_blank"; a.rel="noopener noreferrer"; a.textContent=" | अधिकृत वेबसाईट"; item.append(a); }
+      list.append(item);
+    });
+  } catch(error) {
+    list.textContent = "भरती अपडेट्स लोड झाले नाहीत. कृपया थोड्या वेळाने पुन्हा प्रयत्न करा.";
+    console.error("Homepage recruitment load error:", error);
+  }
+}
 
 // AUTOMATIC LIVE NEWS: Google News RSS (Marathi/Maharashtra) + Admin-posted Firestore news.
 async function loadAutomaticLiveNews() {
