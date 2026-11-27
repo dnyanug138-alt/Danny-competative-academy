@@ -3218,6 +3218,35 @@ const firebaseConfig = {
 
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
+  window.adminLogin = async function() {
+  const email = document.getElementById("adminEmail").value.trim();
+  const password = document.getElementById("adminPassword").value;
+  const msg = document.getElementById("adminMessage");
+
+  if (!email || !password) {
+    msg.innerText = "Email आणि Password भरा.";
+    return;
+  }
+
+  msg.innerText = "Login होत आहे...";
+
+  try {
+    const result = await auth.signInWithEmailAndPassword(email, password);
+    const user = result.user;
+
+    const adminDoc = await db.collection("Admins").doc(user.uid).get();
+
+    if (adminDoc.exists && adminDoc.data().role === "admin") {
+      window.location.href = "admin.html";
+    } else {
+      await auth.signOut();
+      msg.innerText = "तुम्हाला Admin परवानगी नाही.";
+    }
+
+  } catch (error) {
+    msg.innerText = "Login Error: " + error.message;
+  }
+};
 </script>
 </body>
 </html>
