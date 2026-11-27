@@ -469,12 +469,96 @@ button:hover {
 <div class="container" id="homeSections">
 
 <h2>🏠 Welcome to Prayag Study Hub</h2>
+<h2 class="test-heading">🏆 आपल्या टेस्ट सिरीज</h2>
 
-<div class="home-small-tabs">
+<div class="test-series-grid">
+
+  <div class="card test-card" id="login">
+    <div class="test-icon">👮</div>
+    <h3>पोलीस भरती</h3>
+    <p>ऑनलाइन Mock Test</p>
+    <button onclick="showPoliceTests()">Test सुरू करा →</button>
+  </div>
+
+  <div class="card test-card" id="talathiLogin">
+    <div class="test-icon">📋</div>
+    <h3>तलाठी भरती</h3>
+    <p>ऑनलाइन Mock Test</p>
+    <button onclick="showTalathiTests()">Test सुरू करा →</button>
+  </div>
+
+  <div class="card test-card">
+    <div class="test-icon">🏥</div>
+    <h3>आरोग्य सेवक</h3>
+    <p>ऑनलाइन Mock Test</p>
+    <button disabled>लवकरच उपलब्ध</button>
+  </div>
+
+  <div class="card test-card">
+    <div class="test-icon">📝</div>
+    <h3>SSC CHSL</h3>
+    <p>ऑनलाइन Mock Test</p>
+    <button disabled>लवकरच उपलब्ध</button>
+  </div>
+
+  <div class="card test-card">
+    <div class="test-icon">🎓</div>
+    <h3>SSC CGL</h3>
+    <p>ऑनलाइन Mock Test</p>
+    <button disabled>लवकरच उपलब्ध</button>
+  </div>
+
+  <div class="card test-card">
+    <div class="test-icon">🏛️</div>
+    <h3>Combined Group C</h3>
+    <p>ऑनलाइन Mock Test</p>
+    <button disabled>लवकरच उपलब्ध</button>
+  </div>
+
+  <div class="card test-card">
+    <div class="test-icon">🚆</div>
+    <h3>रेल्वे भरती</h3>
+    <p>ऑनलाइन Mock Test</p>
+    <button disabled>लवकरच उपलब्ध</button>
+  </div>
+
+  <div class="card test-card">
+    <div class="test-icon">📚</div>
+    <h3>MPSC</h3>
+    <p>ऑनलाइन Mock Test</p>
+    <button disabled>लवकरच उपलब्ध</button>
+  </div>
+
 </div>
 
+<div id="policeTestList" style="display:none;" class="card">
+  <h3>पोलीस भरती टेस्ट लिस्ट</h3>
+  <div id="policeTestsContainer">
+    टेस्ट लोड होत आहेत...
+  </div>
+</div>
 
-<div class="card" style="border-left:5px solid #ff9800; margin:20px 0;">
+<div id="talathiTestList" style="display:none;" class="card">
+  <h3>तलाठी भरती टेस्ट लिस्ट</h3>
+  <div id="talathiTestsContainer">
+    टेस्ट लोड होत आहेत...
+  </div>
+</div>
+<div id="policeTestList" style="display:none;" class="card">
+  <h3>पोलीस भरती टेस्ट लिस्ट</h3>
+  <div id="policeTestsContainer">
+    टेस्ट लोड होत आहेत...
+  </div>
+</div>
+
+<div id="talathiTestList" style="display:none;" class="card">
+  <h3>तलाठी भरती टेस्ट लिस्ट</h3>
+  <div id="talathiTestsContainer">
+    टेस्ट लोड होत आहेत...
+  </div>
+</div>
+<div class="home-small-tabs">
+
   <a href="bharti.html" class="small-tab">
     <span>📢</span>
     <small>वर्तमान भरती</small>
@@ -483,7 +567,7 @@ button:hover {
   <a href="#" class="small-tab">
     <span>🏆</span>
     <small>नवीन निकाल</small>
-  </a>
+  </a> 
 
   <a href="#" class="small-tab">
     <span>📰</span>
@@ -725,81 +809,6 @@ button:hover {
   
 
 
-<h2 class="test-heading">🏆 आपल्या टेस्ट सिरीज</h2>
-
-<div class="test-series-grid">
-
-  <div class="card test-card" id="login">
-    <div class="test-icon">👮</div>
-    <h3>पोलीस भरती</h3>
-    <p>ऑनलाइन Mock Test</p>
-    <button onclick="showPoliceTests()">Test सुरू करा →</button>
-  </div>
-
-  <div class="card test-card" id="talathiLogin">
-    <div class="test-icon">📋</div>
-    <h3>तलाठी भरती</h3>
-    <p>ऑनलाइन Mock Test</p>
-    <button onclick="showTalathiTests()">Test सुरू करा →</button>
-  </div>
-
-  <div class="card test-card">
-    <div class="test-icon">🏥</div>
-    <h3>आरोग्य सेवक</h3>
-    <p>ऑनलाइन Mock Test</p>
-    <button disabled>लवकरच उपलब्ध</button>
-  </div>
-
-  <div class="card test-card">
-    <div class="test-icon">📝</div>
-    <h3>SSC CHSL</h3>
-    <p>ऑनलाइन Mock Test</p>
-    <button disabled>लवकरच उपलब्ध</button>
-  </div>
-
-  <div class="card test-card">
-    <div class="test-icon">🎓</div>
-    <h3>SSC CGL</h3>
-    <p>ऑनलाइन Mock Test</p>
-    <button disabled>लवकरच उपलब्ध</button>
-  </div>
-
-  <div class="card test-card">
-    <div class="test-icon">🏛️</div>
-    <h3>Combined Group C</h3>
-    <p>ऑनलाइन Mock Test</p>
-    <button disabled>लवकरच उपलब्ध</button>
-  </div>
-
-  <div class="card test-card">
-    <div class="test-icon">🚆</div>
-    <h3>रेल्वे भरती</h3>
-    <p>ऑनलाइन Mock Test</p>
-    <button disabled>लवकरच उपलब्ध</button>
-  </div>
-
-  <div class="card test-card">
-    <div class="test-icon">📚</div>
-    <h3>MPSC</h3>
-    <p>ऑनलाइन Mock Test</p>
-    <button disabled>लवकरच उपलब्ध</button>
-  </div>
-
-</div>
-
-<div id="policeTestList" style="display:none;" class="card">
-  <h3>पोलीस भरती टेस्ट लिस्ट</h3>
-  <div id="policeTestsContainer">
-    टेस्ट लोड होत आहेत...
-  </div>
-</div>
-
-<div id="talathiTestList" style="display:none;" class="card">
-  <h3>तलाठी भरती टेस्ट लिस्ट</h3>
-  <div id="talathiTestsContainer">
-    टेस्ट लोड होत आहेत...
-  </div>
-</div>
 
 <style>
 .test-heading {
