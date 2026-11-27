@@ -414,6 +414,29 @@ button:hover {
 .test-series-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:16px; }
 #examInlineArea .cbt-shell { max-width:100%; margin:12px 0; }
 
+
+/* HOMEPAGE QUICK ACCESS + MOBILE WIDTH FIX */
+.home-quick-access{max-width:1100px;margin:18px auto 26px;padding:0 10px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;text-align:left}
+.home-quick-card{display:flex;align-items:center;gap:14px;background:#fff;border:1px solid #dbe7f5;border-left:5px solid #1769aa;border-radius:14px;padding:16px;box-shadow:0 4px 14px rgba(0,45,100,.07);min-width:0}
+.home-quick-test{border-left-color:#f5a000}
+.home-quick-icon{font-size:32px;flex:0 0 auto}
+.home-quick-copy{flex:1;min-width:0}
+.home-quick-copy h3{margin:0 0 6px;color:#123b68;font-size:17px}
+.home-quick-copy p{margin:0;color:#52657d;font-size:13px;line-height:1.5}
+.home-quick-button{display:inline-block;flex:0 0 auto;background:#1769aa;color:#fff;text-decoration:none;font-weight:700;padding:10px 14px;border-radius:8px;text-align:center}
+.home-quick-test .home-quick-button{background:#d99000}
+@media(max-width:700px){
+  .home-quick-access{grid-template-columns:1fr;margin:14px auto 20px;padding:0 10px}
+  .home-quick-card{align-items:flex-start;flex-wrap:wrap;padding:14px}
+  .home-quick-copy{flex:1 1 calc(100% - 52px)}
+  .home-quick-button{margin-left:46px}
+  .container,#homeSections,#courses,#coursesSecondary,#studentAuthPanel,.notice-board,.premium-section{width:calc(100% - 20px)!important;max-width:100%!important;margin-left:auto!important;margin-right:auto!important}
+  #courses{display:grid;grid-template-columns:minmax(0,1fr)!important}
+  #coursesSecondary{padding:0!important}
+  .premium-plans{width:100%}
+  .premium-card{max-width:100%;width:100%}
+}
+
 </style>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
@@ -493,6 +516,27 @@ button:hover {
 <div class="container" id="homeSections">
 
 <h2>🏠 Welcome to Prayag Study Hub</h2>
+
+<!-- QUICK ACCESS: STUDENT LOGIN AND TESTS -->
+<section class="home-quick-access" aria-label="विद्यार्थी प्रवेश">
+  <div class="home-quick-card">
+    <div class="home-quick-icon">🎓</div>
+    <div class="home-quick-copy">
+      <h3>Student Login / Register</h3>
+      <p>टेस्ट देण्यासाठी किंवा स्वतःचे निकाल पाहण्यासाठी येथे Login करा.</p>
+    </div>
+    <a class="home-quick-button" href="#studentAuthPanel">Student Login</a>
+  </div>
+  <div class="home-quick-card home-quick-test">
+    <div class="home-quick-icon">📝</div>
+    <div class="home-quick-copy">
+      <h3>टेस्ट देण्यासाठी येथे क्लिक करा</h3>
+      <p>Login केल्यानंतर तुमच्या Dashboard मधून टेस्ट निवडा. प्रश्नपत्रिका लगेच उघडणार नाही.</p>
+    </div>
+    <a class="home-quick-button" href="#studentAuthPanel">टेस्ट सुरू करा</a>
+  </div>
+</section>
+
 <h2 class="test-heading">🏆 आपल्या टेस्ट सिरीज</h2>
 
 <div class="test-series-grid">
@@ -1628,20 +1672,8 @@ function openFreeTest(testNumber) {
 
 async function startExamCBT(examKey, testType, testNumber) {
   if (!auth.currentUser) {
-    // Keep the exact test choice and automatically resume after student login/signup.
-    pendingExamLaunch = {
-      examKey: examKey,
-      testType: testType === "paid" ? "paid" : "free",
-      testNumber: Number(testNumber)
-    };
+    alert("टेस्ट देण्यासाठी आधी Student Login करा.");
     const panel = document.getElementById("studentAuthPanel");
-    const options = document.getElementById("authOptions");
-    const form = document.getElementById("studentForm");
-    if (panel) panel.style.display = "block";
-    if (options) options.style.display = "block";
-    if (form) form.style.display = "none";
-    const message = document.getElementById("emailMessage");
-    if (message) message.textContent = "Login / Register करा. त्यानंतर तुमची निवडलेली टेस्ट लगेच सुरू होईल.";
     if (panel) panel.scrollIntoView({behavior:"smooth", block:"center"});
     return;
   }
