@@ -94,14 +94,10 @@ button:hover{background:#09264b}
 <div id="pageMessage" class="message"></div>
 
 <div class="summary">
-  <div class="card">
-    <h3>👨‍🎓 एकूण विद्यार्थी</h3>
-    <h2 id="totalStudents">0</h2>
-  </div>
-  <div class="card">
-    <h3>📰 एकूण बातम्या</h3>
-    <h2 id="totalNews">0</h2>
-  </div>
+  <div class="card"><h3>👨‍🎓 एकूण विद्यार्थी</h3><h2 id="totalStudents">0</h2></div>
+  <div class="card"><h3>📝 एकूण प्रश्न</h3><h2 id="totalQuestions">0</h2></div>
+  <div class="card"><h3>📢 एकूण भरती</h3><h2 id="totalBharti">0</h2></div>
+  <div class="card"><h3>📰 एकूण बातम्या</h3><h2 id="totalNews">0</h2></div>
 </div>
 
 <div class="card">
@@ -175,13 +171,21 @@ button:hover{background:#09264b}
 
   <input id="bhartiTitle" placeholder="भरतीचे नाव">
   <input id="bhartiPosts" placeholder="एकूण पदे">
+  <label for="bhartiStartDate">अर्ज सुरू होण्याची तारीख</label>
+  <input id="bhartiStartDate" type="date">
+  <label for="bhartiLastDate">अर्जाची शेवटची तारीख</label>
+  <input id="bhartiLastDate" type="date">
   <textarea id="bhartiDetails" placeholder="भरतीची संपूर्ण माहिती"></textarea>
-  <input id="bhartiLastDate" placeholder="अर्ज करण्याची शेवटची तारीख">
-  <input id="bhartiPDF" placeholder="अधिकृत जाहिरात PDF लिंक">
-  <input id="bhartiApply" placeholder="ऑनलाइन अर्ज लिंक">
+  <input id="bhartiPDF" type="url" placeholder="अधिकृत जाहिरात PDF लिंक">
+  <input id="bhartiApply" type="url" placeholder="ऑनलाइन अर्ज लिंक">
+  <input id="bhartiSource" type="url" placeholder="अधिकृत वेबसाईट / Source लिंक">
 
   <button onclick="addBharti()">📢 भरती Publish करा</button>
   <div id="bhartiMessage" class="message"></div>
+  <hr>
+  <h3>📋 पोस्ट केलेल्या भरती</h3>
+  <button type="button" onclick="loadBharti()">भरती यादी Refresh करा</button>
+  <div id="adminBhartiList">भरती यादी येथे दिसेल.</div>
 </div>
 
 <div class="card">
@@ -223,6 +227,18 @@ const auth = firebase.auth();
 const db = firebase.firestore();
 
 let editingMCQId = null;
+let editingBhartiId = null;
+
+async function loadAdminStats(){
+  const collections = [["students","totalStudents"],["mcqQuestions","totalQuestions"],["bharti","totalBharti"],["news","totalNews"]];
+  for (const [collectionId, elementId] of collections) {
+    try {
+      const snap = await db.collection(collectionId).get();
+      const el = document.getElementById(elementId);
+      if (el) el.textContent = snap.size;
+    } catch(error) { console.warn("Stats load failed:", collectionId, error); }
+  }
+}
 
 function goHome(){
   window.location.href = "index.html";
@@ -407,9 +423,11 @@ function addBharti(){
   const title = document.getElementById("bhartiTitle").value.trim();
   const posts = document.getElementById("bhartiPosts").value.trim();
   const details = document.getElementById("bhartiDetails").value.trim();
-  const lastDate = document.getElementById("bhartiLastDate").value.trim();
+  const startDate = document.getElementById("bhartiStartDate").value;
+  const lastDate = document.getElementById("bhartiLastDate").value;
   const pdf = document.getElementById("bhartiPDF").value.trim();
   const apply = document.getElementById("bhartiApply").value.trim();
+  const source = document.getElementById("bhartiSource").value.trim();
   const msg = document.getElementById("bhartiMessage");
 
   if(!title || !details){
@@ -417,19 +435,65 @@ function addBharti(){
     return;
   }
 
-  db.collection("bharti").add({
-    title,posts,details,lastDate,pdf,apply,
-    createdAt:firebase.firestore.FieldValue.serverTimestamp()
-  })
-  .then(()=>{
-    msg.innerText = "भरती यशस्वीपणे Publish झाली!";
-    ["bhartiTitle","bhartiPosts","bhartiDetails","bhartiLastDate","bhartiPDF","bhartiApply"].forEach(id=>{
+  const data = {title,posts,details,startDate,lastDate,pdf,apply,source,updatedAt:firebase.firestore.FieldValue.serverTimestamp()};
+  const savePromise = editingBhartiId
+    ? db.collection("bharti").doc(editingBhartiId).update(data)
+    : db.collection("bharti").add({...data,createdAt:firebase.firestore.FieldValue.serverTimestamp()});
+  savePromise.then(()=>{
+    msg.innerText = editingBhartiId ? "भरती Update झाली!" : "भरती Publish झाली! ती Homepage वरही दिसेल.";
+    editingBhartiId = null;
+    const saveButton = document.querySelector('button[onclick="addBharti()"]');
+    if (saveButton) saveButton.textContent = "📢 भरती Publish करा";
+    ["bhartiTitle","bhartiPosts","bhartiDetails","bhartiStartDate","bhartiLastDate","bhartiPDF","bhartiApply","bhartiSource"].forEach(id=>{
       document.getElementById(id).value = "";
     });
+    loadBharti(); loadAdminStats();
   })
   .catch(error=>{
     msg.innerText = "Error: " + error.message;
   });
+}
+
+// CURRENT RECRUITMENT LIST / DELETE
+async function loadBharti(){
+  const list = document.getElementById("adminBhartiList");
+  if (!list) return;
+  list.textContent = "भरती लोड होत आहेत...";
+  try {
+    const snap = await db.collection("bharti").orderBy("createdAt", "desc").get();
+    const total = document.getElementById("totalBharti"); if (total) total.textContent = snap.size;
+    list.innerHTML = "";
+    if (snap.empty) { list.textContent = "अजून भरती पोस्ट केलेली नाही."; return; }
+    snap.forEach(doc => {
+      const d = doc.data();
+      const item = document.createElement("div"); item.className = "item";
+      const title = document.createElement("h3"); title.textContent = d.title || "भरती";
+      const details = document.createElement("p"); details.textContent = d.details || "";
+      const dates = document.createElement("p"); dates.textContent = `अर्ज: ${d.startDate || "-"} ते ${d.lastDate || "-"}`;
+      const edit = document.createElement("button"); edit.textContent = "✏️ Edit";
+      edit.onclick = () => {
+        editingBhartiId = doc.id;
+        document.getElementById("bhartiTitle").value = d.title || "";
+        document.getElementById("bhartiPosts").value = d.posts || "";
+        document.getElementById("bhartiDetails").value = d.details || "";
+        document.getElementById("bhartiStartDate").value = d.startDate || "";
+        document.getElementById("bhartiLastDate").value = d.lastDate || "";
+        document.getElementById("bhartiPDF").value = d.pdf || "";
+        document.getElementById("bhartiApply").value = d.apply || "";
+        document.getElementById("bhartiSource").value = d.source || "";
+        const saveButton = document.querySelector('button[onclick="addBharti()"]');
+        if (saveButton) saveButton.textContent = "✏️ भरती Update करा";
+        document.getElementById("bhartiTitle").scrollIntoView({behavior:"smooth",block:"center"});
+      };
+      const del = document.createElement("button"); del.className = "delete-btn"; del.textContent = "🗑️ Delete";
+      del.onclick = async () => {
+        if (!confirm("ही भरती Delete करायची आहे का?")) return;
+        try { await db.collection("bharti").doc(doc.id).delete(); loadBharti(); loadAdminStats(); }
+        catch(error) { alert("Delete Error: " + error.message); }
+      };
+      item.append(title, details, dates, edit, del); list.append(item);
+    });
+  } catch(error) { list.textContent = "भरती लोड Error: " + error.message; }
 }
 
 // ADD NEWS
@@ -539,6 +603,8 @@ auth.onAuthStateChanged(async function(user){
     loadStudents();
     loadNews();
     loadMCQQuestions();
+    loadBharti();
+    loadAdminStats();
   }catch(error){
     alert("Admin access तपासता आला नाही: " + error.message);
     window.location.replace("index.html#adminLoginPage");
