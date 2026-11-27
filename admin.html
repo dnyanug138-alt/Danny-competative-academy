@@ -118,18 +118,32 @@ button:hover{background:#09264b}
   <select id="mcqExam">
     <option value="Police Bharti">पोलीस भरती</option>
     <option value="Talathi Bharti">तलाठी भरती</option>
+    <option value="Health Worker">आरोग्य सेवक</option>
+    <option value="SSC CHSL">SSC CHSL</option>
+    <option value="SSC CGL">SSC CGL</option>
+    <option value="Combined Group C">Combined Group C</option>
+    <option value="Railway">रेल्वे भरती</option>
     <option value="MPSC">MPSC</option>
+    <option value="Banking">बँकिंग</option>
+    <option value="SSC">SSC</option>
   </select>
 
-  <label>Test Number</label>
+  <label>Test प्रकार</label>
+  <select id="mcqTestType">
+    <option value="free">Free Mock Test</option>
+    <option value="paid">Paid Mock Test</option>
+  </select>
+
+  <label>Test Number (1 ते 50)</label>
   <select id="mcqTestNumber">
     <option value="">Test निवडा</option>
     <script>
     for(let i=1;i<=50;i++){
-      document.write('<option value="'+i+'">Free Test '+i+'</option>');
+      document.write('<option value="'+i+'">Test '+i+'</option>');
     }
     </script>
   </select>
+  <p class="small">प्रत्येक टेस्टमधील प्रश्न क्रमांक आपोआप 1, 2, 3... असा दिला जाईल.</p>
 
   <textarea id="mcqQuestion" placeholder="प्रश्न लिहा"></textarea>
   <input id="optionA" placeholder="पर्याय A">
@@ -252,12 +266,11 @@ function loadStudents(){
   });
 }
 
-// MCQ SAVE / UPDATE
-function addMCQ(){
+// MCQ QUESTION MANAGEMENT — Free/Paid, all exams, per-test auto numbering
+async function addMCQ(){
   const exam = document.getElementById("mcqExam").value;
-  const selectedTest = document.getElementById("mcqTestNumber").value;
-  const testNumber = exam === "Police Bharti" ? Number(selectedTest) : null;
-
+  const testType = document.getElementById("mcqTestType").value;
+  const testNumber = Number(document.getElementById("mcqTestNumber").value);
   const question = document.getElementById("mcqQuestion").value.trim();
   const A = document.getElementById("optionA").value.trim();
   const B = document.getElementById("optionB").value.trim();
@@ -266,133 +279,117 @@ function addMCQ(){
   const answer = document.getElementById("correctAnswer").value;
   const msg = document.getElementById("mcqMessage");
 
-  if(!question || !A || !B || !C || !D){
-    msg.innerText = "कृपया सर्व माहिती भरा.";
-    return;
+  if(!question || !A || !B || !C || !D){ msg.innerText = "कृपया प्रश्न आणि चारही पर्याय भरा."; return; }
+  if(!Number.isInteger(testNumber) || testNumber < 1 || testNumber > 50){ msg.innerText = "Test Number 1 ते 50 निवडा."; return; }
+
+  msg.innerText = "प्रश्न Save होत आहे...";
+  try {
+    const snapshot = await db.collection("mcqQuestions").get();
+    const sameTest = [];
+    snapshot.forEach(doc => {
+      const d = doc.data();
+      const savedType = String(d.testType || d.category || "free").toLowerCase();
+      if(d.exam === exam && Number(d.testNumber) === testNumber && savedType === testType && doc.id !== editingMCQId){
+        sameTest.push(d);
+      }
+    });
+    const currentDoc = editingMCQId ? await db.collection("mcqQuestions").doc(editingMCQId).get() : null;
+    const oldData = currentDoc && currentDoc.exists ? currentDoc.data() : null;
+    const oldType = oldData ? String(oldData.testType || oldData.category || "free").toLowerCase() : "";
+    const isSameGroup = oldData && oldData.exam === exam && Number(oldData.testNumber) === testNumber && oldType === testType;
+    const maxNumber = sameTest.reduce((max,d)=>Math.max(max,Number(d.questionNumber)||0),0);
+    const questionNumber = isSameGroup && Number(oldData.questionNumber)
+      ? Number(oldData.questionNumber)
+      : Math.max(maxNumber, sameTest.length)+1;
+
+    const data = {
+      exam, testType, category:testType, testNumber, questionNumber,
+      question, options:{A,B,C,D}, answer,
+      updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+    };
+    let operation;
+    if(editingMCQId){ operation = db.collection("mcqQuestions").doc(editingMCQId).update(data); }
+    else { data.createdAt = firebase.firestore.FieldValue.serverTimestamp(); operation = db.collection("mcqQuestions").add(data); }
+    await operation;
+    msg.innerText = `प्रश्न ${questionNumber} यशस्वीपणे ${editingMCQId ? "Update" : "Save"} झाला!`;
+    cancelEdit(false);
+    await loadMCQQuestions();
+  } catch(error) {
+    msg.innerText = "Save Error: " + error.message;
+    console.error(error);
   }
-
-  if(exam === "Police Bharti" && (!selectedTest || testNumber < 1 || testNumber > 50)){
-    msg.innerText = "Test Number निवडा.";
-    return;
-  }
-
-  const data = {
-    exam,
-    testNumber,
-    question,
-    options:{A,B,C,D},
-    answer
-  };
-
-  let operation;
-
-  if(editingMCQId){
-    operation = db.collection("mcqQuestions").doc(editingMCQId).update(data);
-  }else{
-    data.createdAt = firebase.firestore.FieldValue.serverTimestamp();
-    operation = db.collection("mcqQuestions").add(data);
-  }
-
-  operation.then(()=>{
-    msg.innerText = "प्रश्न यशस्वीपणे Save / Update झाला!";
-    cancelEdit();
-    loadMCQQuestions();
-  }).catch(error=>{
-    msg.innerText = "Error: " + error.message;
-  });
 }
 
-// LOAD MCQ
-function loadMCQQuestions(){
+async function loadMCQQuestions(){
   const list = document.getElementById("mcqQuestionList");
   list.innerHTML = "प्रश्न लोड होत आहेत...";
-
-  db.collection("mcqQuestions").get()
-  .then(snapshot=>{
-    list.innerHTML = "";
-
-    if(snapshot.empty){
-      list.innerText = "अजून प्रश्न उपलब्ध नाहीत.";
-      return;
-    }
-
+  try {
+    const snapshot = await db.collection("mcqQuestions").get();
     const questions = [];
-    snapshot.forEach(doc=>{
-      questions.push({id:doc.id,...doc.data()});
-    });
-
-    questions.sort((a,b)=>(a.testNumber||0)-(b.testNumber||0));
-
+    snapshot.forEach(doc=>questions.push({id:doc.id,...doc.data()}));
+    questions.sort((a,b)=>String(a.exam).localeCompare(String(b.exam)) ||
+      String(a.testType || "free").localeCompare(String(b.testType || "free")) ||
+      (Number(a.testNumber)||0)-(Number(b.testNumber)||0) ||
+      (Number(a.questionNumber)||0)-(Number(b.questionNumber)||0));
+    list.innerHTML = "";
+    if(!questions.length){ list.innerText = "अजून प्रश्न उपलब्ध नाहीत."; return; }
     questions.forEach(data=>{
-      const item = document.createElement("div");
-      item.className = "item";
-
+      const item = document.createElement("div"); item.className = "item";
       const title = document.createElement("h4");
-      title.textContent = data.exam + " - Test " + (data.testNumber || "-");
-
-      const question = document.createElement("p");
-      question.textContent = data.question;
-
-      const edit = document.createElement("button");
-      edit.textContent = "✏️ Edit";
-      edit.onclick = ()=>editMCQ(data.id);
-
-      const del = document.createElement("button");
-      del.textContent = "🗑️ Delete";
-      del.className = "delete-btn";
-      del.onclick = ()=>deleteMCQ(data.id);
-
-      item.append(title,question,edit,del);
-      list.appendChild(item);
+      const typeLabel = String(data.testType || data.category || "free").toLowerCase() === "paid" ? "Paid" : "Free";
+      title.textContent = `${data.exam || "Exam"} • ${typeLabel} Test ${data.testNumber || "-"} • प्रश्न ${data.questionNumber || "क्रमांक नाही"}`;
+      const question = document.createElement("p"); question.textContent = data.question || "";
+      const edit = document.createElement("button"); edit.textContent = "✏️ Edit"; edit.onclick = ()=>editMCQ(data.id);
+      const del = document.createElement("button"); del.textContent = "🗑️ Delete"; del.className="delete-btn"; del.onclick=()=>deleteMCQ(data.id);
+      item.append(title,question,edit,del); list.appendChild(item);
     });
-  })
-  .catch(error=>{
-    list.innerText = "Error: " + error.message;
-  });
+  } catch(error) { list.innerText = "प्रश्न लोड झाले नाहीत: " + error.message; console.error(error); }
 }
 
-function editMCQ(id){
-  db.collection("mcqQuestions").doc(id).get()
-  .then(doc=>{
-    if(!doc.exists){
-      alert("प्रश्न सापडला नाही.");
-      return;
-    }
-
-    const data = doc.data();
+async function editMCQ(id){
+  const msg = document.getElementById("mcqMessage");
+  try {
+    const doc = await db.collection("mcqQuestions").doc(id).get();
+    if(!doc.exists){ alert("प्रश्न सापडला नाही."); return; }
+    const data = doc.data(); const options = data.options || {};
     editingMCQId = id;
-
     document.getElementById("mcqExam").value = data.exam || "Police Bharti";
+    document.getElementById("mcqTestType").value = String(data.testType || data.category || "free").toLowerCase();
     document.getElementById("mcqTestNumber").value = data.testNumber || "";
     document.getElementById("mcqQuestion").value = data.question || "";
-    document.getElementById("optionA").value = data.options?.A || "";
-    document.getElementById("optionB").value = data.options?.B || "";
-    document.getElementById("optionC").value = data.options?.C || "";
-    document.getElementById("optionD").value = data.options?.D || "";
+    document.getElementById("optionA").value = options.A || "";
+    document.getElementById("optionB").value = options.B || "";
+    document.getElementById("optionC").value = options.C || "";
+    document.getElementById("optionD").value = options.D || "";
     document.getElementById("correctAnswer").value = data.answer || "A";
-
-    document.getElementById("mcqMessage").innerText = "बदल करून Save करा.";
-    window.scrollTo(0,0);
-  })
-  .catch(error=>alert(error.message));
+    msg.innerText = `प्रश्न ${data.questionNumber || ""} Edit करण्यासाठी तयार आहे. बदल करून Save / Update करा.`;
+    const saveButton = document.querySelector('button[onclick="addMCQ()"]');
+    if(saveButton) saveButton.textContent = "✏️ प्रश्न Update करा";
+    document.getElementById("mcqQuestion").scrollIntoView({behavior:"smooth",block:"center"});
+    document.getElementById("mcqQuestion").focus();
+  } catch(error) { alert("Edit Error: " + error.message); console.error(error); }
 }
 
-function cancelEdit(){
+function cancelEdit(clearMessage=true){
   editingMCQId = null;
-  ["mcqQuestion","optionA","optionB","optionC","optionD"].forEach(id=>{
-    document.getElementById(id).value = "";
-  });
+  ["mcqQuestion","optionA","optionB","optionC","optionD"].forEach(id=>document.getElementById(id).value="");
+  document.getElementById("mcqExam").value = "Police Bharti";
+  document.getElementById("mcqTestType").value = "free";
+  document.getElementById("mcqTestNumber").value = "";
+  document.getElementById("correctAnswer").value = "A";
+  const saveButton = document.querySelector('button[onclick="addMCQ()"]');
+  if(saveButton) saveButton.textContent = "💾 प्रश्न Save करा";
+  if(clearMessage) document.getElementById("mcqMessage").innerText = "Edit रद्द केले.";
 }
 
-function deleteMCQ(id){
-  if(!confirm("हा प्रश्न Delete करायचा आहे का?")) return;
-
-  db.collection("mcqQuestions").doc(id).delete()
-  .then(()=>{
-    alert("प्रश्न Delete झाला.");
-    loadMCQQuestions();
-  })
-  .catch(error=>alert(error.message));
+async function deleteMCQ(id){
+  if(!confirm("हा प्रश्न कायमचा Delete करायचा आहे का?")) return;
+  try {
+    await db.collection("mcqQuestions").doc(id).delete();
+    if(editingMCQId === id) cancelEdit();
+    alert("प्रश्न यशस्वीपणे Delete झाला!");
+    await loadMCQQuestions();
+  } catch(error) { alert("Delete Error: " + error.message); console.error(error); }
 }
 
 // CURRENT RECRUITMENT
@@ -514,10 +511,29 @@ function loadNews(){
   });
 }
 
-// INITIAL LOAD
-loadStudents();
-loadNews();
-loadMCQQuestions();
+// ADMIN ACCESS CHECK: only a signed-in account listed in the Admins collection can open this page.
+document.body.style.display = "none";
+auth.onAuthStateChanged(async function(user){
+  if(!user){
+    window.location.replace("index.html#adminLoginPage");
+    return;
+  }
+  try{
+    const adminDoc = await db.collection("Admins").doc(user.uid).get();
+    if(!adminDoc.exists || adminDoc.data().role !== "admin"){
+      await auth.signOut();
+      window.location.replace("index.html#adminLoginPage");
+      return;
+    }
+    document.body.style.display = "";
+    loadStudents();
+    loadNews();
+    loadMCQQuestions();
+  }catch(error){
+    alert("Admin access तपासता आला नाही: " + error.message);
+    window.location.replace("index.html#adminLoginPage");
+  }
+});
 
 </script>
 </body>
