@@ -1755,7 +1755,8 @@ function policeSubmitTest() {
 </script>
   
 <!-- ADMIN LOGIN -->
-<div style="max-width:400px;margin:30px auto;padding:20px;background:white;border-radius:12px;text-align:center;">
+<div id="adminLoginPage" 
+style="max-width:400px;margin:30px auto;padding:20px;background:white;border-radius:12px;text-align:center;">
   <h2>Admin Login</h2>
 
   <input id="adminEmail" type="email"
@@ -2025,6 +2026,12 @@ console.log("Admin Login Button Clicked");
 
         document.getElementById("studentDashboard").style.display = "none";
         document.getElementById("adminDashboard").style.display = "block";
+        document.getElementById("adminLoginPage").style.display = "none";
+
+        document.getElementById("adminPanelPage").style.display = "block";
+        document.getElementById("adminPanelPage").appendChild(
+  document.getElementById("adminDashboard")
+);
         loadDashboardSummary();
 
         loadNews();
@@ -3264,6 +3271,12 @@ async function finishFirestoreTest() {
     <summary>Refund Policy</summary>
     <p>टेस्ट सुरू न झाल्यास तांत्रिक अडचण तपासून विद्यार्थ्याला पुन्हा संधी दिली जाईल. इतर परताव्याच्या विनंत्या लागू नियमांनुसार तपासल्या जातील.</p>
   </details>
-</div> 
+</div>
+  <!-- ADMIN PANEL PAGE -->
+<div id="adminPanelPage" style="display:none;">
+  <h1>Prayag Study Hub</h1>
+  <h2>Admin Panel</h2>
+  <hr>
+</div>
 </body>
 </html>
