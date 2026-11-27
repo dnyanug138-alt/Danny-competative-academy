@@ -6,43 +6,196 @@
 <title>वर्तमान भरती | Prayag Study Hub</title>
 
 <style>
-body {
-  margin: 0;
-  font-family: Arial, sans-serif;
-  background: #f3f6fc;
-  color: #183153;
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  font-family:Arial,sans-serif;
+  background:#f2f5fb;
+  color:#19304d;
 }
-header {
-  background: linear-gradient(135deg, #09264b, #1769aa);
-  color: white;
-  text-align: center;
-  padding: 25px 12px;
+
+header{
+  background:linear-gradient(135deg,#071d3b,#123f70);
+  color:white;
+  padding:25px 15px 30px;
+  text-align:center;
 }
-.container {
-  max-width: 850px;
-  margin: auto;
-  padding: 20px 12px;
+
+.logo{
+  font-size:14px;
+  letter-spacing:1px;
+  color:#f5c75e;
+  font-weight:bold;
 }
-.card {
-  background: white;
-  padding: 18px;
-  margin: 15px 0;
-  border-radius: 12px;
-  box-shadow: 0 3px 12px #0001;
+
+header h1{
+  font-size:27px;
+  margin:13px 0 7px;
 }
-.card h3 { color: #1769aa; }
-a.btn {
-  display: inline-block;
-  background: #1769aa;
-  color: white;
-  padding: 11px 16px;
-  margin: 7px 5px 0 0;
-  border-radius: 7px;
-  text-decoration: none;
+
+header p{
+  font-size:14px;
+  color:#dce8f7;
 }
-.back {
-  color: white;
-  text-decoration: none;
+
+.back{
+  display:inline-block;
+  margin-top:12px;
+  color:white;
+  text-decoration:none;
+  border:1px solid #ffffff70;
+  padding:9px 16px;
+  border-radius:25px;
+  font-size:13px;
+}
+
+.container{
+  max-width:900px;
+  margin:auto;
+  padding:22px 14px;
+}
+
+.intro{
+  background:white;
+  padding:20px;
+  border-radius:15px;
+  box-shadow:0 4px 18px #102b5010;
+  margin-bottom:20px;
+}
+
+.intro h2{
+  margin:0 0 8px;
+  color:#123f70;
+  font-size:21px;
+}
+
+.intro p{
+  margin:0;
+  color:#718096;
+  font-size:14px;
+  line-height:1.6;
+}
+
+.search{
+  width:100%;
+  padding:14px 16px;
+  border:1px solid #dce3ed;
+  border-radius:10px;
+  font-size:15px;
+  outline:none;
+  margin:17px 0;
+  background:white;
+}
+
+.search:focus{
+  border-color:#1769aa;
+}
+
+.count{
+  font-size:14px;
+  color:#52657d;
+  margin:5px 2px 15px;
+}
+
+.card{
+  background:white;
+  border-radius:15px;
+  padding:19px;
+  margin-bottom:17px;
+  box-shadow:0 5px 18px #102b5010;
+  border:1px solid #e8edf5;
+  border-left:5px solid #e6ad37;
+}
+
+.card h3{
+  color:#123f70;
+  font-size:19px;
+  margin:0 0 15px;
+  line-height:1.5;
+}
+
+.info{
+  display:flex;
+  flex-wrap:wrap;
+  gap:9px;
+  margin-bottom:15px;
+}
+
+.info span{
+  background:#edf4fc;
+  color:#174d80;
+  padding:8px 11px;
+  border-radius:7px;
+  font-size:13px;
+  font-weight:bold;
+}
+
+.date{
+  background:#fff5e7!important;
+  color:#a55b00!important;
+}
+
+.details{
+  color:#526174;
+  font-size:14px;
+  line-height:1.8;
+  white-space:pre-wrap;
+  overflow-wrap:anywhere;
+  border-top:1px solid #edf0f5;
+  padding-top:13px;
+}
+
+.buttons{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  margin-top:17px;
+}
+
+.btn{
+  display:inline-block;
+  text-decoration:none;
+  padding:11px 15px;
+  border-radius:8px;
+  font-size:13px;
+  font-weight:bold;
+  text-align:center;
+}
+
+.pdf{
+  background:#edf4fc;
+  color:#14558e;
+}
+
+.apply{
+  background:#087d58;
+  color:white;
+}
+
+.empty{
+  background:white;
+  padding:30px 15px;
+  text-align:center;
+  border-radius:13px;
+  color:#718096;
+  line-height:1.7;
+}
+
+footer{
+  background:#071d3b;
+  color:#dce8f7;
+  text-align:center;
+  padding:20px 10px;
+  font-size:13px;
+  margin-top:30px;
+}
+
+@media(max-width:480px){
+  header h1{font-size:23px}
+  .card{padding:16px}
+  .card h3{font-size:17px}
+  .buttons a{flex:1}
 }
 </style>
 </head>
@@ -50,15 +203,39 @@ a.btn {
 <body>
 
 <header>
+  <div class="logo">📚 PRAYAG STUDY HUB</div>
   <h1>📢 वर्तमान भरती</h1>
-  <p>Prayag Study Hub</p>
+  <p>महाराष्ट्रातील नवीन सरकारी भरतीची माहिती</p>
   <a class="back" href="index.html">← मुख्य पेजवर जा</a>
 </header>
 
 <div class="container">
-  <h2>नवीन सरकारी भरती</h2>
-  <div id="bhartiList">भरती माहिती Loading...</div>
+
+  <div class="intro">
+    <h2>🏢 नवीन सरकारी भरती</h2>
+    <p>सरकारी नोकरीच्या नवीन संधी, पात्रता, पदसंख्या आणि अर्जाची माहिती येथे मिळवा.</p>
+  </div>
+
+  <input
+    type="search"
+    id="searchBharti"
+    class="search"
+    placeholder="🔍 भरतीचे नाव शोधा..."
+  >
+
+  <div class="count" id="bhartiCount">भरती माहिती Loading...</div>
+
+  <div id="bhartiList">
+    <div class="empty">⏳ भरती माहिती लोड होत आहे...</div>
+  </div>
+
 </div>
+
+<footer>
+  <strong>PRAYAG STUDY HUB</strong>
+  <p>Learn Today • Lead Tomorrow</p>
+  © 2026 Prayag Study Hub
+</footer>
 
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
@@ -73,69 +250,120 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
-function loadBharti() {
+let allBharti = [];
+
+function showBharti(data){
+
   const list = document.getElementById("bhartiList");
-  list.innerHTML = "भरती माहिती Loading...";
+  const count = document.getElementById("bhartiCount");
+
+  list.innerHTML = "";
+
+  count.textContent = "एकूण " + data.length + " भरती उपलब्ध";
+
+  if(data.length === 0){
+    list.innerHTML =
+      '<div class="empty">सध्या कोणतीही भरती उपलब्ध नाही.</div>';
+    return;
+  }
+
+  data.forEach(b => {
+
+    const card = document.createElement("div");
+    card.className = "card";
+
+    const title = document.createElement("h3");
+    title.textContent = "📌 " + (b.title || "नवीन भरती");
+    card.appendChild(title);
+
+    const info = document.createElement("div");
+    info.className = "info";
+
+    const posts = document.createElement("span");
+    posts.textContent = "👥 एकूण पदे: " + (b.posts || "उपलब्ध नाही");
+    info.appendChild(posts);
+
+    const date = document.createElement("span");
+    date.className = "date";
+    date.textContent = "📅 शेवटची तारीख: " + (b.lastDate || "उपलब्ध नाही");
+    info.appendChild(date);
+
+    card.appendChild(info);
+
+    const details = document.createElement("div");
+    details.className = "details";
+    details.textContent = b.details || "सविस्तर माहिती उपलब्ध नाही.";
+    card.appendChild(details);
+
+    const buttons = document.createElement("div");
+    buttons.className = "buttons";
+
+    if(b.pdf){
+      const pdf = document.createElement("a");
+      pdf.className = "btn pdf";
+      pdf.href = b.pdf;
+      pdf.target = "_blank";
+      pdf.rel = "noopener noreferrer";
+      pdf.textContent = "📄 अधिकृत जाहिरात PDF";
+      buttons.appendChild(pdf);
+    }
+
+    if(b.apply){
+      const apply = document.createElement("a");
+      apply.className = "btn apply";
+      apply.href = b.apply;
+      apply.target = "_blank";
+      apply.rel = "noopener noreferrer";
+      apply.textContent = "➡️ ऑनलाइन अर्ज करा";
+      buttons.appendChild(apply);
+    }
+
+    if(b.pdf || b.apply){
+      card.appendChild(buttons);
+    }
+
+    list.appendChild(card);
+  });
+}
+
+function loadBharti(){
 
   db.collection("bharti")
-    .orderBy("createdAt", "desc")
+    .orderBy("createdAt","desc")
     .get()
     .then(snapshot => {
-      list.innerHTML = "";
 
-      if (snapshot.empty) {
-        list.innerHTML = "सध्या कोणतीही नवीन भरती उपलब्ध नाही.";
-        return;
-      }
+      allBharti = [];
 
       snapshot.forEach(doc => {
-        const b = doc.data();
-        const card = document.createElement("div");
-        card.className = "card";
-
-        const title = document.createElement("h3");
-        title.textContent = b.title || "";
-        card.appendChild(title);
-
-        const posts = document.createElement("p");
-        posts.textContent = "एकूण पदे: " + (b.posts || "माहिती उपलब्ध नाही");
-        card.appendChild(posts);
-
-        const details = document.createElement("p");
-        details.textContent = b.details || "";
-        card.appendChild(details);
-
-        const date = document.createElement("p");
-        date.textContent = "शेवटची तारीख: " + (b.lastDate || "माहिती उपलब्ध नाही");
-        card.appendChild(date);
-
-        if (b.pdf) {
-          const pdf = document.createElement("a");
-          pdf.className = "btn";
-          pdf.href = b.pdf;
-          pdf.target = "_blank";
-          pdf.rel = "noopener noreferrer";
-          pdf.textContent = "अधिकृत जाहिरात PDF";
-          card.appendChild(pdf);
-        }
-
-        if (b.apply) {
-          const apply = document.createElement("a");
-          apply.className = "btn";
-          apply.href = b.apply;
-          apply.target = "_blank";
-          apply.rel = "noopener noreferrer";
-          apply.textContent = "ऑनलाइन अर्ज करा";
-          card.appendChild(apply);
-        }
-
-        list.appendChild(card);
+        allBharti.push(doc.data());
       });
+
+      showBharti(allBharti);
+
     })
     .catch(error => {
-      list.textContent = "माहिती लोड झाली नाही: " + error.message;
+
+      document.getElementById("bhartiList").textContent =
+        "माहिती लोड झाली नाही: " + error.message;
+
+      document.getElementById("bhartiCount").textContent =
+        "माहिती मिळवताना अडचण आली.";
+
     });
 }
+
+document.getElementById("searchBharti")
+.addEventListener("input",function(){
+
+  const value = this.value.toLowerCase().trim();
+
+  const filtered = allBharti.filter(b =>
+    (b.title || "").toLowerCase().includes(value)
+  );
+
+  showBharti(filtered);
+});
 
 loadBharti();
 </script>
