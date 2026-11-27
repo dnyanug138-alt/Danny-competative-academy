@@ -418,6 +418,25 @@ button:hover {
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+
+<style>
+.bharti-list-table{border:1px solid #dbe3ed;border-radius:10px;overflow:hidden;background:#fff;text-align:left}
+.bharti-list-head,.bharti-list-row{display:grid;grid-template-columns:minmax(0,2.2fr) minmax(130px,.9fr)}
+.bharti-list-head{background:#fff8f0;color:#d97706;padding:13px 16px;border-bottom:1px solid #f1d9c2}
+.bharti-list-head strong:last-child{text-align:center}
+.bharti-list-row{border-bottom:1px solid #e5eaf1;min-height:125px}
+.bharti-list-row:last-child{border-bottom:0}
+.bharti-job-title{padding:16px;background:#fff;overflow-wrap:anywhere}
+.bharti-job-title h3{margin:0 0 8px;color:#285b91;font-size:20px;line-height:1.5}
+.bharti-posts,.bharti-details{margin:5px 0;color:#52657d;font-size:14px}
+.bharti-links{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.bharti-links a{color:#16734b;border:1px solid #9bd9bd;border-radius:18px;padding:5px 10px;text-decoration:none;font-size:13px}
+.bharti-last-date{background:#f2f8fc;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:12px;border-left:1px solid #e1e8f0;color:#16756b;gap:8px}
+.bharti-last-date strong{font-size:19px}
+.bharti-status{font-size:12px;border:1px solid #e5b779;border-radius:20px;padding:5px 9px;color:#b66b1e;background:#fffaf2}
+@media(max-width:600px){.bharti-list-head,.bharti-list-row{grid-template-columns:minmax(0,1fr) 112px}.bharti-job-title{padding:12px}.bharti-job-title h3{font-size:17px}.bharti-last-date strong{font-size:15px}.bharti-status{font-size:10px;padding:4px 6px}}
+</style>
+
 </head>
 
 <body>
@@ -1060,95 +1079,99 @@ function showAuthOptions() {
   <p id="emailMessage" role="status"></p>
 </section>
 
-<!-- STUDENT DASHBOARD -->
-
-<div id="studentDashboard" style="display:none;max-width:500px;margin:25px auto;padding:20px;background:#f2f5ff;border-radius:12px;">
-
-<h2>🎓 Prayag Study Hub</h2>
-<h3>Student Dashboard</h3>
-  <div id="myPremiumAccess" style="background:white;padding:12px;border-radius:10px;margin:12px 0;"><strong>👑 My Premium Access</strong><p>तुमचे Premium Membership तपासले जात आहे...</p></div>
-
-<h3>📝 Free Mock Test Series</h3>
-<p>विद्यार्थ्यांसाठी 50 मोफत टेस्ट सीरिज</p>
-
-
-<div id="freeTestSeries"></div>
-
-<script>
-  const testSeries = document.getElementById("freeTestSeries");
-
-  for (let i = 1; i <= 50; i++) {
-    testSeries.innerHTML += `
-      <div class="test-item">
-        <span>Free Test ${i}</span>
-        <button onclick="openFreeTest(${i})">Start Test</button>
-      </div>
-    `;
-  }
-</script>
-
-<div id="freeTestArea"></div>
-
-
-<button type="button" onclick="document.getElementById('premiumSeries').scrollIntoView({behavior:'smooth'});">👑 परीक्षा निवडून Premium घ्या</button>
-<h3>🏆 My Results</h3>
-<p>तुझे निकाल येथे दिसतील.</p>
-
-<hr>
-
-<h2>🏆 Student Leaderboard</h2>
-<p>सर्वाधिक गुण मिळवणारे विद्यार्थी</p>
-
-<div id="leaderboard">
-  🏆 Leaderboard Loading...
+<!-- STUDENT DASHBOARD: no test/question list is shown immediately after login -->
+<div id="studentDashboard" style="display:none;max-width:1100px;margin:25px auto;padding:18px;background:#f4f7fc;border-radius:16px;text-align:left;">
+  <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;">
+    <div><h2 style="margin:0;color:#123b68;">🎓 Student Dashboard</h2><p id="studentWelcome" style="margin:6px 0;color:#52657d;">स्वागत आहे!</p></div>
+    <button type="button" onclick="studentLogout()">Logout</button>
+  </div>
+  <div id="myPremiumAccess" style="background:white;padding:14px;border-radius:12px;margin:14px 0;"><strong>👑 My Premium Access</strong><p>तुमचे Premium Membership तपासले जात आहे...</p></div>
+  <div class="student-stats-grid">
+    <div class="student-stat"><strong id="studentTotalTests">0</strong><span>दिलेल्या टेस्ट</span></div>
+    <div class="student-stat"><strong id="studentAverage">0%</strong><span>सरासरी गुण</span></div>
+    <div class="student-stat"><strong id="studentTotalScore">0</strong><span>एकूण मिळवलेले गुण</span></div>
+    <div class="student-stat"><strong id="studentBestScore">0%</strong><span>सर्वोत्तम कामगिरी</span></div>
+  </div>
+  <div class="student-dashboard-actions">
+    <button type="button" onclick="toggleStudentExamPicker()">📝 Start Exam</button>
+    <button type="button" onclick="document.getElementById('studentResultsPanel').scrollIntoView({behavior:'smooth'});">🏆 माझे निकाल</button>
+    <button type="button" onclick="document.getElementById('myPremiumAccess').scrollIntoView({behavior:'smooth'});">👑 माझे Premium</button>
+  </div>
+  <div id="studentExamPicker" style="display:none;background:white;padding:16px;border-radius:12px;margin:14px 0;">
+    <h3>परीक्षा निवडा</h3>
+    <p>परीक्षा निवडल्यानंतर Free किंवा Paid विभाग निवडता येईल. प्रश्न टेस्ट सुरू केल्यावरच दिसतील.</p>
+    <select id="studentExamSelect" style="width:100%;padding:12px;border:1px solid #cbd5e1;border-radius:8px;">
+      <option value="police">पोलीस भरती</option><option value="talathi">तलाठी भरती</option><option value="health">आरोग्य सेवक</option><option value="sscchsl">SSC CHSL</option><option value="ssccgl">SSC CGL</option><option value="groupc">Combined Group C</option><option value="railway">Railway</option><option value="mpsc">MPSC</option><option value="banking">Banking</option><option value="ssc">SSC</option>
+    </select>
+    <button type="button" onclick="continueStudentExamSelection()">पुढे जा</button>
+    <button type="button" onclick="toggleStudentExamPicker(false)" style="background:#64748b;">बंद करा</button>
+  </div>
+  <div id="studentResultsPanel" style="background:white;padding:16px;border-radius:12px;margin:14px 0;">
+    <h3>🏆 माझे अलीकडील निकाल</h3><div id="studentResultsList">निकाल लोड होत आहेत...</div>
+  </div>
+  <div style="background:white;padding:16px;border-radius:12px;margin:14px 0;">
+    <h3>📈 विषयानुसार प्रगती</h3><div id="studentGrowthDetails">टेस्ट दिल्यानंतर तुमची प्रगती येथे दिसेल.</div>
+  </div>
+  <p id="studentEmail" style="color:#64748b;font-size:13px;"></p>
 </div>
 
-<p id="studentNameDisplay"></p>
-  <p>Profile: Student</p>
-<p id="studentEmail"></p>
-  <p>Account Status: Active</p>
+<style>
+.student-stats-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:14px 0}
+.student-stat{background:#fff;border:1px solid #e4eaf2;border-radius:12px;padding:15px 8px;text-align:center}
+.student-stat strong{display:block;font-size:25px;color:#1769aa}.student-stat span{font-size:12px;color:#64748b}
+.student-dashboard-actions{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0}.student-dashboard-actions button{flex:1;min-width:130px}
+@media(max-width:620px){.student-stats-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+</style>
 
-  <h3>📚 My Tests</h3>
-<p>तुमच्या टेस्ट लवकरच येथे उपलब्ध होतील.</p>
-  <hr>
-<h3>📚 विषयानुसार सराव परीक्षा</h3>
-
-<button onclick="alert('मराठी व्याकरण')">मराठी व्याकरण</button>
-
-<button onclick="alert('गणित')">गणित</button>
-
-<button onclick="alert('बुद्धिमत्ता चाचणी')">बुद्धिमत्ता चाचणी</button>
-
-<button onclick="alert('सामान्य ज्ञान')">सामान्य ज्ञान</button>
-
-<button onclick="alert('चालू घडामोडी')">चालू घडामोडी</button>
-  
-  <button onclick="startPoliceTest()">
-🚔 Police Bharti Test सुरू करा
-  </button>
-  <button onclick="startDemoTest()">
-🎁 FREE DEMO TEST सुरू करा
-  </button>
-  <div id="policeQuiz"></div>
-  
-  <button 
-  onclick="studentLogout()">Logout</button>
-
-<hr>
-
-<h3>📚 उपलब्ध परीक्षा</h3>
-<p>Police Bharti</p>
-<p>Talathi</p>
-<p>MPSC</p>
-
-<hr>
-
-
-<hr>
-
-
-  
-<hr>
+<script>
+function toggleStudentExamPicker(force){
+  const box=document.getElementById('studentExamPicker');
+  if(!box)return;
+  box.style.display=(force===undefined ? box.style.display==='none' : force) ? 'block' : 'none';
+  if(box.style.display==='block') box.scrollIntoView({behavior:'smooth',block:'center'});
+}
+function continueStudentExamSelection(){
+  if(!auth.currentUser){alert('परीक्षा सुरू करण्यासाठी Login करा.');return;}
+  const key=document.getElementById('studentExamSelect').value;
+  toggleStudentExamPicker(false);
+  showExamHub(key);
+}
+async function loadStudentDashboard(user){
+  const welcome=document.getElementById('studentWelcome');
+  const email=document.getElementById('studentEmail');
+  try{
+    const profile=await db.collection('students').doc(user.uid).get();
+    const name=(profile.exists && profile.data().name) || user.displayName || 'विद्यार्थी';
+    if(welcome) welcome.textContent='स्वागत आहे, '+name+'!';
+    if(email) email.textContent='Email: '+(user.email||'');
+    const snap=await db.collection('testResults').where('uid','==',user.uid).limit(100).get();
+    const results=[];snap.forEach(doc=>results.push(doc.data()));
+    results.sort((a,b)=>{const ta=a.createdAt?.toDate?a.createdAt.toDate().getTime():0;const tb=b.createdAt?.toDate?b.createdAt.toDate().getTime():0;return tb-ta;});
+    const total=results.length;
+    const totalScore=results.reduce((n,r)=>n+(Number(r.score)||0),0);
+    const totalQuestions=results.reduce((n,r)=>n+(Number(r.totalQuestions)||0),0);
+    const avg=totalQuestions?Math.round(totalScore/totalQuestions*100):0;
+    const best=results.reduce((m,r)=>Math.max(m,Number(r.totalQuestions)?(Number(r.score)||0)/Number(r.totalQuestions)*100:0),0);
+    document.getElementById('studentTotalTests').textContent=total;
+    document.getElementById('studentAverage').textContent=avg+'%';
+    document.getElementById('studentTotalScore').textContent=totalScore;
+    document.getElementById('studentBestScore').textContent=Math.round(best)+'%';
+    const list=document.getElementById('studentResultsList');
+    if(!total){list.textContent='अजून टेस्ट दिलेली नाही. Start Exam वर क्लिक करून पहिली टेस्ट द्या.';}
+    else{
+      list.innerHTML='';
+      results.slice(0,10).forEach(r=>{
+        const row=document.createElement('div');row.style.cssText='padding:10px 0;border-bottom:1px solid #e5eaf1';
+        const title=document.createElement('strong');title.textContent=r.testName||'Mock Test';
+        const detail=document.createElement('div');detail.style.cssText='font-size:13px;color:#64748b';detail.textContent=(Number(r.score)||0)+' / '+(Number(r.totalQuestions)||0)+' गुण • '+(Number(r.totalQuestions)?Math.round((Number(r.score)||0)/Number(r.totalQuestions)*100):0)+'%';
+        row.append(title,detail);list.append(row);
+      });
+    }
+    const growth=document.getElementById('studentGrowthDetails');
+    if(total){const byExam={};results.forEach(r=>{const k=r.exam||r.testName||'इतर';byExam[k]=byExam[k]||{score:0,total:0,count:0};byExam[k].score+=Number(r.score)||0;byExam[k].total+=Number(r.totalQuestions)||0;byExam[k].count++;});growth.innerHTML='';Object.entries(byExam).forEach(([k,v])=>{const p=document.createElement('p');p.textContent=k+': '+(v.total?Math.round(v.score/v.total*100):0)+'% ('+v.count+' टेस्ट)';growth.append(p);});}
+  }catch(error){console.error('Student dashboard load error',error);document.getElementById('studentResultsList').textContent='निकाल लोड करता आले नाहीत. Firestore Rules तपासा.';}
+}
+</script>
 
 <div id="adminPanel" style="display:none;background:white;padding:15px;margin-top:15px;border-radius:10px;">
 
@@ -1358,57 +1381,54 @@ function studentLogin() {
 function openPoliceStudyCenter() {
   showPoliceTests();
 }
-auth.onAuthStateChanged(async function(user) {
+// Direct exam launch remembers the selected test while the student logs in.
+let pendingExamLaunch = null;
 
+auth.onAuthStateChanged(async function(user) {
   loadHomepageBharti();
   const dashboard = document.getElementById("studentDashboard");
   const adminPanel = document.getElementById("adminPanel");
   const authPanel = document.getElementById("studentAuthPanel");
 
-  dashboard.style.display = "none";
-  adminPanel.style.display = "none";
+  if (dashboard) dashboard.style.display = "none";
+  if (adminPanel) adminPanel.style.display = "none";
   if (authPanel) authPanel.style.display = user ? "none" : "block";
-
   if (!user) return;
 
   try {
-    console.log("Auth State User:", user.email, user.uid);
-    const adminDoc = await db.collection("Admins")
-      .doc(user.uid).get();
+    const adminDoc = await db.collection("Admins").doc(user.uid).get();
+    const isAdminUser = adminDoc.exists && adminDoc.data().role === "admin";
 
-    if (adminDoc.exists && adminDoc.data().role === "admin") {
-      
-    } else {
-
-      dashboard.style.display = "block";
-      adminPanel.style.display = "none";
-      loadMyPremiumAccess();
-  const urlParams = new URLSearchParams(window.location.search);
-const selectedTest = Number(urlParams.get("freeTest"));
-
-if (selectedTest >= 1 && selectedTest <= 50) {
-  openFreeTest(selectedTest);
-  return;
-}
-
-      if (typeof loadLeaderboard === "function") {
-  loadLeaderboard();
-}
-
-      document.getElementById("studentNameDisplay").innerText =
-        "Student Name: " + (user.displayName || "Student");
-
-      document.getElementById("studentEmail").innerText =
-        "Student Email: " + (user.email || "");
+    if (isAdminUser) {
+      if (adminPanel) adminPanel.style.display = "block";
+      return;
     }
 
-  } catch (error) {
-    dashboard.style.display = "none";
-    adminPanel.style.display = "none";
-    console.error("Admin check error:", error);
-    alert("Dashboard Error: " + error.message);
-  }
+    if (pendingExamLaunch) {
+      // Login was requested as part of starting an exam: continue that exact test.
+      const launch = pendingExamLaunch;
+      pendingExamLaunch = null;
+      if (dashboard) dashboard.style.display = "none";
+      startExamTestFromHome(launch.examKey, launch.testType, launch.testNumber);
+      return;
+    }
 
+    // A normal Student Login opens the personal dashboard for progress and results.
+    if (dashboard) dashboard.style.display = "block";
+    loadMyPremiumAccess();
+    loadStudentDashboard(user);
+    if (typeof loadLeaderboard === "function") loadLeaderboard();
+
+    const nameDisplay = document.getElementById("studentNameDisplay");
+    const emailDisplay = document.getElementById("studentEmail");
+    if (nameDisplay) nameDisplay.innerText = "Student Name: " + (user.displayName || "Student");
+    if (emailDisplay) emailDisplay.innerText = "Student Email: " + (user.email || "");
+  } catch (error) {
+    if (dashboard) dashboard.style.display = "none";
+    if (adminPanel) adminPanel.style.display = "none";
+    console.error("Auth state error:", error);
+    alert("Login तपासताना समस्या आली: " + error.message);
+  }
 });
 
 
@@ -2381,23 +2401,24 @@ async function loadHomepageBharti(){
       list.textContent = "सध्या नवीन भरती अपडेट उपलब्ध नाहीत.";
       return;
     }
+    const table=document.createElement("div"); table.className="bharti-list-table";
+    const head=document.createElement("div"); head.className="bharti-list-head"; head.innerHTML="<strong>Job Title ↑↓</strong><strong>Last Date ↑↓</strong>"; table.append(head);
     snap.forEach(doc => {
-      const d = doc.data();
-      const item = document.createElement("div");
-      item.className = "notice-item";
-      const title = document.createElement("h3");
-      title.textContent = d.title || "नवीन भरती";
-      const detail = document.createElement("p");
-      detail.textContent = d.details || "";
-      item.append(title);
-      if (d.posts) { const posts=document.createElement("p"); posts.textContent="एकूण पदे: "+d.posts; item.append(posts); }
-      if (d.startDate || d.lastDate) { const date=document.createElement("p"); date.textContent="अर्ज कालावधी: "+(d.startDate || "-")+" ते "+(d.lastDate || "-"); item.append(date); }
-      item.append(detail);
-      if (d.pdf) { const a=document.createElement("a"); a.href=d.pdf; a.target="_blank"; a.rel="noopener noreferrer"; a.textContent="अधिकृत जाहिरात PDF"; item.append(a); }
-      if (d.apply) { const a=document.createElement("a"); a.href=d.apply; a.target="_blank"; a.rel="noopener noreferrer"; a.textContent=" | ऑनलाइन अर्ज करा"; item.append(a); }
-      if (d.source) { const a=document.createElement("a"); a.href=d.source; a.target="_blank"; a.rel="noopener noreferrer"; a.textContent=" | अधिकृत वेबसाईट"; item.append(a); }
-      list.append(item);
+      const d=doc.data(); const row=document.createElement("article"); row.className="bharti-list-row";
+      const left=document.createElement("div"); left.className="bharti-job-title";
+      const title=document.createElement("h3"); title.textContent=d.title||"नवीन भरती"; left.append(title);
+      if(d.posts){const posts=document.createElement("p");posts.className="bharti-posts";posts.textContent="एकूण पदे: "+d.posts;left.append(posts);}
+      if(d.details){const detail=document.createElement("p");detail.className="bharti-details";detail.textContent=d.details;left.append(detail);}
+      const links=document.createElement("div");links.className="bharti-links";
+      [[d.pdf,"अधिकृत जाहिरात PDF"],[d.apply,"ऑनलाइन अर्ज करा"],[d.source,"अधिकृत वेबसाईट"]].forEach(([url,label])=>{if(url){const a=document.createElement("a");a.href=url;a.target="_blank";a.rel="noopener noreferrer";a.textContent=label;links.append(a);}});left.append(links);
+      const right=document.createElement("div");right.className="bharti-last-date";
+      const raw=d.lastDate||"";let dateText="तारीख जाहीर नाही";let status="";
+      if(raw){const dt=new Date(raw+"T00:00:00");dateText=Number.isNaN(dt.getTime())?raw:dt.toLocaleDateString("en-GB");const today=new Date();today.setHours(0,0,0,0);status=dt<today?"अर्जाची मुदत संपली":(dt.getTime()===today.getTime()?"आज शेवटची तारीख":"अर्ज सुरू");}
+      const date=document.createElement("strong");date.textContent=dateText;right.append(date);
+      if(status){const badge=document.createElement("span");badge.className="bharti-status";badge.textContent=status;right.append(badge);}
+      row.append(left,right);table.append(row);
     });
+    list.innerHTML="";list.append(table);
   } catch(error) {
     list.textContent = "भरती अपडेट्स लोड झाले नाहीत. कृपया थोड्या वेळाने पुन्हा प्रयत्न करा.";
     console.error("Homepage recruitment load error:", error);
@@ -2918,9 +2939,12 @@ async function renderExamTestList(testType) {
   const container = document.getElementById("examTestSeriesList");
   const examKey = activeExamKey;
   const typeLabel = testType === "paid" ? "Paid" : "Free";
-  const unlocked = testType !== "paid" || await hasActivePremiumAccess(examKey);
+  // Logged-out students may choose a Paid test; access is checked securely after login.
+  const loggedIn = !!auth.currentUser;
+  const hasPremium = testType === "paid" && loggedIn ? await hasActivePremiumAccess(examKey) : false;
+  const unlocked = testType !== "paid" || !loggedIn || hasPremium;
   let html = '';
-  if(testType === "paid" && !unlocked){
+  if(testType === "paid" && loggedIn && !hasPremium){
     const plan=premiumPlans[examKey];
     html += `<div class="card"><h3>🔒 ${examNames[examKey]} Premium आवश्यक</h3><p>50 Paid CBT Tests + PDF Notes + Study Material</p><p>किंमत: ₹${plan?plan.price:"-"} • 3 महिन्यांचा Access</p><button type="button" onclick="selectPremiumPlan('${examKey}')">Premium घ्या</button></div>`;
   }
@@ -2944,10 +2968,17 @@ function closeTalathiTests() { closeExamHub(); }
 
 function startExamTestFromHome(examKey, testType, testNumber) {
   if (!auth.currentUser) {
-    alert("टेस्ट सुरू करण्यासाठी आधी Student Login करा.");
-    document.getElementById("studentAuthPanel").scrollIntoView({behavior:"smooth", block:"center"});
+    // Keep the exact exam/test choice and resume it automatically after login/signup.
+    pendingExamLaunch = { examKey: examKey, testType: testType, testNumber: Number(testNumber) };
+    const panel = document.getElementById("studentAuthPanel");
     const options = document.getElementById("authOptions");
+    const form = document.getElementById("studentForm");
+    if (panel) panel.style.display = "block";
     if (options) options.style.display = "block";
+    if (form) form.style.display = "none";
+    const message = document.getElementById("emailMessage");
+    if (message) message.textContent = "Login / Register करा. त्यानंतर तुमची निवडलेली टेस्ट लगेच सुरू होईल.";
+    if (panel) panel.scrollIntoView({behavior:"smooth", block:"center"});
     return;
   }
   const hub = document.getElementById("examHub");
