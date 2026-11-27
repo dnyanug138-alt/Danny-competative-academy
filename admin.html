@@ -88,6 +88,7 @@ button:hover{background:#09264b}
   <h2 style="color:white">Admin Dashboard</h2>
   <p>Admin Management Panel</p>
   <button class="home-btn" onclick="goHome()">🏠 Home Page</button>
+  <button class="home-btn" type="button" onclick="adminLogout()">🚪 Logout</button>
 </header>
 
 <div id="pageMessage" class="message"></div>
@@ -225,6 +226,15 @@ let editingMCQId = null;
 
 function goHome(){
   window.location.href = "index.html";
+}
+
+async function adminLogout(){
+  try {
+    await auth.signOut();
+    window.location.replace("index.html#adminLoginPage");
+  } catch(error) {
+    alert("Logout करताना त्रुटी: " + error.message);
+  }
 }
 
 // STUDENTS
