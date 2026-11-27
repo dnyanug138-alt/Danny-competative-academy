@@ -241,6 +241,7 @@ const firebaseConfig = {
 };
 
 firebase.initializeApp(firebaseConfig);
+  window.adminDB = firebase.firestore();
 const db = firebase.firestore();
 </script>
 
