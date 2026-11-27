@@ -244,5 +244,254 @@ firebase.initializeApp(firebaseConfig);
   window.adminDB = firebase.firestore();
 const db = firebase.firestore();
 </script>
+<script>
+  let editingMCQId = null;
+  function addMCQ() {
+  const exam = document.getElementById("mcqExam").value;
 
+  const testNumber = exam === "Police Bharti"
+    ? Number(document.getElementById("mcqTestNumber").value)
+    : null;
+
+  const question = document.getElementById("mcqQuestion").value.trim();
+  const A = document.getElementById("optionA").value.trim();
+  const B = document.getElementById("optionB").value.trim();
+  const C = document.getElementById("optionC").value.trim();
+  const D = document.getElementById("optionD").value.trim();
+  const answer = document.getElementById("correctAnswer").value;
+  const msg = document.getElementById("mcqMessage");
+
+  if (!question || !A || !B || !C || !D) {
+    msg.innerText = "कृपया सर्व माहिती भरा.";
+    return;
+  }
+
+  if (exam === "Police Bharti" &&
+      (!Number.isInteger(testNumber) || testNumber < 1 || testNumber > 50)) {
+    msg.innerText = "Test Number 1 ते 50 निवडा.";
+    return;
+  }
+
+  const saveOperation = editingMCQId
+    ? db.collection("mcqQuestions").doc(editingMCQId).update({
+        exam, testNumber, question,
+        options: { A, B, C, D },
+        answer
+      })
+    : db.collection("mcqQuestions").add({
+        exam, testNumber, question,
+        options: { A, B, C, D },
+        answer,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
+
+  saveOperation
+    .then(() => {
+      editingMCQId = null;
+      msg.innerText = "प्रश्न यशस्वीपणे Save / Update झाला!";
+      loadMCQQuestions();
+
+      document.getElementById("mcqQuestion").value = "";
+      document.getElementById("optionA").value = "";
+      document.getElementById("optionB").value = "";
+      document.getElementById("optionC").value = "";
+      document.getElementById("optionD").value = "";
+    })
+    .catch(error => {
+      msg.innerText = "Error: " + error.message;
+      console.error(error);
+    });
+}
+  function loadMCQQuestions() {
+  const list = document.getElementById("mcqQuestionList");
+  list.innerHTML = "प्रश्न लोड होत आहेत...";
+
+  db.collection("mcqQuestions").get()
+    .then(snapshot => {
+      list.innerHTML = "";
+
+      if (snapshot.empty) {
+        list.innerHTML = "अजून प्रश्न उपलब्ध नाहीत.";
+        return;
+      }
+
+      const questions = [];
+      snapshot.forEach(doc => {
+        questions.push({ id: doc.id, ...doc.data() });
+      });
+
+      questions.sort((a, b) =>
+        (a.testNumber || 0) - (b.testNumber || 0)
+      );
+
+      questions.forEach(data => {
+        const item = document.createElement("div");
+        item.className = "notice-item";
+
+        const title = document.createElement("h4");
+        title.textContent = data.exam + " - Test " + (data.testNumber || "-");
+
+        const question = document.createElement("p");
+        question.textContent = data.question;
+
+        const editButton = document.createElement("button");
+        editButton.textContent = "✏️ Edit";
+        editButton.onclick = () => editMCQ(data.id);
+
+        const deleteButton = document.createElement("button");
+        deleteButton.textContent = "🗑️ Delete";
+        deleteButton.onclick = () => deleteMCQ(data.id);
+
+        item.appendChild(title);
+        item.appendChild(question);
+        item.appendChild(editButton);
+        item.appendChild(deleteButton);
+        list.appendChild(item);
+      });
+    })
+    .catch(error => {
+      list.innerHTML = "प्रश्न लोड झाले नाहीत: " + error.message;
+      console.error(error);
+    });
+}
+
+function editMCQ(docId) {
+  db.collection("mcqQuestions").doc(docId).get()
+    .then(doc => {
+      if (!doc.exists) {
+        alert("प्रश्न सापडला नाही!");
+        return;
+      }
+
+      const data = doc.data();
+      editingMCQId = docId;
+
+      document.getElementById("mcqExam").value = data.exam;
+
+      if (data.testNumber !== null) {
+        document.getElementById("mcqTestNumber").value = data.testNumber;
+      }
+
+      document.getElementById("mcqQuestion").value = data.question;
+      document.getElementById("optionA").value = data.options.A;
+      document.getElementById("optionB").value = data.options.B;
+      document.getElementById("optionC").value = data.options.C;
+      document.getElementById("optionD").value = data.options.D;
+      document.getElementById("correctAnswer").value = data.answer;
+
+      document.getElementById("mcqMessage").innerText =
+        "प्रश्न Edit करण्यासाठी तयार आहे. बदल करून Save करा.";
+
+      window.scrollTo(0, 0);
+    })
+    .catch(error => alert("Error: " + error.message));
+}
+
+function deleteMCQ(docId) {
+  if (!confirm("हा प्रश्न कायमचा Delete करायचा आहे का?")) {
+    return;
+  }
+
+  db.collection("mcqQuestions").doc(docId).delete()
+    .then(() => {
+      alert("प्रश्न यशस्वीपणे Delete झाला!");
+      loadMCQQuestions();
+    })
+    .catch(error => {
+      alert("Delete Error: " + error.message);
+      console.error(error);
+    });
+}
+  function addBharti() {
+  const title = document.getElementById("bhartiTitle").value.trim();
+  const posts = document.getElementById("bhartiPosts").value.trim();
+  const details = document.getElementById("bhartiDetails").value.trim();
+  const lastDate = document.getElementById("bhartiLastDate").value.trim();
+  const pdf = document.getElementById("bhartiPDF").value.trim();
+  const apply = document.getElementById("bhartiApply").value.trim();
+  const msg = document.getElementById("bhartiMessage");
+
+  if (!title || !details) {
+    msg.innerText = "कृपया भरतीचे नाव आणि माहिती भरा.";
+    return;
+  }
+
+  db.collection("bharti").add({
+    title, posts, details, lastDate, pdf, apply,
+    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+  })
+  .then(() => {
+    msg.innerText = "भरती यशस्वीपणे Publish झाली!";
+    document.getElementById("bhartiTitle").value = "";
+    document.getElementById("bhartiPosts").value = "";
+    document.getElementById("bhartiDetails").value = "";
+    document.getElementById("bhartiLastDate").value = "";
+    document.getElementById("bhartiPDF").value = "";
+    document.getElementById("bhartiApply").value = "";
+  })
+  .catch(error => {
+    msg.innerText = "Error: " + error.message;
+  });
+}
+  function addNews() {
+  const category = document.getElementById("newsCategory").value;
+  const title = document.getElementById("newsTitle").value.trim();
+  const description = document.getElementById("newsDescription").value.trim();
+  const link = document.getElementById("newsLink").value.trim();
+  const msg = document.getElementById("newsMessage");
+
+  if (!title || !description) {
+    msg.innerText = "कृपया शीर्षक आणि माहिती भरा.";
+    return;
+  }
+
+  db.collection("news").add({
+    category: category,
+    title: title,
+    description: description,
+    link: link,
+    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+  })
+  .then(() => {
+    msg.innerText = "बातमी यशस्वीपणे Publish झाली!";
+    document.getElementById("newsTitle").value = "";
+    document.getElementById("newsDescription").value = "";
+    document.getElementById("newsLink").value = "";
+    loadNews();
+  })
+  .catch(error => {
+    msg.innerText = "Error: " + error.message;
+  });
+}
+  function addNews() {
+  const category = document.getElementById("newsCategory").value;
+  const title = document.getElementById("newsTitle").value.trim();
+  const description = document.getElementById("newsDescription").value.trim();
+  const link = document.getElementById("newsLink").value.trim();
+  const msg = document.getElementById("newsMessage");
+
+  if (!title || !description) {
+    msg.innerText = "कृपया शीर्षक आणि माहिती भरा.";
+    return;
+  }
+
+  db.collection("news").add({
+    category: category,
+    title: title,
+    description: description,
+    link: link,
+    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+  })
+  .then(() => {
+    msg.innerText = "बातमी यशस्वीपणे Publish झाली!";
+    document.getElementById("newsTitle").value = "";
+    document.getElementById("newsDescription").value = "";
+    document.getElementById("newsLink").value = "";
+    loadNews();
+  })
+  .catch(error => {
+    msg.innerText = "Error: " + error.message;
+  });
+}
+  </script>
 </body></html>
