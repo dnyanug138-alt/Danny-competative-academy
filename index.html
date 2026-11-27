@@ -341,7 +341,42 @@ button:hover {
     flex-direction: column;
     align-items: center;
   }
+}
 
+/* HOME SMALL TABS DESIGN */
+.home-small-tabs {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+  margin: 18px 0;
+}
+
+.small-tab {
+  background: #ffffff;
+  color: #123b70;
+  text-decoration: none;
+  border: 2px solid #c8dafa;
+  border-radius: 12px;
+  padding: 16px 4px;
+  min-height: 90px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+}
+
+.small-tab span {
+  font-size: 28px;
+  margin-bottom: 8px;
+}
+
+.small-tab small {
+  font-size: 12px;
+  font-weight: bold;
+  line-height: 1.4;
+}
   .premium-card {
     width: 100%;
     max-width: 320px;
