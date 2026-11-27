@@ -1913,7 +1913,30 @@ placeholder="प्रश्न लिहा"></textarea>
 <div id="mcqQuestionList">
   प्रश्नांची यादी येथे दिसेल.
 </div>
-  
+  <hr>
+<h2>📢 वर्तमान भरती व्यवस्थापन</h2>
+
+<input id="bhartiTitle" placeholder="भरतीचे नाव">
+
+<input id="bhartiPosts" placeholder="एकूण पदे">
+
+<textarea id="bhartiDetails"
+placeholder="भरतीची संपूर्ण माहिती"></textarea>
+
+<input id="bhartiLastDate"
+placeholder="अर्ज करण्याची शेवटची तारीख">
+
+<input id="bhartiPDF"
+placeholder="अधिकृत जाहिरात PDF लिंक">
+
+<input id="bhartiApply"
+placeholder="ऑनलाइन अर्ज लिंक">
+
+<button onclick="addBharti()">
+  📢 भरती Publish करा
+</button>
+
+<div id="bhartiMessage"></div>
   <h2>📰 News Management</h2>
 
   <h3>नवीन बातमी पोस्ट करा</h3>
@@ -2097,7 +2120,45 @@ firebase.auth().onAuthStateChanged(function(user) {
 
 });
   // ADD NEWS TO FIRESTORE
+function addBharti() {
 
+  const title = document.getElementById("bhartiTitle").value.trim();
+  const posts = document.getElementById("bhartiPosts").value.trim();
+  const details = document.getElementById("bhartiDetails").value.trim();
+  const lastDate = document.getElementById("bhartiLastDate").value.trim();
+  const pdf = document.getElementById("bhartiPDF").value.trim();
+  const apply = document.getElementById("bhartiApply").value.trim();
+
+  const msg = document.getElementById("bhartiMessage");
+
+  if (!title || !details) {
+    msg.innerText = "कृपया भरतीचे नाव आणि माहिती भरा.";
+    return;
+  }
+
+  db.collection("bharti").add({
+    title: title,
+    posts: posts,
+    details: details,
+    lastDate: lastDate,
+    pdf: pdf,
+    apply: apply,
+    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+  })
+  .then(() => {
+    msg.innerText = "भरती यशस्वीपणे Publish झाली!";
+
+    document.getElementById("bhartiTitle").value = "";
+    document.getElementById("bhartiPosts").value = "";
+    document.getElementById("bhartiDetails").value = "";
+    document.getElementById("bhartiLastDate").value = "";
+    document.getElementById("bhartiPDF").value = "";
+    document.getElementById("bhartiApply").value = "";
+  })
+  .catch(error => {
+    msg.innerText = "Error: " + error.message;
+  });
+}
 function addNews() {
 
   const category = document.getElementById("newsCategory").value;
