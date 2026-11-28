@@ -149,6 +149,53 @@ button:hover{background:#09264b}
 </div>
 
 <div class="card">
+  <h2>🎯 Test Series Management</h2>
+  <p class="small">Website वर दिसणाऱ्या Free/Paid Test Series चे नाव, क्रमांक, प्रश्नसंख्या, वेळ, marks आणि publish status इथून control करा.</p>
+  <label>परीक्षा</label>
+  <select id="seriesExam">
+    <option value="Police Bharti">पोलीस भरती</option><option value="Talathi Bharti">तलाठी भरती</option><option value="Saralseva">सरळसेवा</option><option value="Health Worker">आरोग्य सेवक</option><option value="SSC CHSL">SSC CHSL</option><option value="SSC CGL">SSC CGL</option><option value="Combined Group C">Combined Group C</option><option value="Railway">रेल्वे भरती</option><option value="MPSC">MPSC</option><option value="Banking">बँकिंग</option><option value="SSC">SSC</option>
+  </select>
+  <label>Test प्रकार</label>
+  <select id="seriesType"><option value="free">Free</option><option value="paid">Paid</option></select>
+  <label>Test Number</label>
+  <input id="seriesNumber" type="number" min="1" max="50" placeholder="उदा. 1">
+  <input id="seriesTitle" placeholder="Test चे नाव — उदा. Police Bharti Mega Test 1">
+  <input id="seriesDescription" placeholder="Test ची छोटी माहिती">
+  <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px">
+    <input id="seriesQuestionCount" type="number" min="1" placeholder="प्रश्नसंख्या">
+    <input id="seriesDuration" type="number" min="1" placeholder="वेळ (मिनिटे)">
+    <input id="seriesMarks" type="number" min="0" placeholder="एकूण गुण">
+  </div>
+  <input id="seriesNegative" type="number" step="0.01" min="0" placeholder="Negative marking (उदा. 0.25)">
+  <label><input id="seriesActive" type="checkbox" checked style="width:auto;margin-right:6px"> Student ला Test दाखवा / Publish करा</label>
+  <button type="button" onclick="saveTestSeriesConfig()">💾 Test Series Save / Update</button>
+  <button type="button" onclick="clearTestSeriesForm()">Clear</button>
+  <p id="seriesMessage" class="message"></p>
+  <button type="button" onclick="loadTestSeriesAdmin()">🔄 Test Series Refresh</button>
+  <div id="testSeriesAdminList"></div>
+</div>
+
+<div class="card">
+  <h2>📦 Bulk Question Builder / Import</h2>
+  <p class="small">100 प्रश्न एकाच वेळी तयार/recheck करून एका click मध्ये निवडलेल्या Test मध्ये Save करा. खाली JSON format वापरा. Preview केल्यावर सर्व प्रश्न तपासता येतील.</p>
+  <label>परीक्षा</label>
+  <select id="bulkExam">
+    <option value="Police Bharti">पोलीस भरती</option><option value="Talathi Bharti">तलाठी भरती</option><option value="Saralseva">सरळसेवा</option><option value="Health Worker">आरोग्य सेवक</option><option value="SSC CHSL">SSC CHSL</option><option value="SSC CGL">SSC CGL</option><option value="Combined Group C">Combined Group C</option><option value="Railway">रेल्वे भरती</option><option value="MPSC">MPSC</option><option value="Banking">बँकिंग</option><option value="SSC">SSC</option>
+  </select>
+  <select id="bulkType"><option value="free">Free Mock Test</option><option value="paid">Paid Mock Test</option></select>
+  <input id="bulkTestNumber" type="number" min="1" max="50" placeholder="Test Number उदा. 1">
+  <textarea id="bulkQuestionsInput" style="min-height:260px" placeholder='उदा. [
+{"question":"भारताची राजधानी कोणती?","A":"नवी दिल्ली","B":"मुंबई","C":"पुणे","D":"नागपूर","answer":"A","explanation":"नवी दिल्ली ही भारताची राजधानी आहे."},
+{"question":"...","A":"...","B":"...","C":"...","D":"...","answer":"B","explanation":"..."}
+]'></textarea>
+  <button type="button" onclick="previewBulkQuestions()">👁️ Preview / Recheck</button>
+  <button type="button" onclick="saveBulkQuestions()">🚀 एकदाच सर्व प्रश्न Save करा</button>
+  <button type="button" onclick="clearBulkQuestions()">Clear</button>
+  <p id="bulkMessage" class="message"></p>
+  <div id="bulkPreview"></div>
+</div>
+
+<div class="card">
   <h2>📝 MCQ Question Management</h2>
 
   <h3>नवीन प्रश्न तयार करा</h3>
@@ -416,6 +463,103 @@ function loadStudents(){
 }
 
 // MCQ QUESTION MANAGEMENT — Free/Paid, all exams, per-test auto numbering
+let editingSeriesId = null;
+let bulkPreviewData = [];
+
+function clearTestSeriesForm(){
+  editingSeriesId=null;
+  ["seriesNumber","seriesTitle","seriesDescription","seriesQuestionCount","seriesDuration","seriesMarks","seriesNegative"].forEach(id=>document.getElementById(id).value="");
+  document.getElementById("seriesExam").value="Police Bharti";
+  document.getElementById("seriesType").value="free";
+  document.getElementById("seriesActive").checked=true;
+  document.getElementById("seriesMessage").innerText="";
+}
+
+async function saveTestSeriesConfig(){
+  const exam=document.getElementById("seriesExam").value;
+  const type=document.getElementById("seriesType").value;
+  const number=Number(document.getElementById("seriesNumber").value);
+  const title=document.getElementById("seriesTitle").value.trim();
+  const description=document.getElementById("seriesDescription").value.trim();
+  const questionCount=Number(document.getElementById("seriesQuestionCount").value||0);
+  const duration=Number(document.getElementById("seriesDuration").value||0);
+  const marks=Number(document.getElementById("seriesMarks").value||0);
+  const negative=Number(document.getElementById("seriesNegative").value||0);
+  const active=document.getElementById("seriesActive").checked;
+  const msg=document.getElementById("seriesMessage");
+  if(!number || number<1 || number>50 || !title){msg.innerText="Test Number आणि Test चे नाव भरा.";return;}
+  if(type==='free' && number>5){msg.innerText="Free Test साठी 1 ते 5 वापरा.";return;}
+  if(type==='paid' && number<6){msg.innerText="Paid Test साठी 6 ते 50 वापरा.";return;}
+  const data={exam,testType:type,testNumber:number,title,description,questionCount,duration,marks,negative,active,updatedAt:firebase.firestore.FieldValue.serverTimestamp()};
+  try{
+    const id=editingSeriesId || `${exam.replace(/\W/g,'_')}_${type}_${number}`;
+    await db.collection("testSeries").doc(id).set(data,{merge:true});
+    msg.innerText="Test Series यशस्वीपणे Save झाली.";
+    clearTestSeriesForm();
+    await loadTestSeriesAdmin();
+  }catch(e){msg.innerText="Save Error: "+e.message;}
+}
+
+async function loadTestSeriesAdmin(){
+  const list=document.getElementById("testSeriesAdminList"); if(!list)return; list.innerHTML="Loading...";
+  try{
+    const snap=await db.collection("testSeries").get();
+    const rows=[]; snap.forEach(d=>rows.push({id:d.id,...d.data()}));
+    rows.sort((a,b)=>String(a.exam).localeCompare(String(b.exam))||String(a.testType).localeCompare(String(b.testType))||(Number(a.testNumber)||0)-(Number(b.testNumber)||0));
+    if(!rows.length){list.innerHTML='<div class="item">अजून Test Series configuration नाही.</div>';return;}
+    list.innerHTML="";
+    rows.forEach(d=>{
+      const item=document.createElement("div");item.className="item";
+      item.innerHTML=`<b>${d.exam||''} • ${String(d.testType||'free').toUpperCase()} Test ${d.testNumber||''}</b><p>${d.title||''}</p><p class="small">${d.questionCount||0} प्रश्न • ${d.duration||0} मिनिटे • ${d.marks||0} गुण • ${d.active===false?'🔴 Hidden':'🟢 Published'}</p>`;
+      const edit=document.createElement("button");edit.textContent="✏️ Edit";edit.onclick=()=>editTestSeriesConfig(d.id,d);
+      const toggle=document.createElement("button");toggle.textContent=d.active===false?"🟢 Publish":"🔴 Hide";toggle.onclick=()=>toggleTestSeries(d.id,d.active!==false);
+      const del=document.createElement("button");del.textContent="🗑️ Delete";del.className="delete-btn";del.onclick=()=>deleteTestSeries(d.id);
+      item.append(edit,toggle,del);list.appendChild(item);
+    });
+  }catch(e){list.innerHTML="Load Error: "+e.message;}
+}
+function editTestSeriesConfig(id,d){
+  editingSeriesId=id;
+  document.getElementById("seriesExam").value=d.exam||"Police Bharti";document.getElementById("seriesType").value=d.testType||"free";
+  document.getElementById("seriesNumber").value=d.testNumber||"";document.getElementById("seriesTitle").value=d.title||"";document.getElementById("seriesDescription").value=d.description||"";
+  document.getElementById("seriesQuestionCount").value=d.questionCount||"";document.getElementById("seriesDuration").value=d.duration||"";document.getElementById("seriesMarks").value=d.marks||"";document.getElementById("seriesNegative").value=d.negative||"";document.getElementById("seriesActive").checked=d.active!==false;
+  document.getElementById("seriesMessage").innerText="Edit mode सुरू आहे.";document.getElementById("seriesTitle").scrollIntoView({behavior:"smooth",block:"center"});
+}
+async function toggleTestSeries(id,current){await db.collection("testSeries").doc(id).update({active:!current,updatedAt:firebase.firestore.FieldValue.serverTimestamp()});await loadTestSeriesAdmin();}
+async function deleteTestSeries(id){if(!confirm("ही Test Series configuration delete करायची आहे?"))return;await db.collection("testSeries").doc(id).delete();await loadTestSeriesAdmin();}
+
+function clearBulkQuestions(){document.getElementById("bulkQuestionsInput").value="";document.getElementById("bulkPreview").innerHTML="";document.getElementById("bulkMessage").innerText="";bulkPreviewData=[];}
+function parseBulkQuestions(){
+  const raw=document.getElementById("bulkQuestionsInput").value.trim();
+  if(!raw)throw new Error("Questions data भरा.");
+  let data;try{data=JSON.parse(raw);}catch(e){throw new Error("JSON format चुकीचा आहे. Preview करण्यापूर्वी JSON तपासा.");}
+  if(!Array.isArray(data)||!data.length)throw new Error("Questions ची array आवश्यक आहे.");
+  return data.map((q,i)=>({question:String(q.question||q.q||'').trim(),A:String(q.A||q.options?.A||'').trim(),B:String(q.B||q.options?.B||'').trim(),C:String(q.C||q.options?.C||'').trim(),D:String(q.D||q.options?.D||'').trim(),answer:String(q.answer||'').trim().toUpperCase(),explanation:String(q.explanation||'').trim(),questionNumber:i+1}));
+}
+function previewBulkQuestions(){
+  const msg=document.getElementById("bulkMessage"),box=document.getElementById("bulkPreview");
+  try{bulkPreviewData=parseBulkQuestions();const bad=bulkPreviewData.filter(q=>!q.question||!q.A||!q.B||!q.C||!q.D||!["A","B","C","D"].includes(q.answer));
+    msg.innerText=bad.length?`⚠️ ${bulkPreviewData.length} पैकी ${bad.length} प्रश्न तपासा.`:`✅ ${bulkPreviewData.length} प्रश्न Recheck साठी तयार.`;
+    let html=`<div class="item"><b>Preview: ${bulkPreviewData.length} प्रश्न</b></div>`;
+    bulkPreviewData.forEach(q=>{html+=`<div class="item"><b>${q.questionNumber}. ${escapeHtmlAdmin(q.question)}</b><br>A) ${escapeHtmlAdmin(q.A)}<br>B) ${escapeHtmlAdmin(q.B)}<br>C) ${escapeHtmlAdmin(q.C)}<br>D) ${escapeHtmlAdmin(q.D)}<br><span class="small">Correct: ${q.answer} ${q.explanation?"• "+escapeHtmlAdmin(q.explanation):""}</span></div>`});
+    box.innerHTML=html;
+  }catch(e){msg.innerText="❌ "+e.message;box.innerHTML="";bulkPreviewData=[];}
+}
+function escapeHtmlAdmin(v){return String(v||'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));}
+async function saveBulkQuestions(){
+  const msg=document.getElementById("bulkMessage");
+  try{
+    if(!bulkPreviewData.length)bulkPreviewData=parseBulkQuestions();
+    const exam=document.getElementById("bulkExam").value,type=document.getElementById("bulkType").value,testNumber=Number(document.getElementById("bulkTestNumber").value);
+    if(!testNumber||testNumber<1||testNumber>50)throw new Error("Test Number 1 ते 50 भरा.");
+    if(type==='free'&&testNumber>5)throw new Error("Free Test 1 ते 5.");if(type==='paid'&&testNumber<6)throw new Error("Paid Test 6 ते 50.");
+    const snap=await db.collection("mcqQuestions").where("exam","==",exam).where("testType","==",type).where("testNumber","==",testNumber).get();
+    const batch=db.batch();snap.forEach(d=>batch.delete(d.ref));
+    bulkPreviewData.forEach(q=>{const ref=db.collection("mcqQuestions").doc();batch.set(ref,{exam,testType:type,category:type,testNumber,questionNumber:q.questionNumber,question:q.question,explanation:q.explanation,options:{A:q.A,B:q.B,C:q.C,D:q.D},answer:q.answer,createdAt:firebase.firestore.FieldValue.serverTimestamp(),updatedAt:firebase.firestore.FieldValue.serverTimestamp()});});
+    await batch.commit();msg.innerText=`🎉 ${bulkPreviewData.length} प्रश्न ${exam} ${type} Test ${testNumber} मध्ये एकदाच Save झाले.`;await loadMCQQuestions();
+  }catch(e){msg.innerText="❌ Bulk Save Error: "+e.message;}
+}
+
 async function addMCQ(){
   const exam = document.getElementById("mcqExam").value;
   const testType = document.getElementById("mcqTestType").value;
@@ -558,7 +702,8 @@ function savePremiumOffer(){
   if(!price||price<1||!days||days<1){msg.textContent="योग्य किंमत आणि वैधता दिवस भरा.";return;}
   const data={examKey,planId,name:offerPlanLabels[planId],price,days,features,active:true,updatedAt:firebase.firestore.FieldValue.serverTimestamp()};
   db.collection("premiumOffers").doc(examKey+"_"+planId).set(data,{merge:true})
-    .then(()=>{msg.textContent="Offer Save / Update झाली.";loadPremiumOffersAdmin();})
+    .then(()=>{msg.textContent="Offer Save / Update झाली.";loadPremiumOffersAdmin();
+    loadTestSeriesAdmin();})
     .catch(error=>{msg.textContent="Save Error: "+error.message;});
 }
 async function loadPremiumOffersAdmin(){
