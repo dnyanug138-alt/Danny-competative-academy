@@ -1567,15 +1567,26 @@ function openPoliceStudyCenter() {
 let pendingExamLaunch = null;
 
 auth.onAuthStateChanged(async function(user) {
-  loadHomepageBharti();
   const dashboard = document.getElementById("studentDashboard");
   const adminPanel = document.getElementById("adminPanel");
   const authPanel = document.getElementById("studentAuthPanel");
+
+  // Homepage recruitment data must never block the login/dashboard flow.
+  try {
+    if (typeof loadHomepageBharti === "function") {
+      loadHomepageBharti();
+    }
+  } catch (homepageError) {
+    console.warn("Homepage recruitment load failed:", homepageError);
+  }
 
   if (dashboard) dashboard.style.display = "none";
   if (adminPanel) adminPanel.style.display = "none";
   if (authPanel) authPanel.style.display = user ? "none" : "block";
   if (!user) return;
+
+  // Show the student dashboard immediately; admin/exam routing can adjust it below.
+  if (dashboard) dashboard.style.display = "block";
 
   let isAdminUser = false;
   try {
@@ -1586,25 +1597,31 @@ auth.onAuthStateChanged(async function(user) {
     console.warn("Admin role lookup unavailable; continuing as student:", adminCheckError);
   }
 
-  try {
-    if (isAdminUser) {
-      if (adminPanel) adminPanel.style.display = "block";
-      return;
-    }
+  if (isAdminUser) {
+    if (dashboard) dashboard.style.display = "none";
+    if (adminPanel) adminPanel.style.display = "block";
+    return;
+  }
 
-    if (pendingExamLaunch) {
-      // Login was requested as part of starting an exam: continue that exact test.
-      const launch = pendingExamLaunch;
-      pendingExamLaunch = null;
-      if (dashboard) dashboard.style.display = "none";
+  if (pendingExamLaunch) {
+    // Login was requested as part of starting an exam: continue that exact test.
+    const launch = pendingExamLaunch;
+    pendingExamLaunch = null;
+    if (dashboard) dashboard.style.display = "none";
+    try {
       startExamTestFromHome(launch.examKey, launch.testType, launch.testNumber);
-      return;
+    } catch (examLaunchError) {
+      console.error("Exam launch failed after login:", examLaunchError);
+      if (dashboard) dashboard.style.display = "block";
+      alert("Test सुरू करताना अडचण आली: " + examLaunchError.message);
     }
+    return;
+  }
 
-    // A normal Student Login opens the personal dashboard for progress and results.
-    if (dashboard) dashboard.style.display = "block";
-    loadMyPremiumAccess();
-    loadStudentDashboard(user);
+  // A normal Student Login opens the personal dashboard for progress and results.
+  try {
+    if (typeof loadMyPremiumAccess === "function") loadMyPremiumAccess();
+    if (typeof loadStudentDashboard === "function") loadStudentDashboard(user);
     if (typeof loadLeaderboard === "function") loadLeaderboard();
 
     const nameDisplay = document.getElementById("studentNameDisplay");
@@ -1612,10 +1629,9 @@ auth.onAuthStateChanged(async function(user) {
     if (nameDisplay) nameDisplay.innerText = "Student Name: " + (user.displayName || "Student");
     if (emailDisplay) emailDisplay.innerText = "Student Email: " + (user.email || "");
   } catch (error) {
-    if (dashboard) dashboard.style.display = "none";
-    if (adminPanel) adminPanel.style.display = "none";
-    console.error("Auth state error:", error);
-    alert("Login तपासताना समस्या आली: " + error.message);
+    // Keep the dashboard visible even if a secondary widget fails.
+    console.error("Dashboard data load error:", error);
+    alert("Dashboard उघडले आहे; काही माहिती लोड झाली नाही: " + error.message);
   }
 });
 
@@ -3524,31 +3540,4 @@ function showFirestoreTestQuestion() {
     "<p>प्रश्न: " + (firestoreTestIndex + 1) + " / 100</p>" +
     "<h4>" + q.q + "</h4>";
 
-  q.options.forEach(function(option, index) {
-    html +=
-      "<button onclick='selectFirestoreTestAnswer(" + index + ")'>" +
-      String.fromCharCode(65 + index) + ". " + option +
-      "</button><br><br>";
-  });
-
-  area.innerHTML = html;
-}
-
-function selectFirestoreTestAnswer(selected) {
-  const q = firestoreTestQuestions[firestoreTestIndex];
-
-  if (selected === q.answer) {
-    firestoreTestScore++;
-  }
-
-  firestoreTestIndex++;
-  showFirestoreTestQuestion();
-  }
-    
-async function finishFirestoreTest() {
-  clearInterval(freeTestTimer);
-
-  const area = document.getElementById("freeTestArea");
-  const user = auth.currentUser;
-  const total = firestoreTestQuestions.length;
-  const testN
+  q.o
