@@ -537,63 +537,63 @@ button:hover {
     <div class="test-icon">👮</div>
     <h3>पोलीस भरती</h3>
     <p>ऑनलाइन Mock Test</p>
-    <button type="button" onclick="showExamHub('police')">Start Test →</button>
+    <button type="button" onclick="window.showExamHub('police')">Start Test →</button>
   </div>
 
   <div class="card test-card" id="talathiLogin">
     <div class="test-icon">📋</div>
     <h3>तलाठी भरती</h3>
     <p>ऑनलाइन Mock Test</p>
-    <button type="button" onclick="showExamHub('talathi')">Start Test →</button>
+    <button type="button" onclick="window.showExamHub('talathi')">Start Test →</button>
   </div>
 
   <div class="card test-card">
     <div class="test-icon">🏛️</div>
     <h3>सरळसेवा</h3>
     <p>ऑनलाइन Mock Test</p>
-    <button type="button" onclick="showExamHub('saralseva')">Start Test →</button>
+    <button type="button" onclick="window.showExamHub('saralseva')">Start Test →</button>
   </div>
 
   <div class="card test-card">
     <div class="test-icon">🏥</div>
     <h3>आरोग्य सेवक</h3>
     <p>ऑनलाइन Mock Test</p>
-    <button type="button" onclick="showExamHub('health')">Start Test →</button>
+    <button type="button" onclick="window.showExamHub('health')">Start Test →</button>
   </div>
 
   <div class="card test-card">
     <div class="test-icon">📝</div>
     <h3>SSC CHSL</h3>
     <p>ऑनलाइन Mock Test</p>
-    <button type="button" onclick="showExamHub('sscchsl')">Start Test →</button>
+    <button type="button" onclick="window.showExamHub('sscchsl')">Start Test →</button>
   </div>
 
   <div class="card test-card">
     <div class="test-icon">🎓</div>
     <h3>SSC CGL</h3>
     <p>ऑनलाइन Mock Test</p>
-    <button type="button" onclick="showExamHub('ssccgl')">Start Test →</button>
+    <button type="button" onclick="window.showExamHub('ssccgl')">Start Test →</button>
   </div>
 
   <div class="card test-card">
     <div class="test-icon">🏛️</div>
     <h3>Combined Group C</h3>
     <p>ऑनलाइन Mock Test</p>
-    <button type="button" onclick="showExamHub('groupc')">Start Test →</button>
+    <button type="button" onclick="window.showExamHub('groupc')">Start Test →</button>
   </div>
 
   <div class="card test-card">
     <div class="test-icon">🚆</div>
     <h3>रेल्वे भरती</h3>
     <p>ऑनलाइन Mock Test</p>
-    <button type="button" onclick="showExamHub('railway')">Start Test →</button>
+    <button type="button" onclick="window.showExamHub('railway')">Start Test →</button>
   </div>
 
   <div class="card test-card">
     <div class="test-icon">📚</div>
     <h3>MPSC</h3>
     <p>ऑनलाइन Mock Test</p>
-    <button type="button" onclick="showExamHub('mpsc')">Start Test →</button>
+    <button type="button" onclick="window.showExamHub('mpsc')">Start Test →</button>
   </div>
 
 </div>
@@ -3141,19 +3141,39 @@ let selectedTestType = "free";
 let activeTestName = "Police Bharti - Free Test 1";
 
 function showExamHub(examKey) {
-  activeExamKey = examNames[examKey] ? examKey : "police";
-  const grid = document.querySelector("#homeSections > .test-series-grid");
-  const hub = document.getElementById("examHub");
-  if (grid) grid.style.display = "none";
-  if (!hub) { alert("परीक्षा विभाग सापडला नाही. पेज Refresh करा."); return; }
-  document.getElementById("examHubTitle").textContent = examNames[activeExamKey] + " अभ्यास केंद्र";
-  document.getElementById("examHubSubtitle").textContent = examNames[activeExamKey] + " साठी Free आणि Paid टेस्ट, Study Material, Old Papers व Current Affairs";
-  document.getElementById("examCategoryContent").style.display = "none";
-  const inlineArea = document.getElementById("examInlineArea");
-  if (inlineArea) inlineArea.style.display = "none";
-  hub.style.display = "block";
-  hub.scrollIntoView({behavior:"smooth", block:"start"});
+  try {
+    activeExamKey = examNames[examKey] ? examKey : "police";
+
+    const home = document.getElementById("homeSections");
+    const grid = home ? home.querySelector(".test-series-grid") : null;
+    const hub = document.getElementById("examHub");
+    const hubTitle = document.getElementById("examHubTitle");
+    const hubSubtitle = document.getElementById("examHubSubtitle");
+    const categoryContent = document.getElementById("examCategoryContent");
+    const inlineArea = document.getElementById("examInlineArea");
+
+    if (!hub) {
+      console.error("examHub section missing from page");
+      alert("परीक्षा विभाग सापडला नाही. पेज Refresh करा.");
+      return;
+    }
+
+    if (grid) grid.style.display = "none";
+    if (hubTitle) hubTitle.textContent = (examNames[activeExamKey] || "परीक्षा") + " अभ्यास केंद्र";
+    if (hubSubtitle) hubSubtitle.textContent = (examNames[activeExamKey] || "परीक्षा") + " साठी Free आणि Paid टेस्ट, Study Material, Old Papers व Current Affairs";
+    if (categoryContent) categoryContent.style.display = "none";
+    if (inlineArea) inlineArea.style.display = "none";
+
+    hub.style.display = "block";
+    hub.scrollIntoView({ behavior: "smooth", block: "start" });
+  } catch (error) {
+    console.error("showExamHub failed:", error);
+    alert("परीक्षा विभाग उघडताना अडचण आली: " + error.message);
+  }
 }
+
+// Explicit global reference for the homepage buttons.
+window.showExamHub = showExamHub;
 function showPoliceTests() { showExamHub("police"); }
 function showTalathiTests() { showExamHub("talathi"); }
 
@@ -3514,30 +3534,4 @@ function startFirestoreTest() {
     if (timer) {
       timer.innerText =
         "वेळ: " +
-        Math.floor(freeTestTimeLeft / 60) + ":" +
-        String(freeTestTimeLeft % 60).padStart(2, "0");
-    }
-
-    if (freeTestTimeLeft <= 0) {
-      finishFirestoreTest();
-    }
-  }, 1000);
-}
-
-function showFirestoreTestQuestion() {
-  const area = document.getElementById("freeTestArea");
-
-  if (firestoreTestIndex >= firestoreTestQuestions.length) {
-    finishFirestoreTest();
-    return;
-  }
-
-  const q = firestoreTestQuestions[firestoreTestIndex];
-
-  let html =
-    "<h3>Free Mock Test " + activeFreeTestNumber + "</h3>" +
-    "<p id='firestoreTimer'>वेळ: 90:00</p>" +
-    "<p>प्रश्न: " + (firestoreTestIndex + 1) + " / 100</p>" +
-    "<h4>" + q.q + "</h4>";
-
-  q.o
+        Math.floor(f
