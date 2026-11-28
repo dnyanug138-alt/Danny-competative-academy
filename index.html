@@ -1259,10 +1259,6 @@ async function loadStudentDashboard(user){
 
 
 
-<!-- FIREBASE SDK -->
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
   <script>
 const firebaseConfig = {
   apiKey: "AIzaSyAQlAw96dP_2TbMNsP94olt1Q4f-TB1kNQ",
@@ -1270,7 +1266,7 @@ const firebaseConfig = {
   projectId: "danny-competative-academy"
 };
 
-firebase.initializeApp(firebaseConfig);
+if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
 
 const auth = firebase.auth();
 const db = firebase.firestore();
@@ -2001,7 +1997,7 @@ function policeSubmitTest(autoSubmit = false) {
   style="width:100%;padding:12px;margin:8px 0;">
 
   <button type="button"
-  onclick="adminLogin()"
+  id="adminLoginButton" onclick="window.adminLogin()"
   style="padding:12px 25px;background:#1769aa;color:white;border:0;border-radius:6px;">
   Admin Login
   </button>
@@ -3612,4 +3608,12 @@ async function finishFirestoreTest() {
 
   <details>
     <summary>Terms & Conditions</summary>
-    <p>वेबसाइटवरील टेस्ट शैक्षणिक सरावासा
+    <p>वेबसाइटवरील टेस्ट शैक्षणिक सरावासाठी आहेत. Paid Test वापरण्यासाठी निर्धारित फी भरणे आवश्यक आहे.</p>
+  </details>
+
+  <details>
+    <summary>Privacy Policy</summary>
+    <p>विद्यार्थ्यांची आवश्यक माहिती खाते व्यवस्थापन आणि शैक्षणिक सेवांसाठी वापरली जाईल.</p>
+  </details>
+
+  
