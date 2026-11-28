@@ -114,10 +114,28 @@ button:hover{background:#09264b}
 </div>
 
 <div class="card">
+  <h2>🎁 Premium Offer Management</h2>
+  <p class="small">प्रत्येक परीक्षेसाठी Basic, Silver, Gold आणि Premium Plan ची किंमत व वैधता स्वतंत्र ठरवा.</p>
+  <label>परीक्षा निवडा</label>
+  <select id="offerExam">
+    <option value="police">पोलीस भरती</option><option value="talathi">तलाठी भरती</option><option value="saralseva">सरळसेवा</option><option value="health">आरोग्य सेवक</option><option value="railway">Railway</option><option value="ssc">SSC</option><option value="sscchsl">SSC CHSL</option><option value="ssccgl">SSC CGL</option><option value="groupc">Combined Group C</option><option value="mpsc">MPSC</option><option value="banking">Banking</option>
+  </select>
+  <label>Plan निवडा</label>
+  <select id="offerPlanId"><option value="basic">Basic</option><option value="silver">Silver</option><option value="gold">Gold</option><option value="premium">Premium</option></select>
+  <input id="offerPrice" type="number" min="1" placeholder="किंमत (₹)">
+  <input id="offerDays" type="number" min="1" placeholder="वैधता दिवसांमध्ये">
+  <textarea id="offerFeatures" placeholder="प्रत्येक सुविधा वेगळ्या ओळीत लिहा"></textarea>
+  <button type="button" onclick="savePremiumOffer()">Offer Save / Update करा</button>
+  <p id="offerMessage" class="message"></p>
+  <button type="button" onclick="loadPremiumOffersAdmin()">Offers Refresh करा</button>
+  <div id="premiumOffersAdminList">Offers यादी येथे दिसेल.</div>
+</div>
+
+<div class="card">
   <h2>📚 Premium PDF Notes / Study Material</h2>
   <label>परीक्षा निवडा</label>
   <select id="materialExam">
-    <option value="Police Bharti">पोलीस भरती</option><option value="Talathi Bharti">तलाठी भरती</option><option value="Health Worker">आरोग्य सेवक</option><option value="SSC">SSC</option><option value="SSC CHSL">SSC CHSL</option><option value="SSC CGL">SSC CGL</option><option value="Railway">Railway</option><option value="Combined Group C">Combined Group C</option><option value="MPSC">MPSC</option><option value="Banking">Banking</option>
+    <option value="Police Bharti">पोलीस भरती</option><option value="Talathi Bharti">तलाठी भरती</option><option value="Saralseva">सरळसेवा</option><option value="Health Worker">आरोग्य सेवक</option><option value="SSC">SSC</option><option value="SSC CHSL">SSC CHSL</option><option value="SSC CGL">SSC CGL</option><option value="Railway">Railway</option><option value="Combined Group C">Combined Group C</option><option value="MPSC">MPSC</option><option value="Banking">Banking</option>
   </select>
   <label>साहित्य प्रकार</label>
   <select id="materialType"><option value="notes">PDF Notes</option><option value="study">Study Material</option></select>
@@ -138,6 +156,7 @@ button:hover{background:#09264b}
   <select id="mcqExam">
     <option value="Police Bharti">पोलीस भरती</option>
     <option value="Talathi Bharti">तलाठी भरती</option>
+    <option value="Saralseva">सरळसेवा</option>
     <option value="Health Worker">आरोग्य सेवक</option>
     <option value="SSC CHSL">SSC CHSL</option>
     <option value="SSC CGL">SSC CGL</option>
@@ -282,8 +301,10 @@ async function approvePremiumPayment(requestId){
     const ref=db.collection("paymentRequests").doc(requestId);const snap=await ref.get();
     if(!snap.exists) throw new Error("Payment request सापडली नाही.");
     const d=snap.data();if(d.status!=="pending") throw new Error("ही request आधीच process झाली आहे.");
-    const expiry=new Date();expiry.setMonth(expiry.getMonth()+Number(d.durationMonths||3));
-    const membership={active:true,examKey:d.examKey,examName:d.examName||d.exam,amount:Number(d.amount||0),startedAt:firebase.firestore.FieldValue.serverTimestamp(),expiresAt:firebase.firestore.Timestamp.fromDate(expiry),paymentRequestId:requestId};
+    const expiry=new Date();
+    if(Number(d.durationDays)>0) expiry.setTime(expiry.getTime()+Number(d.durationDays)*24*60*60*1000);
+    else expiry.setMonth(expiry.getMonth()+Number(d.durationMonths||3));
+    const membership={active:true,examKey:d.examKey,examName:d.examName||d.exam,planId:d.planId||"legacy",planName:d.planName||"Premium",amount:Number(d.amount||0),startedAt:firebase.firestore.FieldValue.serverTimestamp(),expiresAt:firebase.firestore.Timestamp.fromDate(expiry),paymentRequestId:requestId};
     const studentRef=db.collection("students").doc(d.uid);
     await studentRef.set({uid:d.uid,email:d.email||""},{merge:true});
     await studentRef.update({["memberships."+d.examKey]:membership});
@@ -409,6 +430,8 @@ async function addMCQ(){
 
   if(!question || !A || !B || !C || !D){ msg.innerText = "कृपया प्रश्न आणि चारही पर्याय भरा."; return; }
   if(!Number.isInteger(testNumber) || testNumber < 1 || testNumber > 50){ msg.innerText = "Test Number 1 ते 50 निवडा."; return; }
+  if(testType === "free" && testNumber > 5){msg.innerText="Free Test फक्त 1 ते 5 आहेत. Test 6 पासून Paid निवडा.";return;}
+  if(testType === "paid" && testNumber < 6){msg.innerText="Paid Test साठी Test Number 6 ते 50 निवडा.";return;}
 
   msg.innerText = "प्रश्न Save होत आहे...";
   try {
@@ -471,4 +494,284 @@ async function loadMCQQuestions(){
       const del = document.createElement("button"); del.textContent = "🗑️ Delete"; del.className="delete-btn"; del.onclick=()=>deleteMCQ(data.id);
       item.append(title,question,edit,del); list.appendChild(item);
     });
-  } catch(error) { list.innerText
+  } catch(error) { list.innerText = "प्रश्न लोड झाले नाहीत: " + error.message; console.error(error); }
+}
+
+async function editMCQ(id){
+  const msg = document.getElementById("mcqMessage");
+  try {
+    const doc = await db.collection("mcqQuestions").doc(id).get();
+    if(!doc.exists){ alert("प्रश्न सापडला नाही."); return; }
+    const data = doc.data(); const options = data.options || {};
+    editingMCQId = id;
+    document.getElementById("mcqExam").value = data.exam || "Police Bharti";
+    document.getElementById("mcqTestType").value = String(data.testType || data.category || "free").toLowerCase();
+    document.getElementById("mcqTestNumber").value = data.testNumber || "";
+    document.getElementById("mcqQuestion").value = data.question || "";
+    document.getElementById("mcqExplanation").value = data.explanation || "";
+    document.getElementById("optionA").value = options.A || "";
+    document.getElementById("optionB").value = options.B || "";
+    document.getElementById("optionC").value = options.C || "";
+    document.getElementById("optionD").value = options.D || "";
+    document.getElementById("correctAnswer").value = data.answer || "A";
+    msg.innerText = `प्रश्न ${data.questionNumber || ""} Edit करण्यासाठी तयार आहे. बदल करून Save / Update करा.`;
+    const saveButton = document.querySelector('button[onclick="addMCQ()"]');
+    if(saveButton) saveButton.textContent = "✏️ प्रश्न Update करा";
+    document.getElementById("mcqQuestion").scrollIntoView({behavior:"smooth",block:"center"});
+    document.getElementById("mcqQuestion").focus();
+  } catch(error) { alert("Edit Error: " + error.message); console.error(error); }
+}
+
+function cancelEdit(clearMessage=true){
+  editingMCQId = null;
+  ["mcqQuestion","mcqExplanation","optionA","optionB","optionC","optionD"].forEach(id=>document.getElementById(id).value="");
+  document.getElementById("mcqExam").value = "Police Bharti";
+  document.getElementById("mcqTestType").value = "free";
+  document.getElementById("mcqTestNumber").value = "";
+  document.getElementById("correctAnswer").value = "A";
+  const saveButton = document.querySelector('button[onclick="addMCQ()"]');
+  if(saveButton) saveButton.textContent = "💾 प्रश्न Save करा";
+  if(clearMessage) document.getElementById("mcqMessage").innerText = "Edit रद्द केले.";
+}
+
+async function deleteMCQ(id){
+  if(!confirm("हा प्रश्न कायमचा Delete करायचा आहे का?")) return;
+  try {
+    await db.collection("mcqQuestions").doc(id).delete();
+    if(editingMCQId === id) cancelEdit();
+    alert("प्रश्न यशस्वीपणे Delete झाला!");
+    await loadMCQQuestions();
+  } catch(error) { alert("Delete Error: " + error.message); console.error(error); }
+}
+
+// PREMIUM OFFER MANAGEMENT
+const offerExamLabels={police:"पोलीस भरती",talathi:"तलाठी भरती",saralseva:"सरळसेवा",health:"आरोग्य सेवक",railway:"Railway",ssc:"SSC",sscchsl:"SSC CHSL",ssccgl:"SSC CGL",groupc:"Combined Group C",mpsc:"MPSC",banking:"Banking"};
+const offerPlanLabels={basic:"Basic",silver:"Silver",gold:"Gold",premium:"Premium"};
+function savePremiumOffer(){
+  const examKey=document.getElementById("offerExam").value;
+  const planId=document.getElementById("offerPlanId").value;
+  const price=Number(document.getElementById("offerPrice").value);
+  const days=Number(document.getElementById("offerDays").value);
+  const features=document.getElementById("offerFeatures").value.split("\n").map(x=>x.trim()).filter(Boolean);
+  const msg=document.getElementById("offerMessage");
+  if(!price||price<1||!days||days<1){msg.textContent="योग्य किंमत आणि वैधता दिवस भरा.";return;}
+  const data={examKey,planId,name:offerPlanLabels[planId],price,days,features,active:true,updatedAt:firebase.firestore.FieldValue.serverTimestamp()};
+  db.collection("premiumOffers").doc(examKey+"_"+planId).set(data,{merge:true})
+    .then(()=>{msg.textContent="Offer Save / Update झाली.";loadPremiumOffersAdmin();})
+    .catch(error=>{msg.textContent="Save Error: "+error.message;});
+}
+async function loadPremiumOffersAdmin(){
+  const box=document.getElementById("premiumOffersAdminList");if(!box)return;box.textContent="Offers लोड होत आहेत...";
+  try{
+    const snap=await db.collection("premiumOffers").get();box.innerHTML="";
+    if(snap.empty){box.textContent="सध्या Default Offers लागू आहेत. येथे केलेले बदल विद्यार्थ्यांना दिसतील.";return;}
+    snap.forEach(doc=>{
+      const d=doc.data();const item=document.createElement("div");item.className="item";
+      const title=document.createElement("strong");title.textContent=(offerExamLabels[d.examKey]||d.examKey)+" • "+(d.name||d.planId)+" • ₹"+d.price+" / "+d.days+" दिवस";
+      const features=document.createElement("p");features.textContent=(d.features||[]).join(" • ");
+      const edit=document.createElement("button");edit.textContent="Edit";edit.onclick=()=>{document.getElementById("offerExam").value=d.examKey;document.getElementById("offerPlanId").value=d.planId;document.getElementById("offerPrice").value=d.price;document.getElementById("offerDays").value=d.days;document.getElementById("offerFeatures").value=(d.features||[]).join("\n");document.getElementById("offerExam").scrollIntoView({behavior:"smooth",block:"center"});};
+      const toggle=document.createElement("button");toggle.textContent=d.active===false?"Activate":"Deactivate";toggle.className=d.active===false?"":"delete-btn";toggle.onclick=async()=>{await db.collection("premiumOffers").doc(doc.id).update({active:d.active===false,updatedAt:firebase.firestore.FieldValue.serverTimestamp()});loadPremiumOffersAdmin();};
+      item.append(title,features,edit,toggle);box.append(item);
+    });
+  }catch(error){box.textContent="Offers लोड Error: "+error.message;}
+}
+
+// CURRENT RECRUITMENT
+function addBharti(){
+  const title = document.getElementById("bhartiTitle").value.trim();
+  const posts = document.getElementById("bhartiPosts").value.trim();
+  const details = document.getElementById("bhartiDetails").value.trim();
+  const startDate = document.getElementById("bhartiStartDate").value;
+  const lastDate = document.getElementById("bhartiLastDate").value;
+  const pdf = document.getElementById("bhartiPDF").value.trim();
+  const apply = document.getElementById("bhartiApply").value.trim();
+  const source = document.getElementById("bhartiSource").value.trim();
+  const msg = document.getElementById("bhartiMessage");
+
+  if(!title || !details){
+    msg.innerText = "भरतीचे नाव आणि माहिती भरा.";
+    return;
+  }
+
+  const data = {title,posts,details,startDate,lastDate,pdf,apply,source,updatedAt:firebase.firestore.FieldValue.serverTimestamp()};
+  const savePromise = editingBhartiId
+    ? db.collection("bharti").doc(editingBhartiId).update(data)
+    : db.collection("bharti").add({...data,createdAt:firebase.firestore.FieldValue.serverTimestamp()});
+  savePromise.then(()=>{
+    msg.innerText = editingBhartiId ? "भरती Update झाली!" : "भरती Publish झाली! ती Homepage वरही दिसेल.";
+    editingBhartiId = null;
+    const saveButton = document.querySelector('button[onclick="addBharti()"]');
+    if (saveButton) saveButton.textContent = "📢 भरती Publish करा";
+    ["bhartiTitle","bhartiPosts","bhartiDetails","bhartiStartDate","bhartiLastDate","bhartiPDF","bhartiApply","bhartiSource"].forEach(id=>{
+      document.getElementById(id).value = "";
+    });
+    loadBharti(); loadAdminStats();
+  })
+  .catch(error=>{
+    msg.innerText = "Error: " + error.message;
+  });
+}
+
+// CURRENT RECRUITMENT LIST / DELETE
+async function loadBharti(){
+  const list = document.getElementById("adminBhartiList");
+  if (!list) return;
+  list.textContent = "भरती लोड होत आहेत...";
+  try {
+    const snap = await db.collection("bharti").orderBy("createdAt", "desc").get();
+    const total = document.getElementById("totalBharti"); if (total) total.textContent = snap.size;
+    list.innerHTML = "";
+    if (snap.empty) { list.textContent = "अजून भरती पोस्ट केलेली नाही."; return; }
+    snap.forEach(doc => {
+      const d = doc.data();
+      const item = document.createElement("div"); item.className = "item";
+      const title = document.createElement("h3"); title.textContent = d.title || "भरती";
+      const details = document.createElement("p"); details.textContent = d.details || "";
+      const dates = document.createElement("p"); dates.textContent = `अर्ज: ${d.startDate || "-"} ते ${d.lastDate || "-"}`;
+      const edit = document.createElement("button"); edit.textContent = "✏️ Edit";
+      edit.onclick = () => {
+        editingBhartiId = doc.id;
+        document.getElementById("bhartiTitle").value = d.title || "";
+        document.getElementById("bhartiPosts").value = d.posts || "";
+        document.getElementById("bhartiDetails").value = d.details || "";
+        document.getElementById("bhartiStartDate").value = d.startDate || "";
+        document.getElementById("bhartiLastDate").value = d.lastDate || "";
+        document.getElementById("bhartiPDF").value = d.pdf || "";
+        document.getElementById("bhartiApply").value = d.apply || "";
+        document.getElementById("bhartiSource").value = d.source || "";
+        const saveButton = document.querySelector('button[onclick="addBharti()"]');
+        if (saveButton) saveButton.textContent = "✏️ भरती Update करा";
+        document.getElementById("bhartiTitle").scrollIntoView({behavior:"smooth",block:"center"});
+      };
+      const del = document.createElement("button"); del.className = "delete-btn"; del.textContent = "🗑️ Delete";
+      del.onclick = async () => {
+        if (!confirm("ही भरती Delete करायची आहे का?")) return;
+        try { await db.collection("bharti").doc(doc.id).delete(); loadBharti(); loadAdminStats(); }
+        catch(error) { alert("Delete Error: " + error.message); }
+      };
+      item.append(title, details, dates, edit, del); list.append(item);
+    });
+  } catch(error) { list.textContent = "भरती लोड Error: " + error.message; }
+}
+
+// ADD NEWS
+function addNews(){
+  const category = document.getElementById("newsCategory").value;
+  const title = document.getElementById("newsTitle").value.trim();
+  const description = document.getElementById("newsDescription").value.trim();
+  const link = document.getElementById("newsLink").value.trim();
+  const msg = document.getElementById("newsMessage");
+
+  if(!title || !description){
+    msg.innerText = "कृपया शीर्षक आणि माहिती भरा.";
+    return;
+  }
+
+  db.collection("news").add({
+    category,title,description,link,
+    createdAt:firebase.firestore.FieldValue.serverTimestamp()
+  })
+  .then(()=>{
+    msg.innerText = "बातमी यशस्वीपणे Publish झाली!";
+    ["newsTitle","newsDescription","newsLink"].forEach(id=>{
+      document.getElementById(id).value = "";
+    });
+    loadNews();
+  })
+  .catch(error=>{
+    msg.innerText = "Error: " + error.message;
+  });
+}
+
+// LOAD NEWS
+function loadNews(){
+  const list = document.getElementById("adminNewsList");
+  list.innerHTML = "बातम्या लोड होत आहेत...";
+
+  db.collection("news").get()
+  .then(snapshot=>{
+    document.getElementById("totalNews").innerText = snapshot.size;
+    list.innerHTML = "";
+
+    if(snapshot.empty){
+      list.innerText = "अजून बातम्या उपलब्ध नाहीत.";
+      return;
+    }
+
+    snapshot.forEach(doc=>{
+      const data = doc.data();
+      const item = document.createElement("div");
+      item.className = "item";
+
+      const title = document.createElement("h3");
+      title.textContent = data.title || "शीर्षक नाही";
+
+      const category = document.createElement("p");
+      category.textContent = "विभाग: " + (data.category || "-");
+
+      const description = document.createElement("p");
+      description.textContent = data.description || "";
+
+      item.append(title,category,description);
+
+      if(data.link){
+        const link = document.createElement("a");
+        link.href = data.link;
+        link.target = "_blank";
+        link.rel = "noopener noreferrer";
+        link.textContent = "अधिक माहिती";
+        item.appendChild(link);
+      }
+
+      const del = document.createElement("button");
+      del.textContent = "🗑️ Delete";
+      del.className = "delete-btn";
+      del.onclick = ()=>{
+        if(confirm("ही बातमी Delete करायची आहे?")){
+          db.collection("news").doc(doc.id).delete()
+          .then(loadNews)
+          .catch(error=>alert(error.message));
+        }
+      };
+
+      item.appendChild(del);
+      list.appendChild(item);
+    });
+  })
+  .catch(error=>{
+    list.innerText = "Error: " + error.message;
+  });
+}
+
+// ADMIN ACCESS CHECK: only a signed-in account listed in the Admins collection can open this page.
+document.body.style.display = "none";
+auth.onAuthStateChanged(async function(user){
+  if(!user){
+    window.location.replace("index.html#adminLoginPage");
+    return;
+  }
+  try{
+    const adminDoc = await db.collection("Admins").doc(user.uid).get();
+    if(!adminDoc.exists || adminDoc.data().role !== "admin"){
+      await auth.signOut();
+      window.location.replace("index.html#adminLoginPage");
+      return;
+    }
+    document.body.style.display = "";
+    loadStudents();
+    loadNews();
+    loadMCQQuestions();
+    loadBharti();
+    loadAdminStats();
+    loadPaymentRequests();
+    loadStudyMaterials();
+    loadPremiumOffersAdmin();
+  }catch(error){
+    alert("Admin access तपासता आला नाही: " + error.message);
+    window.location.replace("index.html#adminLoginPage");
+  }
+});
+
+</script>
+</body>
+</html>
