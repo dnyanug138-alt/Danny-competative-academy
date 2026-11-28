@@ -3326,20 +3326,143 @@ function showExamCategory(category) {
 }
 
 async function renderExamTestList(testType) {
-  const container = document.getElementById("examTestSeriesList");
-  const examKey = activeExamKey;
-  const offerBox = document.getElementById("examOfferPlans");
-  const isPaid = testType === "paid";
-  const hasPremium = isPaid && auth.currentUser ? await hasActivePremiumAccess(examKey) : false;
-  if(offerBox){
-    if(isPaid && !hasPremium) renderPremiumOfferCards(examKey);
-    else offerBox.innerHTML="";
+  const container=document.getElementById("examTestSeriesList");
+  if(!container)return;
+  const examKey=activeExamKey, examName=examNames[examKey]||examKey, isPaid=testType==="paid";
+  const offerBox=document.getElementById("examOfferPlans");
+  const hasPremium=isPaid && auth.currentUser ? await hasActivePremiumAccess(examKey) : false;
+  if(offerBox){if(isPaid&&!hasPremium)renderPremiumOfferCards(examKey);else offerBox.innerHTML="";}
+  let rows=[];
+  try{
+    const snap=await db.collection("testSeries").where("exam","==",examName).where("testType","==",testType).get();
+    snap.forEach(d=>{const x=d.data();if(x.active!==false)rows.push({id:d.id,...x});});
+  }catch(e){console.warn("testSeries config load",e);}
+  rows.sort((a,b)=>(Number(a.testNumber)||0)-(Number(b.testNumber)||0));
+  if(!rows.length){
+    const first=isPaid?4:1,last=isPaid?50:3;
+    for(let i=first;i<=last;i++)rows.push({testNumber:i,title:`${isPaid?'Paid':'Free'} Test ${i}`,questionCount:0,active:true});
   }
-  const first = isPaid ? 4 : 1;
-  const last = isPaid ? 50 : 3;
-  const typeLabel = isPaid ? "Paid" : "Free";
-  const unlocked = !isPaid || hasPremium;
-  let html = `<div class="offer-note">${isPaid ? "Paid Test 4 ते 50 • संबंधित परीक्षेचा Active Plan आवश्यक" : "Free Test 1 ते 3 • सर्व विद्यार्थ्यांसाठी मोफत"}</div>`;
-  html += '<div class="exam-test-grid">';
-  for (let i = first; i <= last; i++) {
-    html += `<div class="exam-test-card"><h4>${typeLabel} Test ${i}</
+  const unlocked=!isPaid||hasPremium;
+  let html=`<div class="offer-note">${isPaid?"Paid Test • Active Premium Plan आवश्यक":"Free Test • सर्व विद्यार्थ्यांसाठी मोफत"}</div><div class="exam-test-grid">`;
+  rows.forEach(t=>{
+    const n=Number(t.testNumber)||0;
+    html+=`<div class="exam-test-card"><h4>${escapeHTML(t.title||`${isPaid?'Paid':'Free'} Test ${n}`)}</h4><p>${t.description?escapeHTML(t.description):''}</p><p>${t.questionCount||0} प्रश्न ${t.duration?`• ${t.duration} मिनिटे`:''} ${unlocked?'':'• 🔒 Premium आवश्यक'}</p><button type="button" ${unlocked?`onclick="startExamTestFromHome('${examKey}','${testType}',${n})"`:`onclick="showPremiumOfferForExam('${examKey}')"`}>${unlocked?'Start Test →':'Unlock →'}</button></div>`;
+  });
+  html+='</div>';container.innerHTML=html;
+}
+
+function showPremiumOfferForExam(examKey){
+  const box=document.getElementById("examHubOfferPlans");
+  if(box) box.scrollIntoView({behavior:"smooth",block:"center"});
+}
+
+function openExamHubDirect(examKey, examName){
+  activeExamKey=examKey;
+  showExamHub(examKey);
+}
+function closeExamHub(){
+  const hub=document.getElementById("examHub");
+  if(hub) hub.style.display="none";
+  const grid=document.querySelector(".test-series-grid");
+  if(grid) grid.style.display="grid";
+}
+function backToExamTests(){
+  const inline=document.getElementById("examInlineArea");
+  if(inline) inline.style.display="none";
+  const tests=document.getElementById("examTestListSection");
+  if(tests) tests.style.display="block";
+}
+
+// Simple MCQ runner for the test buttons. Uses the existing mcqQuestions collection.
+async function startExamTestFromHome(examKey,testType,testNumber){
+  if(!auth.currentUser){
+    pendingExamLaunch={examKey,testType,testNumber};
+    const panel=document.getElementById("studentAuthPanel");
+    if(panel) panel.scrollIntoView({behavior:"smooth",block:"center"});
+    alert("Test सुरू करण्यासाठी Student Login करा.");
+    return;
+  }
+  const inline=document.getElementById("examInlineArea");
+  if(!inline)return;
+  inline.style.display="block";
+  inline.innerHTML='<div class="card"><h3>⏳ Test Loading...</h3></div>';
+  try{
+    const snap=await db.collection("mcqQuestions").where("exam","==",examNames[examKey]||examKey).where("testType","==",testType).where("testNumber","==",Number(testNumber)).get();
+    const questions=[];snap.forEach(doc=>questions.push({id:doc.id,...doc.data()}));
+    questions.sort((a,b)=>(Number(a.questionNumber)||0)-(Number(b.questionNumber)||0));
+    if(!questions.length){inline.innerHTML='<div class="card"><h3>📭 प्रश्न उपलब्ध नाहीत</h3><p>Admin Panel मधून या टेस्टचे प्रश्न अजून जोडलेले नाहीत.</p><button onclick="backToExamTests()">← परत जा</button></div>';return;}
+    let index=0, answers={};
+    function render(){
+      const q=questions[index];
+      inline.innerHTML=`<div class="card" style="max-width:900px;margin:0 auto"><div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap"><b>${examNames[examKey]||examKey} • ${testType==='paid'?'Paid':'Free'} Test ${testNumber}</b><span>प्रश्न ${index+1}/${questions.length}</span></div><hr><h3>${escapeHTML(q.question||'')}</h3><div id="homeQuizOptions"></div><div style="margin-top:15px"><button type="button" onclick="window.__homeQuizPrev()" ${index===0?'disabled':''}>← मागील</button><button type="button" onclick="window.__homeQuizNext()">${index===questions.length-1?'Submit Test':'Save & Next →'}</button><button type="button" onclick="backToExamTests()">Exit</button></div></div>`;
+      const opts=document.getElementById("homeQuizOptions");
+      ['A','B','C','D'].forEach(k=>{const label=document.createElement('label');label.style.cssText='display:block;padding:12px;margin:8px 0;border:1px solid #dbe5ef;border-radius:9px;cursor:pointer';label.innerHTML=`<input type="radio" name="homeQuizOption" value="${k}" ${answers[q.id]===k?'checked':''}> <b>${k})</b> ${escapeHTML(q.options?.[k]||'')}`;label.querySelector('input').onchange=e=>answers[q.id]=e.target.value;opts.appendChild(label);});
+    }
+    window.__homeQuizPrev=()=>{if(index>0){index--;render();}};
+    window.__homeQuizNext=async()=>{if(index<questions.length-1){index++;render();return;}let score=0;questions.forEach(q=>{if(answers[q.id]===q.answer)score++;});inline.innerHTML=`<div class="card" style="max-width:700px;margin:0 auto;text-align:center"><h2>🎯 Test Result</h2><p style="font-size:22px"><b>${score}</b> / ${questions.length}</p><p>Score: <b>${Math.round(score/questions.length*100)}%</b></p><button onclick="backToExamTests()">← Test Series</button></div>`;try{await db.collection('testResults').add({uid:auth.currentUser.uid,exam:examNames[examKey]||examKey,testName:(testType==='paid'?'Paid':'Free')+' Test '+testNumber,testType,testNumber,score,totalQuestions:questions.length,submittedAt:firebase.firestore.FieldValue.serverTimestamp()});}catch(e){console.warn('Result save failed',e);}};
+    render();
+    inline.scrollIntoView({behavior:'smooth',block:'start'});
+  }catch(e){inline.innerHTML='<div class="card"><p>Test Load Error: '+escapeHTML(e.message)+'</p></div>';}
+}
+
+// ===============================
+// DAILY CURRENT AFFAIRS STUDENT
+// ===============================
+(function(){
+  const style=document.createElement('style');
+  style.textContent=`
+  #dcaStudentArea{margin-top:15px}
+  .dca-head{background:linear-gradient(120deg,#102f57,#1769aa);color:#fff;border-radius:14px;padding:18px}
+  .dca-head h3{color:#fff;margin:0 0 6px}.dca-head p{margin:4px 0;color:#e7f2ff}
+  .dca-student-q{background:#fff;border:1px solid #dbe5ef;border-radius:12px;padding:15px;margin:12px 0}
+  .dca-student-opt{display:block;padding:11px;margin:7px 0;border:1px solid #dbe5ef;border-radius:8px;cursor:pointer;background:#fff}
+  .dca-student-opt:hover{background:#f3f8fd}
+  .dca-explain{display:none;margin-top:10px;padding:10px;background:#fff8e1;border-left:4px solid #e67e22;border-radius:6px;font-size:13px}
+  .dca-right{border-color:#087d58!important;background:#eefaf4!important}.dca-wrong{border-color:#b91c1c!important;background:#fff2f2!important}
+  .dca-result{display:none;text-align:center;background:#eefaf4;border:1px solid #b7e2cb;border-radius:12px;padding:18px;margin-top:15px}
+  `;document.head.appendChild(style);
+})();
+
+function dcaStudentToday(){const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");}
+function dcaStudentEscape(v){return String(v||"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#039;"}[m]));}
+async function loadDailyCurrentAffairs(examKey){
+  const box=document.getElementById("dcaStudentArea"); if(!box)return;
+  if(!auth.currentUser){box.innerHTML='<div class="dca-head"><h3>🔐 Daily Current Affairs</h3><p>आजचे प्रश्न सोडवण्यासाठी Student Login करा.</p></div>';return;}
+  box.innerHTML='<div class="dca-head"><h3>📰 आजचे Current Affairs</h3><p>आजच्या चालू घडामोडींवर आधारित सराव प्रश्न</p></div><div class="card">⏳ प्रश्न Loading...</div>';
+  try{
+    const snap=await db.collection("dailyCurrentAffairs").where("date","==",dcaStudentToday()).where("published","==",true).get();
+    const qs=[];snap.forEach(doc=>{const d=doc.data();if(!d.exam||d.exam==='all'||d.exam===examNames[examKey]||examKey==='all')qs.push({id:doc.id,...d});});
+    qs.sort((a,b)=>(Number(a.questionNumber)||0)-(Number(b.questionNumber)||0));
+    if(!qs.length){box.innerHTML='<div class="dca-head"><h3>📰 आजचे Current Affairs</h3><p>आजचे प्रश्न अजून Publish झालेले नाहीत.</p></div>';return;}
+    let html='<div class="dca-head"><h3>📰 आजचे Current Affairs</h3><p>📅 '+dcaStudentToday()+' • '+qs.length+' प्रश्न</p></div><div id="dcaStudentQuestions"></div><button id="dcaStudentSubmit" type="button">✅ Quiz Submit करा</button><div id="dcaStudentResult" class="dca-result"></div>';
+    box.innerHTML=html;
+    const qbox=document.getElementById('dcaStudentQuestions');
+    qs.forEach((q,i)=>{const item=document.createElement('div');item.className='dca-student-q';item.dataset.id=q.id;item.innerHTML='<h3>'+(i+1)+'. '+dcaStudentEscape(q.question)+'</h3>';['A','B','C','D'].forEach(k=>{const label=document.createElement('label');label.className='dca-student-opt';label.innerHTML='<input type="radio" name="dca_'+q.id+'" value="'+k+'"> <b>'+k+')</b> '+dcaStudentEscape(q.options?.[k]||'');item.appendChild(label);});const exp=document.createElement('div');exp.className='dca-explain';exp.id='dcaExp_'+q.id;item.appendChild(exp);qbox.appendChild(item);});
+    document.getElementById('dcaStudentSubmit').onclick=async()=>{let score=0,attempted=0;qs.forEach(q=>{const item=qbox.querySelector('[data-id="'+q.id+'"]');const selected=item.querySelector('input:checked');const opts=item.querySelectorAll('.dca-student-opt');opts.forEach(o=>o.classList.remove('dca-right','dca-wrong'));if(selected){attempted++;if(selected.value===q.answer){score++;selected.parentElement.classList.add('dca-right');}else{selected.parentElement.classList.add('dca-wrong');opts.forEach(o=>{const input=o.querySelector('input');if(input&&input.value===q.answer)o.classList.add('dca-right');});}}else{opts.forEach(o=>{const input=o.querySelector('input');if(input&&input.value===q.answer)o.classList.add('dca-right');});}const exp=item.querySelector('.dca-explain');exp.style.display='block';exp.innerHTML='<b>💡 स्पष्टीकरण:</b> '+dcaStudentEscape(q.explanation||'स्पष्टीकरण उपलब्ध नाही.');});const pct=Math.round(score/qs.length*100);const result=document.getElementById('dcaStudentResult');result.style.display='block';result.innerHTML='<h2>🎯 आजचा निकाल</h2><p><b>'+score+'</b> / '+qs.length+' बरोबर</p><p>Score: <b>'+pct+'%</b> • Attempted: '+attempted+'/'+qs.length+'</p>';document.getElementById('dcaStudentSubmit').style.display='none';try{await db.collection('dailyCurrentAffairsResults').doc(auth.currentUser.uid+'_'+dcaStudentToday()).set({uid:auth.currentUser.uid,date:dcaStudentToday(),score,total:qs.length,percentage:pct,attempted,submittedAt:firebase.firestore.FieldValue.serverTimestamp()},{merge:true});}catch(e){console.warn('DCA result save failed',e);}result.scrollIntoView({behavior:'smooth',block:'center'});};
+  }catch(e){box.innerHTML='<div class="dca-head"><h3>❌ Current Affairs Load Error</h3><p>'+dcaStudentEscape(e.message)+'</p></div>';}
+}
+
+// Replace the old article-only Current Affairs view with the Daily MCQ view.
+const __oldShowExamCategory=showExamCategory;
+showExamCategory=function(category){
+  if(category!=='current')return __oldShowExamCategory(category);
+  const content=document.getElementById('examCategoryContent');
+  const tests=document.getElementById('examTestListSection');
+  const generic=document.getElementById('genericExamCategory');
+  const title=document.getElementById('examCategoryTitle');
+  if(!content||!generic)return;
+  if(tests)tests.style.display='none';
+  content.style.display='block';
+  title.textContent='📰 Daily Current Affairs';
+  generic.style.display='block';
+  document.getElementById('genericExamCategoryText').textContent='दररोजचे Current Affairs MCQ सोडवा आणि तुमचा Score तपासा.';
+  const old=document.getElementById('premiumMaterialList');if(old)old.innerHTML='';
+  let dca=document.getElementById('dcaStudentArea');if(!dca){dca=document.createElement('div');dca.id='dcaStudentArea';generic.appendChild(dca);}
+  loadDailyCurrentAffairs(activeExamKey);
+  content.scrollIntoView({behavior:'smooth',block:'start'});
+};
+window.showExamCategory=showExamCategory;
+
+</script>
+</body>
+</html>
