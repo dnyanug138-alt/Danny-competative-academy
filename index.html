@@ -529,6 +529,28 @@ button:hover {
   </div>
 </section>
 
+<script>
+// Reliable fallback for exam-card buttons; independent of the main page scripts.
+window.openExamHubDirect = function (examKey, examTitle) {
+  try { activeExamKey = examKey; } catch (e) {}
+  const home = document.getElementById("homeSections");
+  const grid = home ? home.querySelector(".test-series-grid") : null;
+  const hub = document.getElementById("examHub");
+  if (!hub) { alert("परीक्षा विभाग सापडला नाही. पेज Refresh करा."); return; }
+  if (grid) grid.style.display = "none";
+  const title = document.getElementById("examHubTitle");
+  const subtitle = document.getElementById("examHubSubtitle");
+  const category = document.getElementById("examCategoryContent");
+  const inlineArea = document.getElementById("examInlineArea");
+  if (title) title.textContent = examTitle + " अभ्यास केंद्र";
+  if (subtitle) subtitle.textContent = examTitle + " साठी Free आणि Paid टेस्ट, Study Material, Old Papers व Current Affairs";
+  if (category) category.style.display = "none";
+  if (inlineArea) inlineArea.style.display = "none";
+  hub.style.display = "block";
+  hub.scrollIntoView({ behavior: "smooth", block: "start" });
+};
+</script>
+
 <h2 class="test-heading">🏆 आपल्या टेस्ट सिरीज</h2>
 
 <div class="test-series-grid">
@@ -537,63 +559,63 @@ button:hover {
     <div class="test-icon">👮</div>
     <h3>पोलीस भरती</h3>
     <p>ऑनलाइन Mock Test</p>
-    <button type="button" onclick="showExamHub('police')">Start Test →</button>
+    <button type="button" onclick="openExamHubDirect('police', 'पोलीस भरती')">Start Test →</button>
   </div>
 
   <div class="card test-card" id="talathiLogin">
     <div class="test-icon">📋</div>
     <h3>तलाठी भरती</h3>
     <p>ऑनलाइन Mock Test</p>
-    <button type="button" onclick="showExamHub('talathi')">Start Test →</button>
+    <button type="button" onclick="openExamHubDirect('talathi', 'तलाठी भरती')">Start Test →</button>
   </div>
 
   <div class="card test-card">
     <div class="test-icon">🏛️</div>
     <h3>सरळसेवा</h3>
     <p>ऑनलाइन Mock Test</p>
-    <button type="button" onclick="showExamHub('saralseva')">Start Test →</button>
+    <button type="button" onclick="openExamHubDirect('saralseva', 'सरळसेवा')">Start Test →</button>
   </div>
 
   <div class="card test-card">
     <div class="test-icon">🏥</div>
     <h3>आरोग्य सेवक</h3>
     <p>ऑनलाइन Mock Test</p>
-    <button type="button" onclick="showExamHub('health')">Start Test →</button>
+    <button type="button" onclick="openExamHubDirect('health', 'आरोग्य सेवक')">Start Test →</button>
   </div>
 
   <div class="card test-card">
     <div class="test-icon">📝</div>
     <h3>SSC CHSL</h3>
     <p>ऑनलाइन Mock Test</p>
-    <button type="button" onclick="showExamHub('sscchsl')">Start Test →</button>
+    <button type="button" onclick="openExamHubDirect('sscchsl', 'SSC CHSL')">Start Test →</button>
   </div>
 
   <div class="card test-card">
     <div class="test-icon">🎓</div>
     <h3>SSC CGL</h3>
     <p>ऑनलाइन Mock Test</p>
-    <button type="button" onclick="showExamHub('ssccgl')">Start Test →</button>
+    <button type="button" onclick="openExamHubDirect('ssccgl', 'SSC CGL')">Start Test →</button>
   </div>
 
   <div class="card test-card">
     <div class="test-icon">🏛️</div>
     <h3>Combined Group C</h3>
     <p>ऑनलाइन Mock Test</p>
-    <button type="button" onclick="showExamHub('groupc')">Start Test →</button>
+    <button type="button" onclick="openExamHubDirect('groupc', 'Combined Group C')">Start Test →</button>
   </div>
 
   <div class="card test-card">
     <div class="test-icon">🚆</div>
     <h3>रेल्वे भरती</h3>
     <p>ऑनलाइन Mock Test</p>
-    <button type="button" onclick="showExamHub('railway')">Start Test →</button>
+    <button type="button" onclick="openExamHubDirect('railway', 'रेल्वे भरती')">Start Test →</button>
   </div>
 
   <div class="card test-card">
     <div class="test-icon">📚</div>
     <h3>MPSC</h3>
     <p>ऑनलाइन Mock Test</p>
-    <button type="button" onclick="showExamHub('mpsc')">Start Test →</button>
+    <button type="button" onclick="openExamHubDirect('mpsc', 'MPSC')">Start Test →</button>
   </div>
 
 </div>
@@ -3407,55 +3429,4 @@ saveOperation
   });
        }
 
-function loadMCQQuestions() {
-
-  const list = document.getElementById("mcqQuestionList");
-
-  list.innerHTML = "प्रश्न लोड होत आहेत...";
-
-  db.collection("mcqQuestions").get()
-
-    .then(snapshot => {
-
-      list.innerHTML = "";
-
-      if (snapshot.empty) {
-        list.innerHTML = "अजून प्रश्न उपलब्ध नाहीत.";
-        return;
-      }
-
-      const questions = [];
-
-      snapshot.forEach(doc => {
-        questions.push({
-          id: doc.id,
-          ...doc.data()
-        });
-      });
-
-      questions.sort((a, b) =>
-        (a.testNumber || 0) - (b.testNumber || 0)
-      );
-
-      questions.forEach(data => {
-
-        const item = document.createElement("div");
-        item.className = "notice-item";
-
-        const title = document.createElement("h4");
-        title.textContent =
-          data.exam + " - Test " + (data.testNumber || "-");
-
-        const question = document.createElement("p");
-        question.textContent = data.question;
-
-        const editButton = document.createElement("button");
-        editButton.textContent = "✏️ Edit";
-        editButton.onclick = () => editMCQ(data.id);
-
-        const deleteButton = document.createElement("button");
-        deleteButton.textContent = "🗑️ Delete";
-        deleteButton.onclick = () => deleteMCQ(data.id);
-
-        item.appendChild(title);
-       
+functi
