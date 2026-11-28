@@ -120,17 +120,11 @@ button:hover{background:#09264b}
   <select id="offerExam">
     <option value="police">पोलीस भरती</option><option value="talathi">तलाठी भरती</option><option value="saralseva">सरळसेवा</option><option value="health">आरोग्य सेवक</option><option value="railway">Railway</option><option value="ssc">SSC</option><option value="sscchsl">SSC CHSL</option><option value="ssccgl">SSC CGL</option><option value="groupc">Combined Group C</option><option value="mpsc">MPSC</option><option value="banking">Banking</option>
   </select>
-  <p><b>प्रत्येक परीक्षेसाठी 50 टेस्ट:</b> Free Test 1 ते 3 आणि Paid Test 4 ते 50.</p>
-  <label>कालावधी निवडा</label>
-  <select id="offerPlanId" onchange="setOfferDuration()">
-    <option value="basic">30 दिवस</option>
-    <option value="silver">90 दिवस</option>
-    <option value="gold">180 दिवस</option>
-    <option value="premium">365 दिवस</option>
-  </select>
-  <input id="offerPrice" type="number" min="1" placeholder="किंमत (₹) — Admin येथे फी टाकेल">
-  <input id="offerDays" type="number" readonly placeholder="वैधता दिवसांमध्ये">
-  <textarea id="offerFeatures" placeholder="या प्लॅनमध्ये काय मिळेल? प्रत्येक सुविधा वेगळ्या ओळीत लिहा"></textarea>
+  <label>Plan निवडा</label>
+  <select id="offerPlanId"><option value="basic">Basic</option><option value="silver">Silver</option><option value="gold">Gold</option><option value="premium">Premium</option></select>
+  <input id="offerPrice" type="number" min="1" placeholder="किंमत (₹)">
+  <input id="offerDays" type="number" min="1" placeholder="वैधता दिवसांमध्ये">
+  <textarea id="offerFeatures" placeholder="प्रत्येक सुविधा वेगळ्या ओळीत लिहा"></textarea>
   <button type="button" onclick="savePremiumOffer()">Offer Save / Update करा</button>
   <p id="offerMessage" class="message"></p>
   <button type="button" onclick="loadPremiumOffersAdmin()">Offers Refresh करा</button>
@@ -138,15 +132,16 @@ button:hover{background:#09264b}
 </div>
 
 <div class="card">
-  <h2>📚 Premium PDF Notes / Study Material</h2>
+  <h2>📚 Study Material / Old Question Papers</h2>
+  <p class="small">Current Affairs साठी News Management मध्ये “चालू घडामोडी” निवडून बातमी Publish करा.</p>
   <label>परीक्षा निवडा</label>
   <select id="materialExam">
     <option value="Police Bharti">पोलीस भरती</option><option value="Talathi Bharti">तलाठी भरती</option><option value="Saralseva">सरळसेवा</option><option value="Health Worker">आरोग्य सेवक</option><option value="SSC">SSC</option><option value="SSC CHSL">SSC CHSL</option><option value="SSC CGL">SSC CGL</option><option value="Railway">Railway</option><option value="Combined Group C">Combined Group C</option><option value="MPSC">MPSC</option><option value="Banking">Banking</option>
   </select>
   <label>साहित्य प्रकार</label>
-  <select id="materialType"><option value="notes">PDF Notes</option><option value="study">Study Material</option></select>
-  <input id="materialTitle" placeholder="PDF / साहित्याचे नाव">
-  <input id="materialUrl" type="url" placeholder="PDF किंवा Drive ची सार्वजनिक लिंक">
+  <select id="materialType"><option value="notes">PDF Notes</option><option value="study">Study Material</option><option value="papers">Old Question Paper</option></select>
+  <input id="materialTitle" placeholder="PDF / साहित्य / प्रश्नपत्रिकेचे नाव">
+  <input id="materialUrl" type="url" placeholder="PDF / Drive ची सार्वजनिक लिंक">
   <button type="button" onclick="addStudyMaterial()">साहित्य Save करा</button>
   <p id="materialMessage" class="message"></p>
   <button type="button" onclick="loadStudyMaterials()">साहित्य यादी Refresh करा</button>
@@ -174,16 +169,21 @@ button:hover{background:#09264b}
   </select>
 
   <label>Test प्रकार</label>
-  <select id="mcqTestType" onchange="updateMCQTestNumberOptions()">
-    <option value="free">Free Mock Test (1 ते 3)</option>
-    <option value="paid">Paid Mock Test (4 ते 50)</option>
+  <select id="mcqTestType">
+    <option value="free">Free Mock Test</option>
+    <option value="paid">Paid Mock Test</option>
   </select>
 
-  <label>Test Number</label>
+  <label>Test Number (1 ते 50)</label>
   <select id="mcqTestNumber">
-    <option value="">आधी Test प्रकार निवडा</option>
+    <option value="">Test निवडा</option>
+    <script>
+    for(let i=1;i<=50;i++){
+      document.write('<option value="'+i+'">Test '+i+'</option>');
+    }
+    </script>
   </select>
-  <p class="small">एकूण 50 टेस्ट: पहिल्या 3 Free आणि पुढील 47 Paid. प्रत्येक टेस्टमधील प्रश्न क्रमांक 1, 2, 3... असा स्वतंत्र राहील.</p>
+  <p class="small">प्रत्येक टेस्टमधील प्रश्न क्रमांक आपोआप 1, 2, 3... असा दिला जाईल.</p>
 
   <textarea id="mcqQuestion" placeholder="प्रश्न लिहा"></textarea>
   <textarea id="mcqExplanation" placeholder="उत्तराचे स्पष्टीकरण (Premium विद्यार्थ्यांसाठी)"></textarea>
@@ -205,18 +205,8 @@ button:hover{background:#09264b}
   <div id="mcqMessage" class="message"></div>
 
   <hr>
-  <h3>📋 प्रश्न व्यवस्थापन — निवडलेल्या टेस्टचीच यादी</h3>
-  <label>यादीसाठी परीक्षा</label>
-  <select id="mcqListExam">
-    <option value="Police Bharti">पोलीस भरती</option><option value="Talathi Bharti">तलाठी भरती</option><option value="Saralseva">सरळसेवा</option><option value="Health Worker">आरोग्य सेवक</option><option value="SSC CHSL">SSC CHSL</option><option value="SSC CGL">SSC CGL</option><option value="Combined Group C">Combined Group C</option><option value="Railway">रेल्वे भरती</option><option value="MPSC">MPSC</option><option value="Banking">बँकिंग</option><option value="SSC">SSC</option>
-  </select>
-  <label>यादीचा Test प्रकार</label>
-  <select id="mcqListTestType" onchange="updateMCQListTestNumberOptions()">
-    <option value="free">Free Test (1 ते 3)</option><option value="paid">Paid Test (4 ते 50)</option>
-  </select>
-  <label>यादीचा Test Number</label>
-  <select id="mcqListTestNumber"></select>
-  <button type="button" onclick="loadMCQQuestions()">निवडलेल्या टेस्टचे प्रश्न दाखवा</button>
+  <h3>📋 प्रश्न व्यवस्थापन</h3>
+  <button onclick="loadMCQQuestions()">प्रश्नांची यादी दाखवा</button>
   <div id="mcqQuestionList"></div>
 </div>
 
@@ -355,7 +345,7 @@ async function addStudyMaterial(){
 
 async function loadStudyMaterials(){
   const box=document.getElementById("studyMaterialAdminList");if(!box)return;box.textContent="साहित्य लोड होत आहे...";
-  try{const snap=await db.collection("studyMaterials").orderBy("createdAt","desc").get();box.innerHTML="";if(snap.empty){box.textContent="अजून साहित्य जोडलेले नाही.";return;}snap.forEach(doc=>{const d=doc.data();const item=document.createElement("div");item.className="item";const label=document.createElement("p");label.textContent=(d.exam||"")+" • "+(d.type==="notes"?"PDF Notes":"Study Material")+" • "+(d.title||"");const del=document.createElement("button");del.textContent="Delete";del.className="delete-btn";del.onclick=async()=>{if(confirm("हे साहित्य Delete करायचे?")){await db.collection("studyMaterials").doc(doc.id).delete();loadStudyMaterials();}};item.append(label,del);box.append(item);});}
+  try{const snap=await db.collection("studyMaterials").orderBy("createdAt","desc").get();box.innerHTML="";if(snap.empty){box.textContent="अजून साहित्य जोडलेले नाही.";return;}snap.forEach(doc=>{const d=doc.data();const item=document.createElement("div");item.className="item";const typeLabel={notes:"PDF Notes",study:"Study Material",papers:"Old Question Paper"}[d.type]||d.type||"Material";const label=document.createElement("p");label.textContent=(d.exam||"")+" • "+typeLabel+" • "+(d.title||"");const del=document.createElement("button");del.textContent="Delete";del.className="delete-btn";del.onclick=async()=>{if(confirm("हे साहित्य Delete करायचे?")){await db.collection("studyMaterials").doc(doc.id).delete();loadStudyMaterials();}};item.append(label,del);box.append(item);});}
   catch(error){box.textContent="Load Error: "+error.message;}
 }
 
@@ -441,8 +431,8 @@ async function addMCQ(){
 
   if(!question || !A || !B || !C || !D){ msg.innerText = "कृपया प्रश्न आणि चारही पर्याय भरा."; return; }
   if(!Number.isInteger(testNumber) || testNumber < 1 || testNumber > 50){ msg.innerText = "Test Number 1 ते 50 निवडा."; return; }
-  if(testType === "free" && (testNumber < 1 || testNumber > 3)){msg.innerText="Free Test फक्त 1 ते 3 आहेत.";return;}
-  if(testType === "paid" && (testNumber < 4 || testNumber > 50)){msg.innerText="Paid Test साठी Test Number 4 ते 50 निवडा.";return;}
+  if(testType === "free" && testNumber > 5){msg.innerText="Free Test फक्त 1 ते 5 आहेत. Test 6 पासून Paid निवडा.";return;}
+  if(testType === "paid" && testNumber < 6){msg.innerText="Paid Test साठी Test Number 6 ते 50 निवडा.";return;}
 
   msg.innerText = "प्रश्न Save होत आहे...";
   try {
@@ -474,9 +464,6 @@ async function addMCQ(){
     else { data.createdAt = firebase.firestore.FieldValue.serverTimestamp(); operation = db.collection("mcqQuestions").add(data); }
     await operation;
     msg.innerText = `प्रश्न ${questionNumber} यशस्वीपणे ${editingMCQId ? "Update" : "Save"} झाला!`;
-    document.getElementById("mcqListExam").value = exam;
-    document.getElementById("mcqListTestType").value = testType;
-    updateMCQListTestNumberOptions(testNumber);
     cancelEdit(false);
     await loadMCQQuestions();
   } catch(error) {
@@ -485,59 +472,24 @@ async function addMCQ(){
   }
 }
 
-function updateMCQTestNumberOptions(selectedValue=""){
-  const type=document.getElementById("mcqTestType").value;
-  const select=document.getElementById("mcqTestNumber");
-  const first=type==="free"?1:4;
-  const last=type==="free"?3:50;
-  const previous=selectedValue || Number(select.value);
-  select.innerHTML='<option value="">Test निवडा</option>';
-  for(let i=first;i<=last;i++){
-    const option=document.createElement("option");option.value=String(i);option.textContent="Test "+i;select.appendChild(option);
-  }
-  if(previous>=first && previous<=last) select.value=String(previous);
-}
-
-function updateMCQListTestNumberOptions(selectedValue=""){
-  const type=document.getElementById("mcqListTestType").value;
-  const select=document.getElementById("mcqListTestNumber");
-  const first=type==="free"?1:4;
-  const last=type==="free"?3:50;
-  const previous=selectedValue || Number(select.value);
-  select.innerHTML="";
-  for(let i=first;i<=last;i++){
-    const option=document.createElement("option");option.value=String(i);option.textContent="Test "+i;select.appendChild(option);
-  }
-  if(previous>=first && previous<=last) select.value=String(previous);
-}
-
 async function loadMCQQuestions(){
   const list = document.getElementById("mcqQuestionList");
-  const exam=document.getElementById("mcqListExam").value;
-  const testType=document.getElementById("mcqListTestType").value;
-  const testNumber=Number(document.getElementById("mcqListTestNumber").value);
-  list.innerHTML = "निवडलेल्या टेस्टचे प्रश्न लोड होत आहेत...";
+  list.innerHTML = "प्रश्न लोड होत आहेत...";
   try {
     const snapshot = await db.collection("mcqQuestions").get();
     const questions = [];
-    snapshot.forEach(doc=>{
-      const data=doc.data();
-      const savedType=String(data.testType || data.category || "free").toLowerCase();
-      if(data.exam===exam && savedType===testType && Number(data.testNumber)===testNumber){
-        questions.push({id:doc.id,...data});
-      }
-    });
-    questions.sort((a,b)=>(Number(a.questionNumber)||0)-(Number(b.questionNumber)||0));
+    snapshot.forEach(doc=>questions.push({id:doc.id,...doc.data()}));
+    questions.sort((a,b)=>String(a.exam).localeCompare(String(b.exam)) ||
+      String(a.testType || "free").localeCompare(String(b.testType || "free")) ||
+      (Number(a.testNumber)||0)-(Number(b.testNumber)||0) ||
+      (Number(a.questionNumber)||0)-(Number(b.questionNumber)||0));
     list.innerHTML = "";
-    const heading=document.createElement("p");
-    heading.className="small";
-    heading.textContent=`${exam} • ${testType==="free"?"Free":"Paid"} Test ${testNumber} • एकूण ${questions.length} प्रश्न`;
-    list.appendChild(heading);
-    if(!questions.length){ const empty=document.createElement("p");empty.textContent="या निवडलेल्या टेस्टमध्ये अजून प्रश्न जोडलेले नाहीत.";list.appendChild(empty);return; }
-    questions.forEach((data,index)=>{
+    if(!questions.length){ list.innerText = "अजून प्रश्न उपलब्ध नाहीत."; return; }
+    questions.forEach(data=>{
       const item = document.createElement("div"); item.className = "item";
       const title = document.createElement("h4");
-      title.textContent = `प्रश्न ${index+1}`;
+      const typeLabel = String(data.testType || data.category || "free").toLowerCase() === "paid" ? "Paid" : "Free";
+      title.textContent = `${data.exam || "Exam"} • ${typeLabel} Test ${data.testNumber || "-"} • प्रश्न ${data.questionNumber || "क्रमांक नाही"}`;
       const question = document.createElement("p"); question.textContent = data.question || "";
       const edit = document.createElement("button"); edit.textContent = "✏️ Edit"; edit.onclick = ()=>editMCQ(data.id);
       const del = document.createElement("button"); del.textContent = "🗑️ Delete"; del.className="delete-btn"; del.onclick=()=>deleteMCQ(data.id);
@@ -555,7 +507,6 @@ async function editMCQ(id){
     editingMCQId = id;
     document.getElementById("mcqExam").value = data.exam || "Police Bharti";
     document.getElementById("mcqTestType").value = String(data.testType || data.category || "free").toLowerCase();
-    updateMCQTestNumberOptions(Number(data.testNumber)||"");
     document.getElementById("mcqTestNumber").value = data.testNumber || "";
     document.getElementById("mcqQuestion").value = data.question || "";
     document.getElementById("mcqExplanation").value = data.explanation || "";
@@ -577,7 +528,6 @@ function cancelEdit(clearMessage=true){
   ["mcqQuestion","mcqExplanation","optionA","optionB","optionC","optionD"].forEach(id=>document.getElementById(id).value="");
   document.getElementById("mcqExam").value = "Police Bharti";
   document.getElementById("mcqTestType").value = "free";
-  updateMCQTestNumberOptions();
   document.getElementById("mcqTestNumber").value = "";
   document.getElementById("correctAnswer").value = "A";
   const saveButton = document.querySelector('button[onclick="addMCQ()"]');
@@ -588,56 +538,40 @@ function cancelEdit(clearMessage=true){
 async function deleteMCQ(id){
   if(!confirm("हा प्रश्न कायमचा Delete करायचा आहे का?")) return;
   try {
-    const deletingDoc=await db.collection("mcqQuestions").doc(id).get();
-    const deletingData=deletingDoc.exists?deletingDoc.data():null;
     await db.collection("mcqQuestions").doc(id).delete();
-    if(deletingData){
-      const groupSnap=await db.collection("mcqQuestions").get();
-      const group=[];
-      groupSnap.forEach(doc=>{const d=doc.data();const t=String(d.testType||d.category||"free").toLowerCase();if(d.exam===deletingData.exam && t===String(deletingData.testType||deletingData.category||"free").toLowerCase() && Number(d.testNumber)===Number(deletingData.testNumber))group.push({id:doc.id,...d});});
-      group.sort((a,b)=>(Number(a.questionNumber)||0)-(Number(b.questionNumber)||0));
-      const batch=db.batch();group.forEach((d,index)=>batch.update(db.collection("mcqQuestions").doc(d.id),{questionNumber:index+1}));await batch.commit();
-    }
     if(editingMCQId === id) cancelEdit();
-    alert("प्रश्न Delete झाला आणि उर्वरित प्रश्नांचे क्रमांक पुन्हा लावले.");
+    alert("प्रश्न यशस्वीपणे Delete झाला!");
     await loadMCQQuestions();
   } catch(error) { alert("Delete Error: " + error.message); console.error(error); }
 }
 
-// PREMIUM OFFER MANAGEMENT — 4 fixed durations; admin controls price per exam
+// PREMIUM OFFER MANAGEMENT
 const offerExamLabels={police:"पोलीस भरती",talathi:"तलाठी भरती",saralseva:"सरळसेवा",health:"आरोग्य सेवक",railway:"Railway",ssc:"SSC",sscchsl:"SSC CHSL",ssccgl:"SSC CGL",groupc:"Combined Group C",mpsc:"MPSC",banking:"Banking"};
-const offerPlanLabels={basic:"30 दिवस",silver:"90 दिवस",gold:"180 दिवस",premium:"365 दिवस"};
-const offerPlanDays={basic:30,silver:90,gold:180,premium:365};
-function setOfferDuration(){
-  const planId=document.getElementById("offerPlanId").value;
-  document.getElementById("offerDays").value=offerPlanDays[planId]||30;
-}
+const offerPlanLabels={basic:"Basic",silver:"Silver",gold:"Gold",premium:"Premium"};
 function savePremiumOffer(){
   const examKey=document.getElementById("offerExam").value;
   const planId=document.getElementById("offerPlanId").value;
   const price=Number(document.getElementById("offerPrice").value);
-  const days=offerPlanDays[planId];
+  const days=Number(document.getElementById("offerDays").value);
   const features=document.getElementById("offerFeatures").value.split("\n").map(x=>x.trim()).filter(Boolean);
   const msg=document.getElementById("offerMessage");
-  if(!price||price<1){msg.textContent="कृपया या परीक्षेसाठी योग्य फी भरा.";return;}
+  if(!price||price<1||!days||days<1){msg.textContent="योग्य किंमत आणि वैधता दिवस भरा.";return;}
   const data={examKey,planId,name:offerPlanLabels[planId],price,days,features,active:true,updatedAt:firebase.firestore.FieldValue.serverTimestamp()};
   db.collection("premiumOffers").doc(examKey+"_"+planId).set(data,{merge:true})
-    .then(()=>{msg.textContent=offerExamLabels[examKey]+" साठी "+offerPlanLabels[planId]+" ची फी Save / Update झाली.";loadPremiumOffersAdmin();})
+    .then(()=>{msg.textContent="Offer Save / Update झाली.";loadPremiumOffersAdmin();})
     .catch(error=>{msg.textContent="Save Error: "+error.message;});
 }
 async function loadPremiumOffersAdmin(){
   const box=document.getElementById("premiumOffersAdminList");if(!box)return;box.textContent="Offers लोड होत आहेत...";
   try{
     const snap=await db.collection("premiumOffers").get();box.innerHTML="";
-    if(snap.empty){box.textContent="अजून कोणत्याही परीक्षेची फी सेट केलेली नाही. वरून परीक्षा निवडून चारही प्लॅनची फी Save करा.";return;}
-    const docs=[];snap.forEach(doc=>docs.push({id:doc.id,...doc.data()}));
-    docs.sort((a,b)=>(offerExamLabels[a.examKey]||a.examKey).localeCompare(offerExamLabels[b.examKey]||b.examKey)||(Number(a.days)||0)-(Number(b.days)||0));
-    docs.forEach(d=>{
-      const item=document.createElement("div");item.className="item";
-      const title=document.createElement("strong");title.textContent=(offerExamLabels[d.examKey]||d.examKey)+" • "+(offerPlanLabels[d.planId]||d.name||d.planId)+" • ₹"+d.price+" / "+d.days+" दिवस";
+    if(snap.empty){box.textContent="सध्या Default Offers लागू आहेत. येथे केलेले बदल विद्यार्थ्यांना दिसतील.";return;}
+    snap.forEach(doc=>{
+      const d=doc.data();const item=document.createElement("div");item.className="item";
+      const title=document.createElement("strong");title.textContent=(offerExamLabels[d.examKey]||d.examKey)+" • "+(d.name||d.planId)+" • ₹"+d.price+" / "+d.days+" दिवस";
       const features=document.createElement("p");features.textContent=(d.features||[]).join(" • ");
-      const edit=document.createElement("button");edit.textContent="Edit Fee";edit.onclick=()=>{document.getElementById("offerExam").value=d.examKey;document.getElementById("offerPlanId").value=d.planId;setOfferDuration();document.getElementById("offerPrice").value=d.price;document.getElementById("offerFeatures").value=(d.features||[]).join("\n");document.getElementById("offerExam").scrollIntoView({behavior:"smooth",block:"center"});};
-      const toggle=document.createElement("button");toggle.textContent=d.active===false?"Activate":"Deactivate";toggle.className=d.active===false?"":"delete-btn";toggle.onclick=async()=>{await db.collection("premiumOffers").doc(d.id).update({active:d.active===false,updatedAt:firebase.firestore.FieldValue.serverTimestamp()});loadPremiumOffersAdmin();};
+      const edit=document.createElement("button");edit.textContent="Edit";edit.onclick=()=>{document.getElementById("offerExam").value=d.examKey;document.getElementById("offerPlanId").value=d.planId;document.getElementById("offerPrice").value=d.price;document.getElementById("offerDays").value=d.days;document.getElementById("offerFeatures").value=(d.features||[]).join("\n");document.getElementById("offerExam").scrollIntoView({behavior:"smooth",block:"center"});};
+      const toggle=document.createElement("button");toggle.textContent=d.active===false?"Activate":"Deactivate";toggle.className=d.active===false?"":"delete-btn";toggle.onclick=async()=>{await db.collection("premiumOffers").doc(doc.id).update({active:d.active===false,updatedAt:firebase.firestore.FieldValue.serverTimestamp()});loadPremiumOffersAdmin();};
       item.append(title,features,edit,toggle);box.append(item);
     });
   }catch(error){box.textContent="Offers लोड Error: "+error.message;}
@@ -809,11 +743,6 @@ function loadNews(){
     list.innerText = "Error: " + error.message;
   });
 }
-
-// Initial test selectors and default offer duration
-updateMCQTestNumberOptions();
-updateMCQListTestNumberOptions();
-setOfferDuration();
 
 // ADMIN ACCESS CHECK: only a signed-in account listed in the Admins collection can open this page.
 document.body.style.display = "none";
