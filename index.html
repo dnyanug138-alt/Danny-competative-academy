@@ -1259,6 +1259,8 @@ async function loadStudentDashboard(user){
 
 
 
+<!-- FIREBASE SDK -->
+
   <script>
 const firebaseConfig = {
   apiKey: "AIzaSyAQlAw96dP_2TbMNsP94olt1Q4f-TB1kNQ",
@@ -2001,7 +2003,54 @@ function policeSubmitTest(autoSubmit = false) {
   style="padding:12px 25px;background:#1769aa;color:white;border:0;border-radius:6px;">
   Admin Login
   </button>
-  <p id="adminMessage"></p>
+  <p id="adminMessage" role="status" aria-live="polite"></p>
+<script>
+window.adminLogin = async function() {
+  const emailEl = document.getElementById("adminEmail");
+  const passwordEl = document.getElementById("adminPassword");
+  const messageEl = document.getElementById("adminMessage");
+  const button = document.getElementById("adminLoginButton");
+
+  messageEl.textContent = "Admin Login बटण कार्यरत आहे...";
+  if (!emailEl || !passwordEl) {
+    messageEl.textContent = "Login फॉर्म सापडला नाही. पेज Refresh करा.";
+    return;
+  }
+
+  const email = emailEl.value.trim();
+  const password = passwordEl.value;
+  if (!email || !password) {
+    messageEl.textContent = "कृपया Admin Email आणि Password भरा.";
+    return;
+  }
+
+  if (!window.auth || !window.db) {
+    messageEl.textContent = "Firebase कनेक्शन उपलब्ध नाही. पेज Refresh करा.";
+    return;
+  }
+
+  if (button) button.disabled = true;
+  messageEl.textContent = "Login तपासत आहे...";
+  try {
+    const credential = await window.auth.signInWithEmailAndPassword(email, password);
+    const user = credential.user;
+    const adminSnapshot = await window.db.collection("Admins").doc(user.uid).get();
+
+    if (adminSnapshot.exists && adminSnapshot.data() &&
+        String(adminSnapshot.data().role || "").toLowerCase() === "admin") {
+      messageEl.textContent = "Login यशस्वी. Admin Panel उघडत आहे...";
+      window.location.href = "admin.html";
+    } else {
+      await window.auth.signOut();
+      messageEl.textContent = "या खात्याला Admin परवानगी नाही. Firestore मधील Admins नोंद तपासा.";
+    }
+  } catch (error) {
+    messageEl.textContent = "Login Error: " + (error && error.message ? error.message : "अज्ञात त्रुटी");
+  } finally {
+    if (button) button.disabled = false;
+  }
+};
+</script>
 
   
 
@@ -3559,61 +3608,4 @@ async function finishFirestoreTest() {
 </div>
     </div>
 </section>
-  <!-- EDUCATIONAL ARTICLE 2 -->
-<div id="studyArticle2Details" style="
-  max-width:900px;
-  margin:25px auto;
-  padding:25px;
-  background:white;
-  border-radius:12px;
-  box-shadow:0 4px 15px rgba(0,0,0,0.08);
-">
-  <h2>📖 महाराष्ट्र पोलीस भरती – लेखी परीक्षेचे विषय</h2>
-  <p>पोलीस भरतीच्या लेखी परीक्षेची तयारी करताना सर्व विषयांचा नियमित अभ्यास करणे महत्त्वाचे आहे.</p>
-    <h3>1. मराठी व्याकरण</h3>
-  <p>शब्दांच्या जाती, समानार्थी-विरुद्धार्थी शब्द, म्हणी आणि वाक्प्रचार यांचा सराव करा.</p>
-
-  <h3>2. गणित</h3>
-  <p>टक्केवारी, सरासरी, नफा-तोटा आणि काळ-काम यांचा अभ्यास करा.</p>
-
-  <h3>3. बुद्धिमत्ता चाचणी</h3>
-  <p>संख्या मालिका, दिशा, नातेसंबंध आणि तर्कशक्तीचे प्रश्न सोडवा.</p>
-
-  <h3>4. सामान्य ज्ञान</h3>
-  <p>महाराष्ट्राचा इतिहास, भूगोल, भारतीय राज्यघटना आणि चालू घडामोडींचा अभ्यास करा.</p>
-  
-<!-- टीप: परीक्षेचा अचूक अभ्यासक्रम आणि गुणपद्धतीसाठी नवीनतम अधिकृत भरती जाहिरात तपासा. -->
-  <p><strong>Prayag Study Hub</strong> तर्फे सर्व विद्यार्थ्यांना शुभेच्छा!</p>
-</div>
-<!-- CONTACT US SECTION -->
-<div id="contactUs" style="
-  max-width:700px;
-  margin:25px auto;
-  padding:20px;
-  background:white;
-  border-radius:12px;
-  text-align:center;
-  box-shadow:0 4px 15px rgba(0,0,0,0.08);
-">
-  <h2>📞 Contact Us</h2>
-  <p>Prayag Study Hub</p>
-  <p>📧 Email: dnyanug138@gmail.com</p>
-  <p>तुमच्या प्रश्नांसाठी आम्हाला ईमेल करा.</p>
-</div>
-  
- <hr>
-
-<div style="text-align:center;padding:20px;">
-  <h3>📄 Important Policies</h3>
-
-  <details>
-    <summary>Terms & Conditions</summary>
-    <p>वेबसाइटवरील टेस्ट शैक्षणिक सरावासाठी आहेत. Paid Test वापरण्यासाठी निर्धारित फी भरणे आवश्यक आहे.</p>
-  </details>
-
-  <details>
-    <summary>Privacy Policy</summary>
-    <p>विद्यार्थ्यांची आवश्यक माहिती खाते व्यवस्थापन आणि शैक्षणिक सेवांसाठी वापरली जाईल.</p>
-  </details>
-
-  
+  <!-- EDUCATIONAL ARTICL
