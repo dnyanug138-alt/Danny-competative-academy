@@ -548,6 +548,13 @@ button:hover {
   </div>
 
   <div class="card test-card">
+    <div class="test-icon">🏛️</div>
+    <h3>सरळसेवा</h3>
+    <p>ऑनलाइन Mock Test</p>
+    <button type="button" onclick="showExamHub('saralseva')">Start Test →</button>
+  </div>
+
+  <div class="card test-card">
     <div class="test-icon">🏥</div>
     <h3>आरोग्य सेवक</h3>
     <p>ऑनलाइन Mock Test</p>
@@ -605,6 +612,7 @@ button:hover {
     <h3 id="examCategoryTitle"></h3>
     <div id="examTestListSection" style="display:none;margin-top:15px;">
       <p>प्रत्येक टेस्टसाठी 100 प्रश्न आणि 90 मिनिटांचा कालावधी ठेवला आहे. प्रश्न Admin Panel मधून जोडा.</p>
+      <div id="examOfferPlans" class="offer-cards"></div>
       <div id="examTestSeriesList" class="police-free-test-grid"></div>
     </div>
     <div id="genericExamCategory" class="card" style="display:none;">
@@ -1026,34 +1034,42 @@ button:hover {
 .premium-card.yearly button {
   background: #d99a19;
 }
+
+.offer-exam-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px;margin:20px auto;max-width:1050px}
+.offer-exam-grid button{width:100%;min-height:62px;border-radius:13px;background:linear-gradient(135deg,#123b68,#1769aa);font-weight:700;box-shadow:0 5px 14px rgba(18,59,104,.15)}
+.offer-note{font-size:13px;color:#64748b;margin-top:12px}
+.offer-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px;margin:16px 0}
+.offer-card{position:relative;background:#fff;border:1px solid #dbe5f1;border-radius:14px;padding:16px;text-align:left;box-shadow:0 4px 14px rgba(18,59,104,.07);overflow:hidden}
+.offer-card.featured{border:2px solid #16a34a;box-shadow:0 7px 20px rgba(22,163,74,.13)}
+.offer-card h4{margin:0 0 8px;color:#123b68;font-size:17px}
+.offer-price{font-size:29px;font-weight:800;color:#087d58;margin:4px 0}
+.offer-duration{font-size:13px;color:#64748b;margin:0 0 10px}
+.offer-card ul{padding-left:18px;margin:8px 0 14px;color:#475569;font-size:13px;line-height:1.7}
+.offer-card button{width:100%;margin:0;background:#1769aa}
+.offer-card.featured button{background:#15803d}
+.offer-tag{display:inline-block;font-size:11px;font-weight:800;letter-spacing:.3px;color:#166534;background:#dcfce7;border-radius:20px;padding:5px 9px;margin-bottom:8px}
+@media(max-width:600px){.offer-exam-grid{grid-template-columns:1fr 1fr;gap:8px}.offer-exam-grid button{font-size:12px;padding:10px 6px}.offer-cards{grid-template-columns:1fr 1fr;gap:8px}.offer-card{padding:12px}.offer-price{font-size:24px}.offer-card ul{font-size:12px;padding-left:15px}}
+@media(max-width:380px){.offer-cards{grid-template-columns:1fr}}
+
 </style>
 
 <div id="premiumSeries" class="premium-section">
-  <h2>👑 Exam-wise Premium Membership</h2>
-  <p>ज्या परीक्षेचे Premium घ्याल, त्याच परीक्षेचे Tests आणि Study Material मिळेल.</p>
-  <div class="premium-plans">
-    <div class="premium-card"><h3>🛡️ पोलीस भरती</h3><h2>₹99</h2><p>3 महिन्यांचा Access</p><p>50 CBT Tests + PDF Notes + Study Material</p><button type="button" onclick="selectPremiumPlan('police')">Premium घ्या</button></div>
-    <div class="premium-card"><h3>📚 तलाठी भरती</h3><h2>₹199</h2><p>3 महिन्यांचा Access</p><p>50 CBT Tests + PDF Notes + Study Material</p><button type="button" onclick="selectPremiumPlan('talathi')">Premium घ्या</button></div>
-    <div class="premium-card"><h3>🏥 आरोग्य सेवक</h3><h2>₹199</h2><p>3 महिन्यांचा Access</p><p>50 CBT Tests + PDF Notes + Study Material</p><button type="button" onclick="selectPremiumPlan('health')">Premium घ्या</button></div>
-    <div class="premium-card"><h3>📘 SSC CHSL</h3><h2>₹299</h2><p>3 महिन्यांचा Access</p><p>50 CBT Tests + PDF Notes + Study Material</p><button type="button" onclick="selectPremiumPlan('sscchsl')">Premium घ्या</button></div>
-    <div class="premium-card"><h3>📘 SSC CGL</h3><h2>₹299</h2><p>3 महिन्यांचा Access</p><p>50 CBT Tests + PDF Notes + Study Material</p><button type="button" onclick="selectPremiumPlan('ssccgl')">Premium घ्या</button></div>
-    <div class="premium-card"><h3>🏦 Banking</h3><h2>₹299</h2><p>3 महिन्यांचा Access</p><p>50 CBT Tests + PDF Notes + Study Material</p><button type="button" onclick="selectPremiumPlan('banking')">Premium घ्या</button></div>
-    <div class="premium-card"><h3>🚆 Railway</h3><h2>₹399</h2><p>3 महिन्यांचा Access</p><p>50 CBT Tests + PDF Notes + Study Material</p><button type="button" onclick="selectPremiumPlan('railway')">Premium घ्या</button></div>
-    <div class="premium-card"><h3>🏅 Combined Group C</h3><h2>₹399</h2><p>3 महिन्यांचा Access</p><p>50 CBT Tests + PDF Notes + Study Material</p><button type="button" onclick="selectPremiumPlan('groupc')">Premium घ्या</button></div>
-    <div class="premium-card yearly"><h3>🏛️ MPSC</h3><h2>₹799</h2><p>3 महिन्यांचा Access</p><p>50 CBT Tests + PDF Notes + Study Material</p><button type="button" onclick="selectPremiumPlan('mpsc')">Premium घ्या</button></div>
+  <h2>👑 Prayag Study Hub – Premium Offers</h2>
+  <p>प्रत्येक परीक्षेसाठी स्वतंत्र Plans निवडा. पहिल्या 5 टेस्ट Free आणि पुढील 45 टेस्ट Paid.</p>
+  <div class="offer-exam-grid">
+    <button type="button" onclick="openExamOffers('police')">👮 पोलीस भरती – Offers पहा</button>
+    <button type="button" onclick="openExamOffers('talathi')">📋 तलाठी भरती – Offers पहा</button>
+    <button type="button" onclick="openExamOffers('saralseva')">🏛️ सरळसेवा – Offers पहा</button>
+    <button type="button" onclick="openExamOffers('health')">🏥 आरोग्य सेवक – Offers पहा</button>
+    <button type="button" onclick="openExamOffers('railway')">🚆 Railway – Offers पहा</button>
+    <button type="button" onclick="openExamOffers('ssc')">📝 SSC – Offers पहा</button>
+    <button type="button" onclick="openExamOffers('sscchsl')">📘 SSC CHSL – Offers पहा</button>
+    <button type="button" onclick="openExamOffers('ssccgl')">📘 SSC CGL – Offers पहा</button>
+    <button type="button" onclick="openExamOffers('groupc')">🏅 Combined Group C – Offers पहा</button>
+    <button type="button" onclick="openExamOffers('mpsc')">📚 MPSC – Offers पहा</button>
+    <button type="button" onclick="openExamOffers('banking')">🏦 Banking – Offers पहा</button>
   </div>
-  <div id="premiumPurchaseBox" style="display:none;max-width:560px;margin:24px auto 0;background:white;padding:18px;border-radius:12px;text-align:left;">
-    <h3>💳 Premium Payment Request</h3>
-    <p id="premiumSelectedPlan"></p>
-    <p><strong>UPI ID:</strong> dmgaik138@ybl</p>
-    <p>वरील UPI वर योग्य रक्कम भरल्यानंतर Transaction ID / UTR येथे टाका. Admin तपासून Access सुरू करेल.</p>
-    <label for="premiumUTR">Transaction ID / UTR</label>
-    <input id="premiumUTR" type="text" maxlength="80" placeholder="Payment Transaction ID टाका" style="width:100%;padding:12px;margin:8px 0;">
-    <button type="button" onclick="submitPremiumPaymentRequest()">Payment Verification साठी पाठवा</button>
-    <button type="button" onclick="document.getElementById('premiumPurchaseBox').style.display='none'">बंद करा</button>
-    <p id="premiumPaymentMessage" role="status"></p>
-  </div>
-  <p style="margin-top:20px;color:#174f7e;font-weight:bold;">📚 Prayag Study Hub – Learn Today • Lead Tomorrow</p>
+  <p class="offer-note">किंमत आणि वैधता Admin Panel मधून प्रत्येक परीक्षेसाठी स्वतंत्र बदलता येईल.</p>
 </div>
 
   
@@ -1276,31 +1292,91 @@ const db = firebase.firestore();
 window.auth = auth;
 window.db = db;
 
+function defaultOfferSet(){
+  return [
+    {id:"basic",name:"Basic",price:79,days:30,features:["45 Paid Tests","निकाल आणि गुण"]},
+    {id:"silver",name:"Silver",price:149,days:90,features:["45 Paid Tests","PDF Notes","उत्तरांचे स्पष्टीकरण"]},
+    {id:"gold",name:"Gold",price:249,days:180,features:["45 Paid Tests","PDF Notes","Growth Report","Current Affairs"]},
+    {id:"premium",name:"Premium",price:399,days:365,features:["45 Paid Tests","सर्व PDF Notes","Growth Report","Current Affairs","अतिरिक्त सराव प्रश्न"]}
+  ];
+}
 const premiumPlans = {
-  police:{name:"पोलीस भरती", firestore:"Police Bharti", price:99},
-  talathi:{name:"तलाठी भरती", firestore:"Talathi Bharti", price:199},
-  health:{name:"आरोग्य सेवक", firestore:"Health Worker", price:199},
-  ssc:{name:"SSC", firestore:"SSC", price:299},
-  sscchsl:{name:"SSC CHSL", firestore:"SSC CHSL", price:299},
-  ssccgl:{name:"SSC CGL", firestore:"SSC CGL", price:299},
-  railway:{name:"Railway", firestore:"Railway", price:399},
-  groupc:{name:"Combined Group C", firestore:"Combined Group C", price:399},
-  mpsc:{name:"MPSC", firestore:"MPSC", price:799},
-  banking:{name:"Banking", firestore:"Banking", price:299}
+  police:{name:"पोलीस भरती",firestore:"Police Bharti",offers:defaultOfferSet()},
+  talathi:{name:"तलाठी भरती",firestore:"Talathi Bharti",offers:defaultOfferSet()},
+  saralseva:{name:"सरळसेवा",firestore:"Saralseva",offers:defaultOfferSet()},
+  health:{name:"आरोग्य सेवक",firestore:"Health Worker",offers:defaultOfferSet()},
+  ssc:{name:"SSC",firestore:"SSC",offers:defaultOfferSet()},
+  sscchsl:{name:"SSC CHSL",firestore:"SSC CHSL",offers:defaultOfferSet()},
+  ssccgl:{name:"SSC CGL",firestore:"SSC CGL",offers:defaultOfferSet()},
+  railway:{name:"Railway",firestore:"Railway",offers:defaultOfferSet()},
+  groupc:{name:"Combined Group C",firestore:"Combined Group C",offers:defaultOfferSet()},
+  mpsc:{name:"MPSC",firestore:"MPSC",offers:defaultOfferSet()},
+  banking:{name:"Banking",firestore:"Banking",offers:defaultOfferSet()}
 };
 let selectedPremiumPlanKey = null;
+let selectedPremiumTierId = null;
 
-function selectPremiumPlan(examKey){
+async function loadPremiumOffers(){
+  try{
+    const snap=await db.collection("premiumOffers").get();
+    snap.forEach(doc=>{
+      const d=doc.data();
+      if(!premiumPlans[d.examKey] || !d.planId) return;
+      const offers=premiumPlans[d.examKey].offers;
+      const item={id:d.planId,name:d.name||d.planId,price:Number(d.price)||0,days:Number(d.days)||30,features:Array.isArray(d.features)?d.features:[],active:d.active!==false};
+      const at=offers.findIndex(o=>o.id===d.planId);
+      if(at>=0) offers[at]=item; else offers.push(item);
+    });
+    const current=document.getElementById("examOfferPlans");
+    if(current && activeExamKey) renderPremiumOfferCards(activeExamKey);
+  }catch(error){console.warn("Premium offers default list वापरली जात आहे:",error);}
+}
+loadPremiumOffers();
+
+function renderPremiumOfferCards(examKey){
+  const box=document.getElementById("examOfferPlans");
+  const config=premiumPlans[examKey];
+  if(!box || !config) return;
+  box.innerHTML="";
+  const offers=config.offers.filter(o=>o.active!==false).sort((a,b)=>a.days-b.days);
+  offers.forEach(offer=>{
+    const card=document.createElement("div");
+    card.className="offer-card"+(offer.id==="gold"?" featured":"");
+    if(offer.id==="gold"){
+      const tag=document.createElement("span");tag.className="offer-tag";tag.textContent="लोकप्रिय पर्याय";card.appendChild(tag);
+    }else if(offer.id==="premium"){
+      const tag=document.createElement("span");tag.className="offer-tag";tag.textContent="सर्वाधिक सुविधा";card.appendChild(tag);
+    }
+    const title=document.createElement("h4");title.textContent=offer.name+" Plan";card.appendChild(title);
+    const price=document.createElement("div");price.className="offer-price";price.textContent="₹"+offer.price;card.appendChild(price);
+    const duration=document.createElement("p");duration.className="offer-duration";duration.textContent=offer.days+" दिवसांची वैधता";card.appendChild(duration);
+    const list=document.createElement("ul");
+    (offer.features||[]).forEach(feature=>{const li=document.createElement("li");li.textContent=feature;list.appendChild(li);});
+    card.appendChild(list);
+    const button=document.createElement("button");button.type="button";button.textContent="हा Plan निवडा";button.onclick=()=>selectPremiumPlan(examKey,offer.id);card.appendChild(button);
+    box.appendChild(card);
+  });
+  if(!offers.length) box.textContent="या परीक्षेसाठी सध्या कोणतीही ऑफर उपलब्ध नाही.";
+}
+
+function selectPremiumPlan(examKey,tierId){
+  if(!tierId){
+    showExamHub(examKey);
+    showExamCategory("paid");
+    return;
+  }
   if(!auth.currentUser){
-    alert("Premium घेण्यासाठी आधी Student Login करा.");
+    alert("Plan निवडल्यानंतर Payment Request पाठवण्यासाठी आधी Student Login करा.");
     const panel=document.getElementById("studentAuthPanel");
     if(panel) panel.scrollIntoView({behavior:"smooth",block:"center"});
     return;
   }
-  const plan=premiumPlans[examKey];
-  if(!plan){alert("ही परीक्षा सापडली नाही.");return;}
+  const config=premiumPlans[examKey];
+  const offer=config && config.offers.find(o=>o.id===tierId && o.active!==false);
+  if(!config || !offer){alert("ही ऑफर सध्या उपलब्ध नाही.");return;}
   selectedPremiumPlanKey=examKey;
-  document.getElementById("premiumSelectedPlan").textContent=plan.name+" Premium – ₹"+plan.price+" (3 महिने)";
+  selectedPremiumTierId=tierId;
+  document.getElementById("premiumSelectedPlan").textContent=config.name+" – "+offer.name+" Plan | ₹"+offer.price+" | "+offer.days+" दिवस";
   document.getElementById("premiumPurchaseBox").style.display="block";
   document.getElementById("premiumPaymentMessage").textContent="";
   document.getElementById("premiumPurchaseBox").scrollIntoView({behavior:"smooth",block:"center"});
@@ -1308,15 +1384,16 @@ function selectPremiumPlan(examKey){
 
 async function submitPremiumPaymentRequest(){
   const user=auth.currentUser;
-  const plan=premiumPlans[selectedPremiumPlanKey];
+  const config=premiumPlans[selectedPremiumPlanKey];
+  const offer=config && config.offers.find(o=>o.id===selectedPremiumTierId && o.active!==false);
   const utr=document.getElementById("premiumUTR").value.trim();
   const msg=document.getElementById("premiumPaymentMessage");
   if(!user){msg.textContent="कृपया आधी Login करा.";return;}
-  if(!plan){msg.textContent="परीक्षा निवडा.";return;}
+  if(!config || !offer){msg.textContent="परीक्षा आणि Plan निवडा.";return;}
   if(utr.length<6){msg.textContent="योग्य Transaction ID / UTR टाका.";return;}
   msg.textContent="Payment request पाठवत आहे...";
   try{
-    await db.collection("paymentRequests").add({uid:user.uid,email:user.email||"",examKey:selectedPremiumPlanKey,examName:plan.name,exam:plan.firestore,amount:plan.price,utr,status:"pending",durationMonths:3,createdAt:firebase.firestore.FieldValue.serverTimestamp()});
+    await db.collection("paymentRequests").add({uid:user.uid,email:user.email||"",examKey:selectedPremiumPlanKey,examName:config.name,exam:config.firestore,planId:offer.id,planName:offer.name,amount:offer.price,utr,status:"pending",durationDays:offer.days,durationMonths:Math.ceil(offer.days/30),createdAt:firebase.firestore.FieldValue.serverTimestamp()});
     msg.textContent="Payment request पाठवली आहे. Admin तपासून Premium सुरू करेल.";
     document.getElementById("premiumUTR").value="";
   }catch(error){msg.textContent="Request पाठवता आली नाही: "+error.message;}
@@ -1755,6 +1832,8 @@ async function startExamCBT(examKey, testType, testNumber) {
   if (!Number.isInteger(number) || number < 1 || number > 50) {
     alert("कृपया 1 ते 50 मधील टेस्ट निवडा."); return;
   }
+  if(type === "free" && number > 5){alert("पहिल्या 5 टेस्ट Free आहेत. Test 6 पासून Paid Plan आवश्यक आहे.");return;}
+  if(type === "paid" && number < 6){alert("Paid Test क्रमांक 6 ते 50 मधील असावा.");return;}
   selectedExamKey = examKey;
   selectedExamFirestoreName = examName;
   selectedTestType = type;
@@ -3031,12 +3110,12 @@ async function loadLeaderboard() {
 }
   
 const examNames = {
-  police: "पोलीस भरती", talathi: "तलाठी भरती", health: "आरोग्य सेवक",
+  police: "पोलीस भरती", talathi: "तलाठी भरती", saralseva: "सरळसेवा", health: "आरोग्य सेवक",
   sscchsl: "SSC CHSL", ssccgl: "SSC CGL", groupc: "Combined Group C",
   railway: "रेल्वे भरती", mpsc: "MPSC", banking: "बँकिंग", ssc: "SSC"
 };
 const examFirestoreNames = {
-  police:"Police Bharti", talathi:"Talathi Bharti", health:"Health Worker",
+  police:"Police Bharti", talathi:"Talathi Bharti", saralseva:"Saralseva", health:"Health Worker",
   sscchsl:"SSC CHSL", ssccgl:"SSC CGL", groupc:"Combined Group C",
   railway:"Railway", mpsc:"MPSC", banking:"Banking", ssc:"SSC"
 };
@@ -3096,22 +3175,29 @@ function showExamCategory(category) {
 async function renderExamTestList(testType) {
   const container = document.getElementById("examTestSeriesList");
   const examKey = activeExamKey;
-  const typeLabel = testType === "paid" ? "Paid" : "Free";
-  // Logged-out students may choose a Paid test; access is checked securely after login.
-  const loggedIn = !!auth.currentUser;
-  const hasPremium = testType === "paid" && loggedIn ? await hasActivePremiumAccess(examKey) : false;
-  const unlocked = testType !== "paid" || !loggedIn || hasPremium;
-  let html = '';
-  if(testType === "paid" && loggedIn && !hasPremium){
-    const plan=premiumPlans[examKey];
-    html += `<div class="card"><h3>🔒 ${examNames[examKey]} Premium आवश्यक</h3><p>50 Paid CBT Tests + PDF Notes + Study Material</p><p>किंमत: ₹${plan?plan.price:"-"} • 3 महिन्यांचा Access</p><button type="button" onclick="selectPremiumPlan('${examKey}')">Premium घ्या</button></div>`;
+  const offerBox = document.getElementById("examOfferPlans");
+  const isPaid = testType === "paid";
+  const hasPremium = isPaid && auth.currentUser ? await hasActivePremiumAccess(examKey) : false;
+  if(offerBox){
+    if(isPaid && !hasPremium) renderPremiumOfferCards(examKey);
+    else offerBox.innerHTML="";
   }
+  const first = isPaid ? 6 : 1;
+  const last = isPaid ? 50 : 5;
+  const typeLabel = isPaid ? "Paid" : "Free";
+  const unlocked = !isPaid || hasPremium;
+  let html = `<div class="offer-note">${isPaid ? "Paid Test 6 ते 50 • संबंधित परीक्षेचा Active Plan आवश्यक" : "Free Test 1 ते 5 • सर्व विद्यार्थ्यांसाठी मोफत"}</div>`;
   html += '<div class="exam-test-grid">';
-  for (let i = 1; i <= 50; i++) {
-    html += `<div class="exam-test-card"><h4>${typeLabel} Test ${i}</h4><p>100 प्रश्न • 90 मिनिटे</p><button type="button" ${unlocked?'':'disabled'} onclick="startExamTestFromHome('${examKey}','${testType}',${i})">${unlocked?'Start Test →':'🔒 Locked'}</button></div>`;
+  for (let i = first; i <= last; i++) {
+    html += `<div class="exam-test-card"><h4>${typeLabel} Test ${i}</h4><p>100 प्रश्न • 90 मिनिटे</p><button type="button" ${unlocked?'':'disabled'} onclick="startExamTestFromHome('${examKey}','${testType}',${i})">${unlocked?'Start Test →':'🔒 Plan निवडा'}</button></div>`;
   }
   html += '</div>';
   container.innerHTML = html;
+}
+
+function openExamOffers(examKey){
+  showExamHub(examKey);
+  showExamCategory("paid");
 }
 
 function closeExamHub() {
@@ -3465,147 +3551,4 @@ async function finishFirestoreTest() {
   const area = document.getElementById("freeTestArea");
   const user = auth.currentUser;
   const total = firestoreTestQuestions.length;
-  const testName = "Free Mock Test " + activeFreeTestNumber;
-
-  area.innerHTML = "<h3>निकाल सेव्ह होत आहे...</h3>";
-
-  try {
-    if (user) {
-      await db.collection("testResults").add({
-        uid: user.uid,
-        name: user.displayName || "Student",
-        email: user.email,
-        testName: testName,
-        score: firestoreTestScore,
-        totalQuestions: total,
-        createdAt: firebase.firestore.FieldValue.serverTimestamp()
-      });
-    }
-
-    area.innerHTML = `
-      <h2>🎉 टेस्ट पूर्ण झाली!</h2>
-      <h3>${testName}</h3>
-      <p>एकूण प्रश्न: ${total}</p>
-      <p>बरोबर उत्तरे: ${firestoreTestScore}</p>
-      <p>चुकीची / न सोडवलेली उत्तरे: ${total - firestoreTestScore}</p>
-      <h2>मिळालेले गुण: ${firestoreTestScore} / ${total}</h2>
-      <p>${user ? "निकाल सेव्ह झाला!" : "निकाल सेव्ह करण्यासाठी Login करा."}</p>
-      <button onclick="openFreeTest(${activeFreeTestNumber})">
-        पुन्हा टेस्ट द्या
-      </button>
-    `;
-
-  } catch (error) {
-    area.innerHTML = "<h3>निकाल सेव्ह झाला नाही.</h3><p>" +
-      error.message + "</p>";
-  }
-                              }
-  
-</script>
-  
-<!-- STUDY GUIDANCE SECTION -->
-  <div style="text-align:center; margin:15px;">
-  <button onclick="document.getElementById('studyGuidance').style.display='block'">
-    📚 अभ्यास मार्गदर्शन पहा
-  </button>
-  </div>
-<section id="studyGuidance" style="display:none;
-  max-width:1000px;
-  margin:25px auto;
-  padding:20px;
-  background:#eef5ff;
-  border-radius:12px;
-">
-  <h2 style="text-align:center;color:#123b68;">
-    📚 अभ्यास मार्गदर्शन
-  </h2>
-  <p style="text-align:center;">
-    स्पर्धा परीक्षांसाठी उपयुक्त अभ्यास लेख आणि मार्गदर्शन
-  </p>
-  
-<!-- EDUCATIONAL ARTICLE 1 -->
-  <div style="
-  max-width:900px;
-  margin:20px auto;
-  padding:20px;
-  background:white;
-  border-radius:12px;
-">
-<div id="studyArticle1" style="
-  max-width:900px;
-  margin:25px auto;
-  padding:25px;
-  background:white;
-  border-radius:12px;
-  box-shadow:0 4px 15px rgba(0,0,0,0.08);
-">
-  <h2>📚 पोलीस भरती परीक्षेची तयारी कशी करावी?</h2>
-
-  <p>
-    पोलीस भरती परीक्षेत यश मिळवण्यासाठी नियमित अभ्यास,
-    योग्य नियोजन आणि सातत्यपूर्ण सराव महत्त्वाचा आहे.
-  </p>
-
-  <h3>1. अभ्यासाचे नियोजन करा</h3>
-  <p>दररोज अभ्यासासाठी ठरावीक वेळ द्या आणि सर्व विषयांचा समतोल अभ्यास करा.</p>
-
-  <h3>2. बुद्धिमत्ता चाचणीचा सराव</h3>
-  <p>संख्या मालिका, दिशा, नातेसंबंध आणि तर्कशक्तीवर आधारित प्रश्न सोडवा.</p>
-
-  <h3>3. सामान्य ज्ञान वाढवा</h3>
-  <p>भारत, महाराष्ट्र, इतिहास, भूगोल आणि चालू घडामोडींचा अभ्यास करा.</p>
-
-  <h3>4. मराठी व्याकरण शिका</h3>
-  <p>शब्दांच्या जाती, समानार्थी शब्द, विरुद्धार्थी शब्द आणि म्हणी यांचा सराव करा.</p>
-
-  <h3>5. गणिताचा सराव करा</h3>
-  <p>टक्केवारी, सरासरी, नफा-तोटा आणि वेळ-काम यांसारख्या विषयांचा अभ्यास करा.</p>
-
-  <h3>6. Mock Test सोडवा</h3>
-  <p>नियमित सराव परीक्षा देऊन आपली तयारी तपासा आणि चुका समजून घ्या.</p>
-
-  <p><strong>Danny Competitive Academy</strong> तर्फे सर्व विद्यार्थ्यांना अभ्यासासाठी शुभेच्छा!</p>
-</div>
-  </div>
-  <!-- EDUCATIONAL ARTICLE 2 -->
-<div id="studyArticle2" style="
-  max-width:900px;
-  margin:25px auto;
-  padding:25px;
-  background:white;
-  border-radius:12px;
-  box-shadow:0 4px 15px rgba(0,0,0,0.08);
-">
-  <h2>📖 महाराष्ट्र पोलीस भरती – लेखी परीक्षेचे विषय</h2>
-  <p>पोलीस भरतीच्या लेखी परीक्षेची तयारी करताना सर्व विषयांचा नियमित अभ्यास करणे महत्त्वाचे आहे.</p>
-<!-- ABOUT US SECTION -->
-<div id="aboutUs" style="
-  max-width:900px;
-  margin:25px auto;
-  padding:25px;
-  background:white;
-  border-radius:12px;
-  text-align:center;
-  box-shadow:0 4px 15px rgba(0,0,0,0.08);
-">
-  <h2>🎓 About Us – आमच्याबद्दल</h2>
-
-  <p>
-        Prayag Study Hub हे स्पर्धा परीक्षांची तयारी
-    करणाऱ्या विद्यार्थ्यांसाठी तयार केलेले शैक्षणिक व्यासपीठ आहे.
-  </p>
-
-  <p>
-    येथे पोलीस भरती, तलाठी भरती आणि MPSC परीक्षांसाठी
-    Mock Tests, सराव प्रश्न आणि अभ्यास साहित्य उपलब्ध करून
-    देण्याचा आमचा प्रयत्न आहे.
-  </p>
-
-  <p>
-    आमचे ध्येय विद्यार्थ्यांना योग्य सराव आणि मार्गदर्शन
-    उपलब्ध करून देणे आहे.
-  </p>
-</div>
-    </div>
-</section>
-  <!-- EDUCATIONAL ARTICL
+  const testN
