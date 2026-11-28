@@ -620,9 +620,23 @@ window.openExamHubDirect = function (examKey, examTitle) {
 
 </div>
 
-<section id="examHub" class="card" style="display:none;max-width:1000px;margin:20px auto;">
-  <h2 id="examHubTitle">परीक्षा अभ्यास केंद्र</h2>
-  <p id="examHubSubtitle">या परीक्षेसाठी सर्व अभ्यास सुविधा एकाच ठिकाणी</p>
+<section id="examHub" class="card" style="display:none;max-width:1120px;margin:20px auto;">
+  <div class="exam-hub-hero">
+    <div class="exam-hub-hero-icon">🏆</div>
+    <div>
+      <span class="exam-hub-kicker">PRAYAG STUDY HUB • EXAM CENTER</span>
+      <h2 id="examHubTitle">परीक्षा अभ्यास केंद्र</h2>
+      <p id="examHubSubtitle">या परीक्षेसाठी सर्व अभ्यास सुविधा एकाच ठिकाणी</p>
+    </div>
+  </div>
+  <section class="hub-offers-section" aria-label="Premium test offers">
+    <div class="hub-section-heading">
+      <div><span class="hub-section-kicker">PREMIUM ACCESS</span><h3>💳 तुमच्यासाठी उपलब्ध टेस्ट सिरीज ऑफर्स</h3><p>Admin Panel मधील सध्याचे प्लॅन आणि किंमत</p></div>
+      <span class="hub-offer-pill">SPECIAL PLANS</span>
+    </div>
+    <div id="examHubOfferPlans" class="offer-cards hub-offer-cards"><div class="hub-offer-loading">ऑफर्स लोड होत आहेत...</div></div>
+  </section>
+  <div class="hub-section-heading category-heading"><div><span class="hub-section-kicker">STUDY ZONE</span><h3>अभ्यासाची सुविधा निवडा</h3></div></div>
   <div class="exam-category-grid">
     <div class="card test-card"><div class="test-icon">📝</div><h3>Free Mock Test</h3><p>मोफत सराव परीक्षा</p><button type="button" onclick="showExamCategory('free')">Open →</button></div>
     <div class="card test-card"><div class="test-icon">💳</div><h3>Paid Mock Test</h3><p>मासिक आणि वार्षिक टेस्ट</p><button type="button" onclick="showExamCategory('paid')">Open →</button></div>
@@ -976,8 +990,32 @@ window.openExamHubDirect = function (examKey, examTitle) {
 }
 .police-free-test-grid .test-item h4 { margin: 4px 0 8px; }
 .police-free-test-grid .test-item button { width: 100%; margin: 0; padding: 9px 5px; }
-.exam-category-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(145px,1fr)); gap:12px; margin:20px 0; }
-#examHub { scroll-margin-top:20px; }
+#examHub { scroll-margin-top:20px; padding:clamp(14px,3vw,28px); border:1px solid #d9e7f6; border-radius:22px; background:linear-gradient(180deg,#f4f9ff 0%,#ffffff 42%); box-shadow:0 12px 34px rgba(20,65,112,.10); }
+.exam-hub-hero{display:flex;align-items:center;gap:16px;padding:20px;border-radius:18px;color:#fff;background:linear-gradient(120deg,#102f57,#1769aa 58%,#2587bd);box-shadow:0 8px 20px rgba(18,59,104,.18)}
+.exam-hub-hero-icon{width:58px;height:58px;flex:0 0 58px;display:grid;place-items:center;border-radius:17px;background:rgba(255,255,255,.16);font-size:30px}
+.exam-hub-kicker,.hub-section-kicker{font-size:10px;font-weight:800;letter-spacing:1.2px;opacity:.8}
+.exam-hub-hero h2{margin:5px 0;color:#fff;font-size:clamp(21px,4vw,29px)}
+.exam-hub-hero p{margin:0;color:#e5f2ff;font-size:13px}
+.hub-offers-section{margin:22px 0 24px;padding:18px;border:1px solid #d8e7f5;border-radius:18px;background:linear-gradient(135deg,#fff 0%,#f0f7ff 100%)}
+.hub-section-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}
+.hub-section-heading h3{margin:4px 0;color:#123b68;font-size:18px}
+.hub-section-heading p{margin:0;color:#64748b;font-size:12px}
+.hub-section-kicker{color:#16805d}
+.hub-offer-pill{padding:7px 11px;border-radius:30px;background:#e0f2fe;color:#075985;font-size:10px;font-weight:800;white-space:nowrap}
+.hub-offer-cards{grid-template-columns:repeat(auto-fit,minmax(190px,1fr));margin:12px 0 0}
+.hub-offer-cards .offer-card{border-radius:16px;border-color:#cbdff1;background:#fff;transition:transform .18s ease,box-shadow .18s ease}
+.hub-offer-cards .offer-card:hover{transform:translateY(-3px);box-shadow:0 10px 22px rgba(18,59,104,.12)}
+.hub-offer-cards .offer-card h4{font-size:16px}
+.hub-offer-cards .offer-card button{border-radius:10px;padding:11px}
+.hub-offer-loading{grid-column:1/-1;padding:18px;text-align:center;color:#64748b;border:1px dashed #b8cde2;border-radius:13px;background:#fff;font-size:13px}
+.category-heading{margin:12px 2px 8px}
+.exam-category-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(145px,1fr)); gap:12px; margin:12px 0 18px; }
+.exam-category-grid .test-card{border:1px solid #dce8f5;border-radius:16px;background:#fff;box-shadow:0 5px 16px rgba(18,59,104,.06);transition:transform .18s ease,box-shadow .18s ease}
+.exam-category-grid .test-card:hover{transform:translateY(-3px);box-shadow:0 10px 22px rgba(18,59,104,.12)}
+.exam-category-grid .test-card button{border-radius:10px;background:linear-gradient(120deg,#1769aa,#0f4d80)}
+@media(max-width:600px){.exam-hub-hero{padding:15px;gap:12px}.exam-hub-hero-icon{width:48px;height:48px;flex-basis:48px;font-size:25px}.hub-offers-section{padding:12px}.hub-section-heading h3{font-size:16px}.hub-offer-cards{grid-template-columns:1fr 1fr;gap:8px}.hub-offer-cards .offer-card{padding:11px}.hub-offer-cards .offer-price{font-size:23px}.hub-offer-cards .offer-card ul{font-size:11px;padding-left:14px}.hub-offer-cards .offer-card button{font-size:12px;padding:9px 5px}}
+@media(max-width:380px){.hub-offer-cards{grid-template-columns:1fr}}
+
 </style>
 
   
@@ -1341,6 +1379,8 @@ let selectedPremiumTierId = null;
 async function loadPremiumOffers(){
   try{
     const snap=await db.collection("premiumOffers").get();
+    // On a successful read, display only the offers configured in Admin Panel.
+    Object.keys(premiumPlans).forEach(key=>{ premiumPlans[key].offers=[]; });
     snap.forEach(doc=>{
       const d=doc.data();
       if(!premiumPlans[d.examKey] || !d.planId) return;
@@ -1351,9 +1391,35 @@ async function loadPremiumOffers(){
     });
     const current=document.getElementById("examOfferPlans");
     if(current && activeExamKey) renderPremiumOfferCards(activeExamKey);
+    if(activeExamKey) renderHubPremiumOfferCards(activeExamKey);
   }catch(error){console.warn("Premium offers default list वापरली जात आहे:",error);}
 }
 loadPremiumOffers();
+
+function renderHubPremiumOfferCards(examKey){
+  const box=document.getElementById("examHubOfferPlans");
+  const config=premiumPlans[examKey];
+  if(!box || !config) return;
+  box.innerHTML="";
+  const offers=config.offers.filter(o=>o.active!==false).sort((a,b)=>a.days-b.days);
+  if(!offers.length){
+    box.innerHTML='<div class="hub-offer-loading">सध्या या परीक्षेसाठी ऑफर उपलब्ध नाहीत. Admin Panel मधून Premium Offers जोडा.</div>';
+    return;
+  }
+  offers.forEach((offer,index)=>{
+    const card=document.createElement("div");
+    card.className="offer-card"+(index===1?" featured":"");
+    if(index===1){const tag=document.createElement("span");tag.className="offer-tag";tag.textContent="लोकप्रिय पर्याय";card.appendChild(tag);}
+    const title=document.createElement("h4");title.textContent=(offer.name||"Premium")+" Plan";card.appendChild(title);
+    const price=document.createElement("div");price.className="offer-price";price.textContent="₹"+offer.price;card.appendChild(price);
+    const duration=document.createElement("p");duration.className="offer-duration";duration.textContent=offer.days+" दिवसांची वैधता";card.appendChild(duration);
+    const list=document.createElement("ul");
+    (offer.features||[]).forEach(feature=>{const li=document.createElement("li");li.textContent=feature;list.appendChild(li);});
+    card.appendChild(list);
+    const button=document.createElement("button");button.type="button";button.textContent="हा Plan निवडा";button.onclick=()=>selectPremiumPlan(examKey,offer.id);card.appendChild(button);
+    box.appendChild(card);
+  });
+}
 
 function renderPremiumOfferCards(examKey){
   const box=document.getElementById("examOfferPlans");
@@ -3209,6 +3275,7 @@ function showExamHub(examKey) {
     if (grid) grid.style.display = "none";
     if (hubTitle) hubTitle.textContent = (examNames[activeExamKey] || "परीक्षा") + " अभ्यास केंद्र";
     if (hubSubtitle) hubSubtitle.textContent = (examNames[activeExamKey] || "परीक्षा") + " साठी Free आणि Paid टेस्ट, Study Material, Old Papers व Current Affairs";
+    renderHubPremiumOfferCards(activeExamKey);
     if (categoryContent) categoryContent.style.display = "none";
     if (inlineArea) inlineArea.style.display = "none";
 
@@ -3275,158 +3342,4 @@ async function renderExamTestList(testType) {
   let html = `<div class="offer-note">${isPaid ? "Paid Test 4 ते 50 • संबंधित परीक्षेचा Active Plan आवश्यक" : "Free Test 1 ते 3 • सर्व विद्यार्थ्यांसाठी मोफत"}</div>`;
   html += '<div class="exam-test-grid">';
   for (let i = first; i <= last; i++) {
-    html += `<div class="exam-test-card"><h4>${typeLabel} Test ${i}</h4><p>100 प्रश्न • 90 मिनिटे</p><button type="button" ${unlocked?'':'disabled'} onclick="startExamTestFromHome('${examKey}','${testType}',${i})">${unlocked?'Start Test →':'🔒 Plan निवडा'}</button></div>`;
-  }
-  html += '</div>';
-  container.innerHTML = html;
-}
-
-function openExamOffers(examKey){
-  showExamHub(examKey);
-  showExamCategory("paid");
-}
-
-function closeExamHub() {
-  const hub = document.getElementById("examHub");
-  if (hub) hub.style.display = "none";
-  const grid = document.querySelector("#homeSections > .test-series-grid");
-  if (grid) grid.style.display = "grid";
-  document.getElementById("homeSections").scrollIntoView({behavior:"smooth", block:"start"});
-}
-function closePoliceTests() { closeExamHub(); }
-function closeTalathiTests() { closeExamHub(); }
-
-function startExamTestFromHome(examKey, testType, testNumber) {
-  if (!auth.currentUser) {
-    // Keep the exact exam/test choice and resume it automatically after login/signup.
-    pendingExamLaunch = { examKey: examKey, testType: testType, testNumber: Number(testNumber) };
-    const panel = document.getElementById("studentAuthPanel");
-    const options = document.getElementById("authOptions");
-    const form = document.getElementById("studentForm");
-    if (panel) panel.style.display = "block";
-    if (options) options.style.display = "block";
-    if (form) form.style.display = "none";
-    const message = document.getElementById("emailMessage");
-    if (message) message.textContent = "Login / Register करा. त्यानंतर तुमची निवडलेली टेस्ट लगेच सुरू होईल.";
-    if (panel) panel.scrollIntoView({behavior:"smooth", block:"center"});
-    return;
-  }
-  const hub = document.getElementById("examHub");
-  const inlineArea = document.getElementById("examInlineArea");
-  const quiz = document.getElementById("policeQuiz");
-  if (!hub || !inlineArea || !quiz) { alert("परीक्षा सुरू करण्यासाठी आवश्यक भाग सापडला नाही."); return; }
-  hub.style.display = "block";
-  document.getElementById("examCategoryContent").style.display = "none";
-  inlineArea.style.display = "block";
-  inlineArea.appendChild(quiz);
-  quiz.style.display = "block";
-  const backButton = inlineArea.querySelector("button");
-  if (backButton) backButton.style.display = "inline-block";
-  document.getElementById("examHubTitle").textContent = (examNames[examKey] || "परीक्षा") + " - परीक्षा सुरू";
-  quiz.scrollIntoView({behavior:"smooth", block:"start"});
-  startExamCBT(examKey, testType, testNumber);
-}
-
-function backToExamTests() {
-  clearInterval(policeTimer);
-  const inlineArea = document.getElementById("examInlineArea");
-  const quiz = document.getElementById("policeQuiz");
-  if (quiz) { quiz.innerHTML = ""; quiz.style.display = "none"; }
-  if (inlineArea) inlineArea.style.display = "none";
-  document.getElementById("examCategoryContent").style.display = "block";
-  document.getElementById("examTestListSection").style.display = "block";
-  document.getElementById("examHubTitle").textContent = (examNames[activeExamKey] || "परीक्षा") + " अभ्यास केंद्र";
-  document.getElementById("examHub").scrollIntoView({behavior:"smooth", block:"start"});
-}
-
-function startPoliceFreeTestFromHome(testNumber) {
-  startExamTestFromHome("police", "free", testNumber);
-}
-
-function comingSoon() { alert("हा विभाग लवकरच सुरू होईल!"); }
-
-function loadDashboardSummary() {
-
-  db.collection("students").get()
-    .then(snapshot => {
-      document.getElementById("totalStudents").innerText =
-        snapshot.size;
-    })
-    .catch(error => console.log(error));
-
-  db.collection("news").get()
-    .then(snapshot => {
-      document.getElementById("totalNews").innerText =
-        snapshot.size;
-    })
-    .catch(error => console.log(error));
-
-}
-  
-
-let editingMCQId = null;
-  
-function addMCQ() {
-
-  const exam = document.getElementById("mcqExam").value;
-
-  const testNumber = exam === "Police Bharti"
-    ? Number(document.getElementById("mcqTestNumber").value)
-    : null;
-
-  const question = document.getElementById("mcqQuestion").value.trim();
-  const A = document.getElementById("optionA").value.trim();
-  const B = document.getElementById("optionB").value.trim();
-  const C = document.getElementById("optionC").value.trim();
-  const D = document.getElementById("optionD").value.trim();
-  const answer = document.getElementById("correctAnswer").value;
-  const msg = document.getElementById("mcqMessage");
-
-  if (!question || !A || !B || !C || !D) {
-    msg.innerText = "कृपया सर्व माहिती भरा.";
-    return;
-  }
-
-  if (exam === "Police Bharti" &&
-    (!Number.isInteger(testNumber) || testNumber < 1 || testNumber > 50)) {
-  msg.innerText = "Test Number 1 ते 50 निवडा.";
-  return;
-  }
-
-  
-const saveOperation = editingMCQId
-  ? db.collection("mcqQuestions").doc(editingMCQId).update({
-      exam: exam,
-      testNumber: testNumber,
-      question: question,
-      options: { A, B, C, D },
-      answer: answer
-    })
-  : db.collection("mcqQuestions").add({
-      exam: exam,
-      testNumber: testNumber,
-      question: question,
-      options: { A, B, C, D },
-      answer: answer,
-      createdAt: firebase.firestore.FieldValue.serverTimestamp()
-    });
-
-saveOperation
-  .then(() => {
-    editingMCQId = null;
-    msg.innerText = "प्रश्न यशस्वीपणे Save / Update झाला!";
-    loadMCQQuestions();
-
-    document.getElementById("mcqQuestion").value = "";
-    document.getElementById("optionA").value = "";
-    document.getElementById("optionB").value = "";
-    document.getElementById("optionC").value = "";
-    document.getElementById("optionD").value = "";
-  })
-  .catch(error => {
-    msg.innerText = "Error: " + error.message;
-    console.error(error);
-  });
-       }
-
-functi
+    html += `<div class="exam-test-card"><h4>${typeLabel} Test ${i}</
